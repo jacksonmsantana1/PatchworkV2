@@ -21,6 +21,12 @@ export default class NavBar extends HTMLElement {
     }
   }
 
+  attributeChangedCallback(name, oldVal, newVal) {
+    if (this[name] !== newVal) {
+      this[name] = newVal;
+    }
+  }
+
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
   }

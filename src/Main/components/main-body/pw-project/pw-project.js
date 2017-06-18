@@ -1,14 +1,14 @@
 /*  eslint no-underscore-dangle:0 */
 export default class PwProject extends HTMLElement {
   static get observedAttributes() {
-    return ['image', 'description', 'id'];
+    return ['image', 'id', 'active'];
   }
 
   createdCallback() {
     // Setting the initial attributes
     this._id = this.getAttribute('id') || '';
-    this._description = this.getAttribute('description') || '';
     this._image = this.getAttribute('image') || '';
+    this._active = this.getAttribute('active') || 'true';
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
@@ -19,8 +19,28 @@ export default class PwProject extends HTMLElement {
     }
   }
 
+  attributeChangedCallback(name, oldVal, newVal) {
+    if (this[name] !== newVal) {
+      this[name] = newVal;
+    }
+  }
+
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
+  }
+
+  get active() {
+    return this._active;
+  }
+
+  set active(value) {
+    this._id = value;
+    this.setAttribute('active', value);
+    if (!value) {
+      this.shadowRoot.childNodes[1].style.opacity = 0.4;
+    } else {
+      this.shadowRoot.childNodes[1].style.opacity = 1;
+    }
   }
 
   get id() {
@@ -30,16 +50,6 @@ export default class PwProject extends HTMLElement {
   set id(value) {
     this._id = value;
     this.setAttribute('id', value);
-    this.render();
-  }
-
-  get description() {
-    return this._description;
-  }
-
-  set description(value) {
-    this._description = value;
-    this.setAttribute('description', value);
     this.render();
   }
 
@@ -57,7 +67,7 @@ export default class PwProject extends HTMLElement {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<figure>
               <img src="${this.image}">
-              <figcaption>${this.description}</figcaption>
+              <figcaption><slot></slot></figcaption>
             </figure>`;
   }
 
@@ -88,9 +98,13 @@ export default class PwProject extends HTMLElement {
                 line-height: 1.5;
               }
 
+              :host(:hover) figure:not(:hover) {
+                opacity: 0.4;
+              }
+
               @media screen and (max-width: 750px) {
                 figure { width: 100%; }
-                div#columns figure {
+                figure {
                   padding: 0.25em;
                 }
               }
