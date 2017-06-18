@@ -7,7 +7,7 @@ export default class PasswordInput extends HTMLElement {
 
   createdCallback() {
     // Setting the initial attributes
-    this._active = this.active || 'true';
+    this._active = this.getAttribute('active') || 'true';
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });

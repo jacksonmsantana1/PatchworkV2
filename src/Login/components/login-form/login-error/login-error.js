@@ -5,7 +5,7 @@ export default class LoginError extends HTMLElement {
 
   createdCallback() {
     // Setting the initial attributes
-    this._message = '';
+    this._message = this.getAttribute('message') || '';
 
     // setting the inner dom and the styles
     this.attachShadow({ mode: 'open' });
@@ -14,10 +14,6 @@ export default class LoginError extends HTMLElement {
     if (super.createdcallback) {
       super.createdcallback();
     }
-  }
-
-  connectedCallback() {
-    this.message = this.getattribute('message') || '';
   }
 
   render() {

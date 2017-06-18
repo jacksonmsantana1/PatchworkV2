@@ -8,8 +8,8 @@ export default class EmailInput extends HTMLElement {
 
   createdCallback() {
     // Setting the initial attributes
-    this._valid = this.valid || 'false';
-    this._active = this.active || 'true';
+    this._valid = this.getAttribute('valid') || 'false';
+    this._active = this.getAttribute('active') || 'true';
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });

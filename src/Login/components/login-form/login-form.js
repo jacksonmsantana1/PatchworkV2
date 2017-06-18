@@ -72,21 +72,21 @@ class LoginForm extends HTMLElement {
 
   getInputPassword() {
     return H.childNodes(this)
-      .chain(H.nth(2))
+      .chain(H.nth(1))
       .chain(H.childNodes)
       .chain(H.nth(3));
   }
 
   getInputEmail() {
     return H.childNodes(this)
-      .chain(H.nth(2))
+      .chain(H.nth(1))
       .chain(H.childNodes)
       .chain(H.nth(1));
   }
 
   getLoginError() {
     return H.childNodes(this)
-      .chain(H.nth(2))
+      .chain(H.nth(1))
       .chain(H.childNodes)
       .chain(H.nth(5));
   }
