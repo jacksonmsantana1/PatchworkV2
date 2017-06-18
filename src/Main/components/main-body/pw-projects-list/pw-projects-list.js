@@ -4,6 +4,8 @@ export default class PwProjectsList extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.render();
 
+    this.addEventListener('project-selected', this.onProjectSelected.bind(this), false);
+
     if (super.createdcallback) {
       super.createdcallback();
     }
@@ -11,6 +13,24 @@ export default class PwProjectsList extends HTMLElement {
 
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
+  }
+
+  onProjectSelected(evt) {
+    this.focusOnProject(evt.detail);
+  }
+
+  focusOnProject(id) {
+    const slot = this.shadowRoot.querySelector('slot');
+    /* eslint array-callback-return:0 no-param-reassign:0 */
+    slot.assignedNodes().map((project) => {
+      if (project.localName === 'pw-project') {
+        if (project.id !== id) {
+          project.active = '';
+        } else {
+          project.active = 'true';
+        }
+      }
+    });
   }
 
   get style() {

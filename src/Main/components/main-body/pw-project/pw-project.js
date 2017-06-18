@@ -1,3 +1,5 @@
+import H from '../../../../lib/Helper/Helper';
+
 /*  eslint no-underscore-dangle:0 */
 export default class PwProject extends HTMLElement {
   static get observedAttributes() {
@@ -14,6 +16,9 @@ export default class PwProject extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.render();
 
+    // Event Listeners
+    this.addEventListener('mouseover', this.onMouseOver.bind(this), false);
+
     if (super.createdCallback) {
       super.createdCallback();
     }
@@ -29,12 +34,16 @@ export default class PwProject extends HTMLElement {
     this.shadowRoot.innerHTML = this.style + this.html;
   }
 
+  onMouseOver() {
+    H.emitEvent(true, true, this.id, 'project-selected', this);
+  }
+
   get active() {
     return this._active;
   }
 
   set active(value) {
-    this._id = value;
+    this._active = value;
     this.setAttribute('active', value);
     if (!value) {
       this.shadowRoot.childNodes[1].style.opacity = 0.4;
