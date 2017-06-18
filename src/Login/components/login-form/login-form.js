@@ -1,6 +1,5 @@
 import Request from 'superagent';
 import Page from 'page';
-import R from 'ramda';
 import Token from '../../../lib/Token/Token';
 import H from '../../../lib/Helper/Helper';
 
@@ -73,20 +72,26 @@ class LoginForm extends HTMLElement {
 
   getInputPassword() {
     return H.childNodes(this)
-      .map(R.nth(1))
-      .chain(H.getElementByTagName('password-input'));
+      .chain(H.nth(2))
+      .chain(H.childNodes)
+      .chain(H.nth(3))
+      .map(H.log);
   }
 
   getInputEmail() {
     return H.childNodes(this)
-      .map(R.nth(1))
-      .chain(H.getElementByTagName('email-input'));
+      .chain(H.nth(2))
+      .chain(H.childNodes)
+      .chain(H.nth(1))
+      .map(H.log);
   }
 
   getLoginError() {
     return H.childNodes(this)
-      .map(R.nth(1))
-      .chain(H.getElementByTagName('login-error'));
+      .chain(H.nth(2))
+      .chain(H.childNodes)
+      .chain(H.nth(5))
+      .map(H.log);
   }
 
   get html() {
