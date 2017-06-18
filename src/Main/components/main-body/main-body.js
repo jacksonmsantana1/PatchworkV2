@@ -16,20 +16,17 @@ export default class MainBody extends HTMLElement {
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<main>
-              <div class="helper">
-                MAIN PAGE
-              <span>Here will be the list of the projects</span>
-              </div>
+              <slot></slot>
             </main>`;
   }
 
   get style() {
     return `<style>
               main {
-                height: 100vh;
                 background: #f9dae0;
                 font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
                 color: #fff;
+                padding: 5em;
               }
 
               main .helper {
