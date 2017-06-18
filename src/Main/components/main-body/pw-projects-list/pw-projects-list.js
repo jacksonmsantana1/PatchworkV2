@@ -21,12 +21,6 @@ export default class PwProjectsList extends HTMLElement {
                 src:url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/callunasansregular-webfont.woff') format('woff');
               }
 
-              body {
-                background: url(//subtlepatterns.com/patterns/scribble_light.png);
-                font-family: Calluna, Arial, sans-serif;
-                min-height: 1000px;
-              }
-
               #columns {
                 column-width: 320px;
                 column-gap: 15px;
@@ -55,19 +49,6 @@ export default class PwProjectsList extends HTMLElement {
                 font-size: .9rem;
                 color: #444;
                 line-height: 1.5;
-              }
-
-              div#columns small {
-                font-size: 1rem;
-                float: right;
-                text-transform: uppercase;
-                color: #aaa;
-              }
-
-              div#columns small a {
-                color: #666;
-                text-decoration: none;
-                transition: .4s color;
               }
 
               div#columns:hover figure:not(:hover) {
