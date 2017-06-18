@@ -1,4 +1,4 @@
-export default class ProjectsList extends HTMLElement {
+export default class PwProjectsList extends HTMLElement {
   createdCallback() {
     // setting the inner dom and the styles
     this.attachShadow({ mode: 'open' });
@@ -135,6 +135,6 @@ export default class ProjectsList extends HTMLElement {
 }
 
 // Check that the element hasn't already been registered
-if (!window.customElements.get('projects-list')) {
-  document.registerElement('projects-list', ProjectsList);
+if (!window.customElements.get('pw-projects-list')) {
+  document.registerElement('pw-projects-list', PwProjectsList);
 }

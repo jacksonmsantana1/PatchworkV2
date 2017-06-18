@@ -1,5 +1,5 @@
 import './components/main-body/main-body';
-import './components/main-body/projects-list/projects-list';
+import './components/main-body/pw-projects-list/pw-projects-list';
 import './components/nav-bar/nav-bar';
 import './components/nav-bar/nav-bar-tab/nav-bar-tab';
 
@@ -21,7 +21,7 @@ class MainPage extends HTMLElement {
               <nav-bar-tab class="active" href="/#/login" slot="tabsSlot">Logout</nav-bar-tab>
             </nav-bar>
             <main-body>
-              <projects-list></projects-list>
+              <pw-projects-list></pw-projects-list>
             </main-body>`;
   }
 }
