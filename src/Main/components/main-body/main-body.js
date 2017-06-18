@@ -52,7 +52,7 @@ export default class MainBody extends HTMLElement {
 
               @media screen and (max-width: 750px) {
                 main {
-                  padding: 1em;
+                  padding: 2em;
                 }
               }
             </style>`;

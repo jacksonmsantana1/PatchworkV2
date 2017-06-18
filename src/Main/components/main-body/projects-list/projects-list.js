@@ -30,9 +30,6 @@ export default class ProjectsList extends HTMLElement {
               #columns {
                 column-width: 320px;
                 column-gap: 15px;
-                width: 90%;
-                max-width: 1100px;
-                margin: 50px auto;
               }
 
               div#columns figure {
@@ -80,6 +77,9 @@ export default class ProjectsList extends HTMLElement {
               @media screen and (max-width: 750px) {
                 #columns { column-gap: 0px; }
                 #columns figure { width: 100%; }
+                div#columns figure {
+                  padding: 0.25em;
+                }
               }
             </style>`;
   }
