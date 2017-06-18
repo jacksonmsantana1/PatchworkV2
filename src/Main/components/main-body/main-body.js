@@ -49,6 +49,12 @@ export default class MainBody extends HTMLElement {
                font-size: 0.4em;
                display: block;
               }
+
+              @media screen and (max-width: 750px) {
+                main {
+                  padding: 1em;
+                }
+              }
             </style>`;
   }
 }
