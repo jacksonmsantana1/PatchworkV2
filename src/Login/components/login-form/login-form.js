@@ -74,28 +74,25 @@ class LoginForm extends HTMLElement {
     return H.childNodes(this)
       .chain(H.nth(2))
       .chain(H.childNodes)
-      .chain(H.nth(3))
-      .map(H.log);
+      .chain(H.nth(3));
   }
 
   getInputEmail() {
     return H.childNodes(this)
       .chain(H.nth(2))
       .chain(H.childNodes)
-      .chain(H.nth(1))
-      .map(H.log);
+      .chain(H.nth(1));
   }
 
   getLoginError() {
     return H.childNodes(this)
       .chain(H.nth(2))
       .chain(H.childNodes)
-      .chain(H.nth(5))
-      .map(H.log);
+      .chain(H.nth(5));
   }
 
   get html() {
-    return `     <form>
+    return `<form>
         <email-input valid="true" active="true"></email-input>
         <password-input active="true"></password-input>
         <login-error></login-error>
