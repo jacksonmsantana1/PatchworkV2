@@ -1,0 +1,88 @@
+{
+  "name": "ProjectBase",
+  "version": "1.0.0",
+  "description": "Project Base for web components",
+  "main": "index.js",
+  "author": "Jackson Martorano Sant'Ana",
+  "license": "MIT",
+  "scripts": {
+    "test": "testem",
+    "build": "gulp main",
+    "dev": "gulp dev"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.0",
+    "babel-loader": "^6.2.7",
+    "babel-plugin-transform-h-jsx": "^1.0.0",
+    "babel-preset-flow": "^1.0.0",
+    "babel-preset-latest": "^6.16.0",
+    "browser-sync": "^2.17.5",
+    "chai": "^3.5.0",
+    "del": "^2.2.2",
+    "eslint": "^3.8.1",
+    "eslint-config-airbnb": "^12.0.0",
+    "eslint-plugin-flowtype": "^2.25.0",
+    "eslint-plugin-import": "^2.0.1",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.4.1",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-flowtype": "^1.0.0",
+    "mocha": "^3.1.2",
+    "sinon": "^1.17.6",
+    "sinon-chai": "^2.8.0",
+    "testem": "^1.13.0",
+    "webpack-stream": "^3.2.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "airbnb",
+      "plugin:flowtype/recommended"
+    ],
+    "env": {
+      "browser": true
+    },
+    "plugins": [
+      "import",
+      "flowtype"
+    ],
+    "parser": "babel-eslint",
+    "rules": {
+      "new-cap": [
+        2,
+        {
+          "capIsNewExceptions": [
+            "Map",
+            "List"
+          ]
+        }
+      ],
+      "react/react-in-jsx-scope": 0,
+      "react/jsx-filename-extension": 0,
+      "react/self-closing-comp": 0,
+      "react/style-prop-object": 0,
+      "react/no-unknown-property": 0,
+      "react/jsx-no-bind": 0
+    }
+  },
+  "babel": {
+    "presets": [
+      "latest",
+      "flow"
+    ]
+  },
+  "dependencies": {
+    "axios": "^0.15.2",
+    "babel-polyfill": "^6.16.0",
+    "data.either": "^1.5.0",
+    "data.task": "^3.1.1",
+    "immutable": "^3.8.1",
+    "jwt-decode": "^2.1.0",
+    "page": "^1.7.1",
+    "ramda": "^0.23.0",
+    "redux": "^3.6.0",
+    "superagent": "^3.5.2",
+    "virtual-dom": "^2.1.1",
+    "webcomponents.js": "^0.7.22"
+  }
+}
