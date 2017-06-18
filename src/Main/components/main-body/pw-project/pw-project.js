@@ -18,6 +18,7 @@ export default class PwProject extends HTMLElement {
 
     // Event Listeners
     this.addEventListener('mouseover', this.onMouseOver.bind(this), false);
+    this.addEventListener('mouseout', this.onMouseOut.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -32,6 +33,10 @@ export default class PwProject extends HTMLElement {
 
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
+  }
+
+  onMouseOut() {
+    H.emitEvent(true, true, this.id, 'project-deselected', this);
   }
 
   onMouseOver() {

@@ -5,6 +5,7 @@ export default class PwProjectsList extends HTMLElement {
     this.render();
 
     this.addEventListener('project-selected', this.onProjectSelected.bind(this), false);
+    this.addEventListener('project-deselected', this.onProjectDeselected.bind(this), false);
 
     if (super.createdcallback) {
       super.createdcallback();
@@ -16,17 +17,29 @@ export default class PwProjectsList extends HTMLElement {
   }
 
   onProjectSelected(evt) {
-    this.focusOnProject(evt.detail);
-  }
-
-  focusOnProject(id) {
     const slot = this.shadowRoot.querySelector('slot');
+    const id = evt.detail;
+
     /* eslint array-callback-return:0 no-param-reassign:0 */
     slot.assignedNodes().map((project) => {
       if (project.localName === 'pw-project') {
         if (project.id !== id) {
           project.active = '';
         } else {
+          project.active = 'true';
+        }
+      }
+    });
+  }
+
+  onProjectDeselected(evt) {
+    const slot = this.shadowRoot.querySelector('slot');
+    const id = evt.detail;
+
+    /* eslint array-callback-return:0 no-param-reassign:0 */
+    slot.assignedNodes().map((project) => {
+      if (project.localName === 'pw-project') {
+        if (project.id !== id) {
           project.active = 'true';
         }
       }
