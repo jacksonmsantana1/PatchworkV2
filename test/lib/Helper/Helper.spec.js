@@ -1,4 +1,4 @@
-import H from '../src/lib/Helper/Helper';
+import H from '../../../src/lib/Helper/Helper';
 
 describe('Helper Class', () => {
   describe('#equals()', () => {
