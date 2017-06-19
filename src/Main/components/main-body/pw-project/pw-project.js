@@ -43,6 +43,14 @@ export default class PwProject extends HTMLElement {
     H.emitEvent(true, true, this.id, 'project-selected', this);
   }
 
+  setOpacity(value) {
+    return H.getShadowRoot(this)
+      .chain(H.childNodes)
+      .chain(H.nth(1))
+      .chain(H.props('style'))
+      .chain(H.changeProps('opacity', value));
+  }
+
   get active() {
     return this._active;
   }
@@ -51,9 +59,9 @@ export default class PwProject extends HTMLElement {
     this._active = value;
     this.setAttribute('active', value);
     if (!value) {
-      this.shadowRoot.childNodes[1].style.opacity = 0.4;
+      this.setOpacity(0.4);
     } else {
-      this.shadowRoot.childNodes[1].style.opacity = 1;
+      this.setOpacity(1);
     }
   }
 
