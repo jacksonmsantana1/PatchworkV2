@@ -1,3 +1,6 @@
+import R from 'ramda';
+import H from '../../../../lib/Helper/Helper';
+
 export default class PwProjectsList extends HTMLElement {
   createdCallback() {
     // setting the inner dom and the styles
@@ -17,33 +20,44 @@ export default class PwProjectsList extends HTMLElement {
   }
 
   onProjectSelected(evt) {
-    const slot = this.shadowRoot.querySelector('slot');
     const id = evt.detail;
 
-    /* eslint array-callback-return:0 no-param-reassign:0 */
-    slot.assignedNodes().map((project) => {
-      if (project.localName === 'pw-project') {
-        if (project.id !== id) {
-          project.active = '';
-        } else {
-          project.active = 'true';
-        }
-      }
-    });
+    this.getSlot()
+      .chain(H.assignedNodes)
+      .map(R.filter(project => H.equals('pw-project', project.localName)))
+      .map(H.splat(this.setProjectActive(id)));
   }
 
   onProjectDeselected(evt) {
-    const slot = this.shadowRoot.querySelector('slot');
     const id = evt.detail;
 
-    /* eslint array-callback-return:0 no-param-reassign:0 */
-    slot.assignedNodes().map((project) => {
-      if (project.localName === 'pw-project') {
-        if (project.id !== id) {
-          project.active = 'true';
-        }
+    this.getSlot()
+      .chain(H.assignedNodes)
+      .map(R.filter(project => H.equals('pw-project', project.localName)))
+      .map(H.splat(this.setAllProjectsActive(id)));
+  }
+
+  setProjectActive(id) {
+    return (project) => {
+      if (project.id !== id) {
+        H.changeProps('active', '', project);
+      } else {
+        H.changeProps('active', 'true', project);
       }
-    });
+    };
+  }
+
+  setAllProjectsActive(id) {
+    return (project) => {
+      if (project.id !== id) {
+        H.changeProps('active', 'true', project);
+      }
+    };
+  }
+
+  getSlot() {
+    return H.getShadowRoot(this)
+      .chain(H.querySelector('slot'));
   }
 
   get style() {

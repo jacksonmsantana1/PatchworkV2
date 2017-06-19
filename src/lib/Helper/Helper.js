@@ -89,6 +89,39 @@ const nth = R.curry((n, arr) => {
     .chain(isNil);
 });
 
+// querySelector :: String -> HTMLElement -> Either(HTMLELement)
+const querySelector = R.curry((query, doc) =>
+  Either.fromNullable(doc).map(_doc => _doc.querySelector(query)).chain(isNil));
+
+// assignedNodes :: HTMLElement<slot> ->Either([HTMLELement])
+const assignedNodes = doc => Either.fromNullable(doc)
+                                .map(_elem => _elem.assignedNodes())
+                                .chain(isNil);
+
+// equals :: <T> -> <T> -> Boolean
+const equals = R.curry((x, y) => {
+  if (x === y) {
+    return true;
+  }
+
+  return false;
+});
+
+// diffs :: <T> -> <T> -> Boolean
+const diffs = R.curry((x, y) => {
+  if (x !== y) {
+    return true;
+  }
+
+  return false;
+});
+
+function splat(fn) {
+  return function (list) {
+    return Array.prototype.map.call(list, fn);
+  };
+}
+
 class Helper {}
 
 Helper.changeProps = changeProps;
@@ -102,5 +135,10 @@ Helper.changeProperty = changeProperty;
 Helper.log = log;
 Helper.isNil = isNil;
 Helper.nth = nth;
+Helper.querySelector = querySelector;
+Helper.assignedNodes = assignedNodes;
+Helper.equals = equals;
+Helper.diffs = diffs;
+Helper.splat = splat;
 
 export default Helper;
