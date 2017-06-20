@@ -1,4 +1,5 @@
 import H from '../../../../lib/Helper/Helper';
+import './show-button/show-button';
 
 /*  eslint no-underscore-dangle:0 */
 export default class PwProject extends HTMLElement {
@@ -37,10 +38,12 @@ export default class PwProject extends HTMLElement {
 
   onMouseOut() {
     H.emitEvent(true, true, this.id, 'project-deselected', this);
+    this.button.get().hideButton();
   }
 
   onMouseOver() {
     H.emitEvent(true, true, this.id, 'project-selected', this);
+    this.button.get().showButton();
   }
 
   setOpacity(value) {
@@ -63,6 +66,14 @@ export default class PwProject extends HTMLElement {
     } else {
       this.setOpacity(1);
     }
+  }
+
+  get button() {
+    return H.getShadowRoot(this)
+      .chain(H.childNodes)
+      .chain(H.nth(1))
+      .chain(H.childNodes)
+      .chain(H.nth(5));
   }
 
   get id() {
@@ -90,6 +101,7 @@ export default class PwProject extends HTMLElement {
     return `<figure>
               <img src="${this.image}">
               <figcaption><slot></slot></figcaption>
+              <show-button visible="true" active="true"></show-button>
             </figure>`;
   }
 

@@ -1,20 +1,22 @@
-import R from 'ramda';
-import H from '../../../../lib/Helper/Helper';
+import H from '../../../../../lib/Helper/Helper';
 
-export default class SubmitButton extends HTMLElement {
+/*  eslint no-underscore-dangle:0 */
+export default class ShowButton extends HTMLElement {
   static get observedAttributes() {
-    return ['active'];
+    return ['active', 'visible'];
   }
 
   createdCallback() {
     // Setting the initial attributes
+    this._visible = this.getAttribute('visible') || '';
     this._active = this.getAttribute('active') || 'true';
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
     this.render();
+    this.hideButton();
 
-    // Setting Event Listeners
+    // Event Listeners
     this.addEventListener('click', this.onClick.bind(this), false);
 
     if (super.createdCallback) {
@@ -22,39 +24,67 @@ export default class SubmitButton extends HTMLElement {
     }
   }
 
-  // When an attribute is updated, check if the value is different
   attributeChangedCallback(name, oldVal, newVal) {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
   }
 
-  onClick() {
-    H.emitEvent(true, true, '', 'submitted', this);
-  }
-
   render() {
-    this.shadowRoot.innerHTML = this.html + this.style;
+    this.shadowRoot.innerHTML = this.style + this.html;
   }
 
-  get button() {
-    return H.getShadowRoot(this).chain(H.childNodes).map(R.nth(0));
+  onClick() {
+    H.emitEvent(true, true, this.id, 'show-project', this);
   }
 
-  // Set the value for foo, reflect to attribute, and re-render
+  showButton() {
+    this.button
+      .chain(H.props('style'))
+      .chain(H.changeProps('display', 'inline-block'));
+  }
+
+  hideButton() {
+    this.button
+      .chain(H.props('style'))
+      .chain(H.changeProps('display', 'none'));
+  }
+
+  get active() {
+    return this._active;
+  }
+
   set active(value) {
     /* eslint no-underscore-dangle:0 */
     if (value) {
-      this.button.fold(H.logError('submit-button'), H.changeProps('disabled', false));
+      this.input.fold(H.logError('show-button'), H.changeProps('disabled', false));
     } else {
-      this.button.fold(H.logError('submit-button'), H.changeProps('disabled', true));
+      this.input.fold(H.logError('show-button'), H.changeProps('disabled', true));
     }
+  }
+
+  get visible() {
+    return this._visible;
+  }
+
+  set visible(value) {
+    if (!value) {
+      this.hideButton();
+    } else {
+      this.showButton();
+    }
+  }
+
+  get button() {
+    return H.getShadowRoot(this)
+      .chain(H.childNodes)
+      .chain(H.nth(1));
   }
 
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<button type="button" class="button buttonBlue">
-              Submit
+              Show
               <div class="ripples buttonRipples">
                 <span class="ripplesCircle"></span>
               </div>
@@ -127,11 +157,11 @@ export default class SubmitButton extends HTMLElement {
           opacity: 0;
         }
     }
-    </style>`;
+            </style>`;
   }
 }
 
 // Check that the element hasn't already been registered
-if (!window.customElements.get('submit-button')) {
-  document.registerElement('submit-button', SubmitButton);
+if (!window.customElements.get('show-button')) {
+  document.registerElement('show-button', ShowButton);
 }
