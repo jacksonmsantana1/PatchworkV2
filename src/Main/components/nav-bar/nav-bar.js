@@ -116,10 +116,10 @@ export default class NavBar extends HTMLElement {
               .header {
                 position: relative;
                 width: 100%;
-                background: #f9c3c3;
+                background: #e4a0a0;
                 height: 50px;
                 line-height: 50px;
-                box-shadow: 0 -3px 0 #fdd4d4 inset;
+                box-shadow: 0 -3px 0 #f19292 inset;
               }
 
               .wrap {
@@ -135,7 +135,7 @@ export default class NavBar extends HTMLElement {
               }
 
               .logo a {
-                color: #f7a1a1;
+                color: #ca6161;
                 text-decoration: none;
                 opacity: 1;
                 -moz-transition: all 0.2s ease;
@@ -153,7 +153,7 @@ export default class NavBar extends HTMLElement {
                 position: absolute;
                 top: 0;
                 right: 1em;
-                color: #fff;
+                color: #ca6161;
                 text-decoration: none;
                 font-weight: bold;
                 cursor: pointer;

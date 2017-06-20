@@ -86,7 +86,7 @@ export default class NavBarTab extends HTMLElement {
               }
 
               a {
-                color: #f7a1a1;
+                color: #8e4040;
                 opacity: 1;
                 text-decoration: none;
               }
@@ -101,11 +101,12 @@ export default class NavBarTab extends HTMLElement {
                   list-style-type: none;
                   display: inline-block;
                   text-align: center;
-                  background-color: #f9c3c3;
-                  box-shadow: 0 -3px 0 #fdd4d4 inset;
+                  background-color: #e4a0a0;
+                  box-shadow: 0 -3px 0 #f19292 inset;
                 }
 
                 li a {
+                  color: #ca6161;
                   display: block;
                   border-bottom: 0;
                   padding: 0 0.8em;
