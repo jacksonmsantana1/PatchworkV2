@@ -1,21 +1,40 @@
+import H from '../../../lib/Helper/Helper';
+import '../../components/main-body/project-modal/project-modal';
+
 export default class MainBody extends HTMLElement {
   createdCallback() {
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
     this.render();
 
+    this.addEventListener('show-project', this.onShowProject.bind(this), false);
+
     if (super.createdCallback) {
       super.createdCallback();
     }
+  }
+
+  onShowProject(evt) {
+    this.projectModal.get().id = evt.detail;
+    this.projectModal.get().visible = true;
   }
 
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
   }
 
+  get projectModal() {
+    return H.getShadowRoot(this)
+      .chain(H.childNodes)
+      .chain(H.nth(1))
+      .chain(H.childNodes)
+      .chain(H.nth(1));
+  }
+
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<main>
+              <project-modal visible="true"></project-modal>
               <slot></slot>
             </main>`;
   }

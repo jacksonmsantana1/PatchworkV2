@@ -3,13 +3,14 @@ import H from '../../../../../lib/Helper/Helper';
 /*  eslint no-underscore-dangle:0 */
 export default class ShowButton extends HTMLElement {
   static get observedAttributes() {
-    return ['active', 'visible'];
+    return ['active', 'visible', 'id'];
   }
 
   createdCallback() {
     // Setting the initial attributes
     this._visible = this.getAttribute('visible') || '';
     this._active = this.getAttribute('active') || 'true';
+    this._id = this.getAttribute('id') || '';
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
@@ -73,6 +74,15 @@ export default class ShowButton extends HTMLElement {
     } else {
       this.showButton();
     }
+  }
+
+  get id() {
+    return this._id;
+  }
+
+  set id(value) {
+    this._id = value;
+    this.setAttribute('id', value);
   }
 
   get button() {

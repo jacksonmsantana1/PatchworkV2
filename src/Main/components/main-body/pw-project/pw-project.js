@@ -101,7 +101,7 @@ export default class PwProject extends HTMLElement {
     return `<figure>
               <img src="${this.image}">
               <figcaption><slot></slot></figcaption>
-              <show-button visible="true" active="true"></show-button>
+              <show-button visible="true" active="true" id="${this.id}"></show-button>
             </figure>`;
   }
 

@@ -34,7 +34,7 @@ const logError = R.curry((componentName, err) => console.error(`<${componentName
 
 // emitEvent :: Boolean -> String -> HTMLElement
 const emitEvent = R.curry((bubbles, cancelable, detail, eventName, elem) => {
-  const event = new CustomEvent(eventName, { bubbles, cancelable, detail });
+  const event = new CustomEvent(eventName, { bubbles, cancelable, detail, composed: true });
   elem.dispatchEvent(event);
 });
 
@@ -116,6 +116,21 @@ const diffs = R.curry((x, y) => {
   return false;
 });
 
+// toggleClass :: String -> ClassList -> _
+const toggleClass = R.curry((className, classList) => {
+  classList.toggle(className);
+});
+
+// addClass :: String -> ClassList -> _
+const addClass = R.curry((className, classList) => {
+  classList.add(className);
+});
+
+// removeClass :: String -> ClassList -> _
+const removeClass = R.curry((className, classList) => {
+  classList.remove(className);
+});
+
 function splat(fn) {
   return function (list) {
     return Array.prototype.map.call(list, fn);
@@ -140,5 +155,8 @@ Helper.assignedNodes = assignedNodes;
 Helper.equals = equals;
 Helper.diffs = diffs;
 Helper.splat = splat;
+Helper.toggleClass = toggleClass;
+Helper.addClass = addClass;
+Helper.removeClass = removeClass;
 
 export default Helper;
