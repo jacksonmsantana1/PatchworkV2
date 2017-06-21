@@ -14,6 +14,7 @@ export default class ProjectModal extends HTMLElement {
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
     this.render();
+    this.scrollHandler = this.onScroll.bind(this); // Necessary because of the removeEventListener
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -43,7 +44,7 @@ export default class ProjectModal extends HTMLElement {
 
   showModal() {
     window.scroll(0, 0);
-    document.addEventListener('scroll', this.onScroll.bind(this));
+    document.addEventListener('scroll', this.scrollHandler);
 
     H.getShadowRoot(this)
       .chain(H.childNodes)
@@ -60,7 +61,7 @@ export default class ProjectModal extends HTMLElement {
       .chain(H.removeClass('global-modal-show'));
 
     // FIXME Its not removing the event listener
-    document.removeEventListener('scroll', this.onScroll.bind(this), false);
+    document.removeEventListener('scroll', this.scrollHandler);
   }
 
   get overlay() {
