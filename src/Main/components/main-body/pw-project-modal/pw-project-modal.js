@@ -1,3 +1,4 @@
+import './pw-project-layout/pw-project-layout';
 import H from '../../../../lib/Helper/Helper';
 
 /*  eslint no-underscore-dangle:0 */
@@ -116,6 +117,7 @@ export default class PwProjectModal extends HTMLElement {
                 <div class="global-modal-header">
                   <span class="mobile-close"> X </span>
                   <h3> <span>Project ${this.id} </span> <b>Bla Bla Bla</b></h3>
+                  <pw-project-layout svg="https://pt.wikipedia.org/wiki/Ficheiro:NewTux.svg"></pw-project-layout>
                 </div>
               </div>
             </div>`;
@@ -154,7 +156,7 @@ export default class PwProjectModal extends HTMLElement {
                 position: absolute;
                 left: 10%;
                 top: 15%;
-                min-height: 80%;
+                min-height: 95%;
                 min-width: 80%;
                 z-index: 2;
               }
