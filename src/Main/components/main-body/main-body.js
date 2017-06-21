@@ -1,5 +1,5 @@
 import H from '../../../lib/Helper/Helper';
-import '../../components/main-body/project-modal/project-modal';
+import '../../components/main-body/pw-project-modal/pw-project-modal';
 
 export default class MainBody extends HTMLElement {
   createdCallback() {
@@ -7,6 +7,7 @@ export default class MainBody extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.render();
 
+    // Event Listeners
     this.addEventListener('show-project', this.onShowProject.bind(this), false);
 
     if (super.createdCallback) {
@@ -15,15 +16,15 @@ export default class MainBody extends HTMLElement {
   }
 
   onShowProject(evt) {
-    this.projectModal.get().id = evt.detail;
-    this.projectModal.get().visible = true;
+    this.pwProjectModal.get().id = evt.detail;
+    this.pwProjectModal.get().visible = true;
   }
 
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
   }
 
-  get projectModal() {
+  get pwProjectModal() {
     return H.getShadowRoot(this)
       .chain(H.childNodes)
       .chain(H.nth(1))
@@ -34,7 +35,7 @@ export default class MainBody extends HTMLElement {
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<main>
-              <project-modal visible="true"></project-modal>
+              <pw-project-modal visible="true"></pw-project-modal>
               <slot></slot>
             </main>`;
   }

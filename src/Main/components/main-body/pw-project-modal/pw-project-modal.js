@@ -1,7 +1,7 @@
 import H from '../../../../lib/Helper/Helper';
 
 /*  eslint no-underscore-dangle:0 */
-export default class ProjectModal extends HTMLElement {
+export default class PwProjectModal extends HTMLElement {
   static get observedAttributes() {
     return ['visible', 'id'];
   }
@@ -14,6 +14,8 @@ export default class ProjectModal extends HTMLElement {
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
     this.render();
+
+    // Event handler
     this.scrollHandler = this.onScroll.bind(this); // Necessary because of the removeEventListener
 
     if (super.createdCallback) {
@@ -252,6 +254,6 @@ export default class ProjectModal extends HTMLElement {
 }
 
 // Check that the element hasn't already been registered
-if (!window.customElements.get('project-modal')) {
-  document.registerElement('project-modal', ProjectModal);
+if (!window.customElements.get('pw-project-modal')) {
+  document.registerElement('pw-project-modal', PwProjectModal);
 }
