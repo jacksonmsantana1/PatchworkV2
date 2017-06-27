@@ -63,7 +63,6 @@ export default class PwProjectModal extends HTMLElement {
       .chain(H.props('classList'))
       .chain(H.removeClass('global-modal-show'));
 
-    // FIXME Its not removing the event listener
     document.removeEventListener('scroll', this.scrollHandler);
   }
 
@@ -117,7 +116,7 @@ export default class PwProjectModal extends HTMLElement {
                 <div class="global-modal-header">
                   <span class="mobile-close"> X </span>
                   <h3> <span>Project ${this.id} </span> <b>Bla Bla Bla</b></h3>
-                  <pw-project-layout svg="https://pt.wikipedia.org/wiki/Ficheiro:NewTux.svg"></pw-project-layout>
+                  <pw-project-layout svg="//s3-us-west-2.amazonaws.com/s.cdpn.io/4273/mulan_2.jpg"></pw-project-layout>
                 </div>
               </div>
             </div>`;
