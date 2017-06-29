@@ -40,13 +40,16 @@ const loadPage = (page) => {
 
 Page.base('/#');
 
+// FIXME When the page is called using Page('/#/') this function
+// is called twice
 Page('/', () => {
   const token = Token.getToken().getOrElse('');
-  const main = document.createElement('main-page');
 
   isLogged(token).fork((err) => {
     backToLogin(err.response.body.message);
   }, (res) => {
+    const main = document.createElement('main-page');
+
     if (res) {
       loadPage(main);
     } else {

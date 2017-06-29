@@ -70,7 +70,8 @@
       "react/self-closing-comp": 0,
       "react/style-prop-object": 0,
       "react/no-unknown-property": 0,
-      "react/jsx-no-bind": 0
+      "react/jsx-no-bind": 0,
+      "no-underscore-dangle": 0
     }
   },
   "babel": {

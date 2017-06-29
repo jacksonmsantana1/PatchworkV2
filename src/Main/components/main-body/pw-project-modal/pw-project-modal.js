@@ -108,6 +108,7 @@ export default class PwProjectModal extends HTMLElement {
     }
   }
 
+  // TODO The attribute svg must come from the backend
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<div class="global-modal">

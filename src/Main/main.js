@@ -6,28 +6,39 @@ import './components/main-body/pw-project/pw-project';
 import './components/nav-bar/nav-bar';
 import './components/nav-bar/nav-bar-tab/nav-bar-tab';
 
+// TODO Refactor the getHtml and the getProjects
 class MainPage extends HTMLElement {
   createdCallback() {
     if (super.createdCallback) {
       super.createdCallback();
     }
 
+    // Initializing properties
+    this._html = '';
+
+    // Getting the projects from the server
     this.getProjects().then((res) => {
-      this.innerHTML = this.getHtml(res.body);
+      this.html = res.body;
+      this.innerHTML = this.html;
     });
   }
 
-  getHtml(projects) {
+  get html() {
+    return this._html;
+  }
+
+  set html(projects) {
     /* eslint quotes:0 class-methods-use-this:0 */
-    return `<nav-bar logo="Patchwork Project">
-              <nav-bar-tab class="active" href="/#/" slot="tabsSlot">Main</nav-bar-tab>
-              <nav-bar-tab class="active" href="/#/login" slot="tabsSlot">Logout</nav-bar-tab>
-            </nav-bar>
-            <main-body>
-              <pw-projects-list>
-                ${projects.map(proj => `<pw-project active="true" image="${proj.image}" id="1">${proj.description}</pw-project>`).join('')}
-              </pw-projects-list>
-            </main-body>`;
+    this._html = `<nav-bar logo="Patchwork Project">
+                    <nav-bar-tab class="active" href="/#/" slot="tabsSlot">Main</nav-bar-tab>
+                    <nav-bar-tab class="active" href="/#/login" slot="tabsSlot">Logout</nav-bar-tab>
+                  </nav-bar>
+                  <main-body>
+                    <pw-projects-list>
+                      ${projects.map(proj => `<pw-project active="true" image="${proj.image}" id="1">${proj.description}</pw-project>`).join('')}
+                    </pw-projects-list>
+                  </main-body>`;
+    return this._html;
   }
 
   getProjects() {
