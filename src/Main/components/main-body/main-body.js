@@ -18,6 +18,7 @@ export default class MainBody extends HTMLElement {
   onShowProject(evt) {
     this.pwProjectModal.get().id = evt.detail;
     this.pwProjectModal.get().visible = true;
+    evt.stopPropagation();
   }
 
   render() {

@@ -55,7 +55,8 @@ export default class PwProjectLayout extends HTMLElement {
               /* Required to make image fluid in IE */
 
               img:not(.png) {
-                width: 50%;
+                width: 100%;
+                height: 40em;
               }
             </style>`;
   }

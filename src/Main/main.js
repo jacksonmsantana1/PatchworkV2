@@ -35,7 +35,7 @@ class MainPage extends HTMLElement {
                   </nav-bar>
                   <main-body>
                     <pw-projects-list>
-                      ${projects.map(proj => `<pw-project active="true" image="${proj.image}" id="1">${proj.description}</pw-project>`).join('')}
+                      ${projects.map(proj => `<pw-project active="true" image="${proj.image}" id="${proj._id}">${proj.description}</pw-project>`).join('')}
                     </pw-projects-list>
                   </main-body>`;
     return this._html;

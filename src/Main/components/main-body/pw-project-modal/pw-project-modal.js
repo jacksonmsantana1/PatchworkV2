@@ -1,5 +1,8 @@
+import Request from 'superagent';
+import Page from 'page';
 import './pw-project-layout/pw-project-layout';
 import H from '../../../../lib/Helper/Helper';
+import Token from '../../../../lib/Token/Token';
 
 /*  eslint no-underscore-dangle:0 */
 export default class PwProjectModal extends HTMLElement {
@@ -11,6 +14,7 @@ export default class PwProjectModal extends HTMLElement {
     // Setting the initial attributes
     this._visible = this.getAttribute('visible') || '';
     this._id = this.getAttribute('id') || '';
+    this._project = {};
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
@@ -43,6 +47,13 @@ export default class PwProjectModal extends HTMLElement {
     /* eslint no-unused-vars:0 */
     const yHeight = window.scrollY + 15;
     this.modal.chain(H.props('style')).chain(H.changeProps('top', `${yHeight}px`));
+    evt.stopPropagation();
+  }
+
+  getProject() {
+    return Request.get(`http://localhost:3000/projects/${this.id}`)
+     .set('Authorization', Token.getToken().get())
+     .set('Content-Type', 'application/json');
   }
 
   showModal() {
@@ -99,16 +110,24 @@ export default class PwProjectModal extends HTMLElement {
   set visible(value) {
     this._visible = value;
     this.setAttribute('visible', value);
-    this.render();
 
-    if (value) {
-      this.showModal();
-    } else {
-      this.hideModel();
-    }
+    this.getProject(value)
+      .then((project) => {
+        this._project = project.body;
+        this.render();
+
+        if (value) {
+          this.showModal();
+        } else {
+          this.hideModel();
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+        Page('/#/login'); /* eslint new-cap:0 */
+      });
   }
 
-  // TODO The attribute svg must come from the backend
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<div class="global-modal">
@@ -116,8 +135,8 @@ export default class PwProjectModal extends HTMLElement {
               <div class="global-modal_contents modal-transition">
                 <div class="global-modal-header">
                   <span class="mobile-close"> X </span>
-                  <h3> <span>Project ${this.id} </span> <b>Bla Bla Bla</b></h3>
-                  <pw-project-layout svg="//s3-us-west-2.amazonaws.com/s.cdpn.io/4273/mulan_2.jpg"></pw-project-layout>
+                  <h3> <span> ${this._project.name} </span> </h3>
+                  <pw-project-layout svg="${this._project.svg}"></pw-project-layout>
                 </div>
               </div>
             </div>`;
