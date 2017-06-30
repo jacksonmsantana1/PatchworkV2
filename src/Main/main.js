@@ -3,7 +3,7 @@ import Page from 'page';
 import Token from '../lib/Token/Token';
 import './components/pw-main-body/pw-main-body';
 import './components/pw-main-body/pw-projects-list/pw-projects-list';
-import './components/pw-main-body/pw-project/pw-project';
+import './components/pw-main-body/pw-project-item/pw-project-item';
 import './components/pw-nav-bar/pw-nav-bar';
 import './components/pw-nav-bar/pw-nav-bar-tab/pw-nav-bar-tab';
 
@@ -40,10 +40,9 @@ class MainPage extends HTMLElement {
                   </pw-nav-bar>
                   <pw-main-body>
                     <pw-projects-list>
-                      ${projects.map(proj => `<pw-project active="true" image="${proj.image}" id="${proj._id}">${proj.description}</pw-project>`).join('')}
+                      ${projects.map(proj => `<pw-project-item active="true" image="${proj.image}" id="${proj._id}">${proj.description}</pw-project-item>`).join('')}
                     </pw-projects-list>
                   </pw-main-body>`;
-    return this._html;
   }
 
   getProjects() {

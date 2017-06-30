@@ -24,7 +24,7 @@ export default class PwProjectsList extends HTMLElement {
 
     this.getSlot()
       .chain(H.assignedNodes)
-      .map(R.filter(project => H.equals('pw-project', project.localName)))
+      .map(R.filter(project => H.equals('pw-project-item', project.localName)))
       .map(H.splat(this.setProjectActive(id)));
   }
 
@@ -33,7 +33,7 @@ export default class PwProjectsList extends HTMLElement {
 
     this.getSlot()
       .chain(H.assignedNodes)
-      .map(R.filter(project => H.equals('pw-project', project.localName)))
+      .map(R.filter(project => H.equals('pw-project-item', project.localName)))
       .map(H.splat(this.setAllProjectsActive(id)));
   }
 

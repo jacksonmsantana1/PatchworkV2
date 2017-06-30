@@ -2,7 +2,7 @@ import H from '../../../../lib/Helper/Helper';
 import './show-button/show-button';
 
 /*  eslint no-underscore-dangle:0 */
-export default class PwProject extends HTMLElement {
+export default class PwProjectItem extends HTMLElement {
   static get observedAttributes() {
     return ['image', 'id', 'active'];
   }
@@ -147,6 +147,6 @@ export default class PwProject extends HTMLElement {
 }
 
 // Check that the element hasn't already been registered
-if (!window.customElements.get('pw-project')) {
-  document.registerElement('pw-project', PwProject);
+if (!window.customElements.get('pw-project-item')) {
+  document.registerElement('pw-project-item', PwProjectItem);
 }
