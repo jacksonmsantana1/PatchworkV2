@@ -65,6 +65,10 @@ Page('/login', () => {
   loadPage(login);
 });
 
+Page('/projects/:id', (ctx) => {
+  console.log(ctx);
+});
+
 Page();
 
 export default Page;

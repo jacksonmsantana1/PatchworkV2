@@ -1,7 +1,7 @@
 import H from '../../../lib/Helper/Helper';
-import '../../components/main-body/pw-project-modal/pw-project-modal';
+import '../../components/pw-main-body/pw-project-modal/pw-project-modal';
 
-export default class MainBody extends HTMLElement {
+export default class PwMainBody extends HTMLElement {
   createdCallback() {
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
@@ -81,6 +81,6 @@ export default class MainBody extends HTMLElement {
 }
 
 // Check that the element hasn't already been registered
-if (!window.customElements.get('main-body')) {
-  document.registerElement('main-body', MainBody);
+if (!window.customElements.get('pw-main-body')) {
+  document.registerElement('pw-main-body', PwMainBody);
 }

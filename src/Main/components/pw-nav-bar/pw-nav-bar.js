@@ -1,7 +1,7 @@
 import H from '../../../lib/Helper/Helper';
 
 /* eslint no-underscore-dangle:0 */
-export default class NavBar extends HTMLElement {
+export default class PwNavBar extends HTMLElement {
   static get observedAttributes() {
     return ['logo'];
   }
@@ -265,6 +265,6 @@ export default class NavBar extends HTMLElement {
 }
 
 // Check that the element hasn't already been registered
-if (!window.customElements.get('nav-bar')) {
-  document.registerElement('nav-bar', NavBar);
+if (!window.customElements.get('pw-nav-bar')) {
+  document.registerElement('pw-nav-bar', PwNavBar);
 }

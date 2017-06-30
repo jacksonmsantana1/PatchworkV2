@@ -1,7 +1,7 @@
 import Page from 'page';
 
 /* eslint no-underscore-dangle:0 new-cap:0 */
-export default class NavBarTab extends HTMLElement {
+export default class PwNavBarTab extends HTMLElement {
   static get observedAttributes() {
     return ['href', 'class'];
   }
@@ -126,6 +126,6 @@ export default class NavBarTab extends HTMLElement {
 }
 
 // Check that the element hasn't already been registered
-if (!window.customElements.get('nav-bar-tab')) {
-  document.registerElement('nav-bar-tab', NavBarTab);
+if (!window.customElements.get('pw-nav-bar-tab')) {
+  document.registerElement('pw-nav-bar-tab', PwNavBarTab);
 }

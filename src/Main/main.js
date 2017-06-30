@@ -1,10 +1,11 @@
 import Request from 'superagent';
+import Page from 'page';
 import Token from '../lib/Token/Token';
-import './components/main-body/main-body';
-import './components/main-body/pw-projects-list/pw-projects-list';
-import './components/main-body/pw-project/pw-project';
-import './components/nav-bar/nav-bar';
-import './components/nav-bar/nav-bar-tab/nav-bar-tab';
+import './components/pw-main-body/pw-main-body';
+import './components/pw-main-body/pw-projects-list/pw-projects-list';
+import './components/pw-main-body/pw-project/pw-project';
+import './components/pw-nav-bar/pw-nav-bar';
+import './components/pw-nav-bar/pw-nav-bar-tab/pw-nav-bar-tab';
 
 // TODO Refactor the getHtml and the getProjects
 class MainPage extends HTMLElement {
@@ -20,6 +21,10 @@ class MainPage extends HTMLElement {
     this.getProjects().then((res) => {
       this.html = res.body;
       this.innerHTML = this.html;
+    })
+    .catch((err) => {
+      console.log(err.message);
+      Page('/#/login'); /* eslint new-cap:0 */
     });
   }
 
@@ -29,15 +34,15 @@ class MainPage extends HTMLElement {
 
   set html(projects) {
     /* eslint quotes:0 class-methods-use-this:0 */
-    this._html = `<nav-bar logo="Patchwork Project">
-                    <nav-bar-tab class="active" href="/#/" slot="tabsSlot">Main</nav-bar-tab>
-                    <nav-bar-tab class="active" href="/#/login" slot="tabsSlot">Logout</nav-bar-tab>
-                  </nav-bar>
-                  <main-body>
+    this._html = `<pw-nav-bar logo="Patchwork Project">
+                    <pw-nav-bar-tab class="active" href="/#/" slot="tabsSlot">Main</pw-nav-bar-tab>
+                    <pw-nav-bar-tab class="active" href="/#/login" slot="tabsSlot">Logout</pw-nav-bar-tab>
+                  </pw-nav-bar>
+                  <pw-main-body>
                     <pw-projects-list>
                       ${projects.map(proj => `<pw-project active="true" image="${proj.image}" id="${proj._id}">${proj.description}</pw-project>`).join('')}
                     </pw-projects-list>
-                  </main-body>`;
+                  </pw-main-body>`;
     return this._html;
   }
 

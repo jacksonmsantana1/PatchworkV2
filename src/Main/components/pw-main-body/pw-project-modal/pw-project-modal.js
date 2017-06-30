@@ -1,5 +1,6 @@
 import Request from 'superagent';
 import Page from 'page';
+import './pw-project-modal-button/pw-project-modal-button';
 import './pw-project-layout/pw-project-layout';
 import H from '../../../../lib/Helper/Helper';
 import Token from '../../../../lib/Token/Token';
@@ -137,6 +138,7 @@ export default class PwProjectModal extends HTMLElement {
                   <span class="mobile-close"> X </span>
                   <h3> <span> ${this._project.name} </span> </h3>
                   <pw-project-layout svg="${this._project.svg}"></pw-project-layout>
+                  <pw-project-modal-button id="${this.id}"></pw-project-modal-button>
                 </div>
               </div>
             </div>`;

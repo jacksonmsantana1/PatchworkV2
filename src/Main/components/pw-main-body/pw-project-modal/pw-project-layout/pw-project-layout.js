@@ -1,4 +1,3 @@
-/*  eslint no-underscore-dangle:0 */
 export default class PwProjectLayout extends HTMLElement {
   static get observedAttributes() {
     return ['svg'];
@@ -56,7 +55,7 @@ export default class PwProjectLayout extends HTMLElement {
 
               img:not(.png) {
                 width: 100%;
-                height: 40em;
+                height: 37em;
               }
             </style>`;
   }
