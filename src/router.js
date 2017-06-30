@@ -5,6 +5,7 @@ import Task from 'data.task';
 import Token from './lib/Token/Token';
 import './Login/login';
 import './Main/main';
+import './Project/project';
 
 /* Helper Functions */
 
@@ -48,9 +49,8 @@ Page('/', () => {
   isLogged(token).fork((err) => {
     backToLogin(err.response.body.message);
   }, (res) => {
-    const main = document.createElement('main-page');
-
     if (res) {
+      const main = document.createElement('main-page');
       loadPage(main);
     } else {
       backToLogin('User must be logged in...');
@@ -66,7 +66,20 @@ Page('/login', () => {
 });
 
 Page('/projects/:id', (ctx) => {
-  console.log(ctx);
+  const token = Token.getToken().getOrElse('');
+  const id = ctx.params.id;
+
+  isLogged(token).fork((err) => {
+    backToLogin(err.response.body.message);
+  }, (res) => {
+    if (res) {
+      const project = document.createElement('project-page');
+      project.id = id;
+      loadPage(project);
+    } else {
+      backToLogin('User must be logged in...');
+    }
+  });
 });
 
 Page();
