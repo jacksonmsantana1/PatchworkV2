@@ -42,7 +42,7 @@ export default class ShowButton extends HTMLElement {
   showButton() {
     this.button
       .chain(H.props('style'))
-      .chain(H.changeProps('display', 'inline-block'));
+      .chain(H.changeProps('display', 'block'));
   }
 
   hideButton() {

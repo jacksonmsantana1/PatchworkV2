@@ -1,5 +1,14 @@
+import './pw-project/pw-project';
+
 export default class PwProjectBody extends HTMLElement {
+  static get observedAttributes() {
+    return ['id'];
+  }
+
   createdCallback() {
+    // Initializing attributes
+    this._id = this.getAttribute('id') || '';
+
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
     this.render();
@@ -17,7 +26,18 @@ export default class PwProjectBody extends HTMLElement {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<main>
               <slot></slot>
+              <pw-project id="${this.id}"></pw-project>
             </main>`;
+  }
+
+  get id() {
+    return this._id;
+  }
+
+  set id(value) {
+    this._id = value;
+    this.setAttribute('id', value);
+    this.render();
   }
 
   get style() {

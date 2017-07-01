@@ -26,6 +26,8 @@ export default class PwProjectsList extends HTMLElement {
       .chain(H.assignedNodes)
       .map(R.filter(project => H.equals('pw-project-item', project.localName)))
       .map(H.splat(this.setProjectActive(id)));
+
+    evt.stopPropagation();
   }
 
   onProjectDeselected(evt) {
@@ -35,6 +37,8 @@ export default class PwProjectsList extends HTMLElement {
       .chain(H.assignedNodes)
       .map(R.filter(project => H.equals('pw-project-item', project.localName)))
       .map(H.splat(this.setAllProjectsActive(id)));
+
+    evt.stopPropagation();
   }
 
   setProjectActive(id) {
@@ -73,7 +77,7 @@ export default class PwProjectsList extends HTMLElement {
                 column-gap: 15px;
               }
 
-              div#columns:hover div#columns::slotted(pw-project):not(:hover) {
+              div#columns:hover div#columns::slotted(pw-project-item):not(:hover) {
                 opacity: 0.4;
               }
 

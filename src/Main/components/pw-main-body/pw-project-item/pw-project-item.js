@@ -38,12 +38,12 @@ export default class PwProjectItem extends HTMLElement {
 
   onMouseOut() {
     H.emitEvent(true, true, this.id, 'project-deselected', this);
-    this.button.get().hideButton();
+    this.button.get().visible = '';
   }
 
   onMouseOver() {
     H.emitEvent(true, true, this.id, 'project-selected', this);
-    this.button.get().showButton();
+    this.button.get().visible = true;
   }
 
   setOpacity(value) {
