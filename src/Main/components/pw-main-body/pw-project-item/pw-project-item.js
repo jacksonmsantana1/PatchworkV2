@@ -1,5 +1,5 @@
 import H from '../../../../lib/Helper/Helper';
-import './show-button/show-button';
+import './pw-show-button/pw-show-button';
 
 /*  eslint no-underscore-dangle:0 */
 export default class PwProjectItem extends HTMLElement {
@@ -101,7 +101,7 @@ export default class PwProjectItem extends HTMLElement {
     return `<figure>
               <img src="${this.image}">
               <figcaption><slot></slot></figcaption>
-              <show-button visible="true" active="true" id="${this.id}"></show-button>
+              <pw-show-button visible="true" active="true" id="${this.id}"></pw-show-button>
             </figure>`;
   }
 

@@ -1,7 +1,7 @@
 import H from '../../../../../lib/Helper/Helper';
 
 /*  eslint no-underscore-dangle:0 */
-export default class ShowButton extends HTMLElement {
+export default class PwShowButton extends HTMLElement {
   static get observedAttributes() {
     return ['active', 'visible', 'id'];
   }
@@ -172,6 +172,6 @@ export default class ShowButton extends HTMLElement {
 }
 
 // Check that the element hasn't already been registered
-if (!window.customElements.get('show-button')) {
-  document.registerElement('show-button', ShowButton);
+if (!window.customElements.get('pw-show-button')) {
+  document.registerElement('pw-show-button', PwShowButton);
 }
