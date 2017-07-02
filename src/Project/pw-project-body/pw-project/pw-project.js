@@ -1,5 +1,7 @@
 import Task from 'data.task';
 import Page from 'page';
+import Request from 'superagent';
+import H from '../../../lib/Helper/Helper';
 import Token from '../../../lib/Token/Token';
 
 export default class PwProject extends HTMLElement {
@@ -10,72 +12,28 @@ export default class PwProject extends HTMLElement {
   createdCallback() {
     // Initializing attributes
     this._id = this.getAttribute('id') || '';
+    this._svg = {};
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
-    this.render();
+    this.getProject().fork(err => console.log(err.message), (proj) => {
+      this._svg = proj.svg;
+      this.render();
+      this.addListenersToPolygons();
+    });
+
+    this.addEventListener('change-svg-image', this.onChangeSvgImage.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
     }
+  }
 
-    this.svg = {
-      width: 1000,
-      height: 1000,
-      viewBox: '0 0 100 100',
-      patterns: [
-        {
-          id: 'img1',
-          width: '100',
-          height: '100',
-          image: {
-            href: 'https://img1.etsystatic.com/164/0/10708234/il_570xN.1207611407_dhao.jpg',
-            x: 0,
-            y: 0,
-            width: 100,
-            height: 100,
-          },
-        }, {
-          id: 'img2',
-          width: '100',
-          height: '100',
-          image: {
-            href: 'https://img1.etsystatic.com/155/0/10708234/il_570xN.1207608269_jzwz.jpg',
-            x: 0,
-            y: 0,
-            width: 100,
-            height: 100,
-          },
-        },
-      ],
-      polygons: [
-        {
-          id: 'img1',
-          points: [[0, 0], [20, 0], [0, 20]],
-        }, {
-          id: 'img2',
-          points: [[20, 0], [20, 20], [0, 20]],
-        }, {
-          id: 'img2',
-          points: [[20, 0], [20, 20], [40, 20]],
-        }, {
-          id: 'img1',
-          points: [[20, 0], [40, 20], [40, 20]],
-        }, {
-          id: 'img2',
-          points: [[0, 20], [20, 20], [20, 40]],
-        }, {
-          id: 'img1',
-          points: [[0, 40], [20, 40], [0, 20]],
-        }, {
-          id: 'img2',
-          points: [[20, 20], [40, 20], [20, 40]],
-        }, {
-          id: 'img1',
-          points: [[40, 20], [40, 40], [20, 40]],
-        },
-      ],
-    };
+  onChangeSvgImage(evt) {
+    const id = evt.detail.id;
+    const image = evt.detail.image;
+
+    this.setSvgPatternImage(id, image);
   }
 
   render() {
@@ -84,11 +42,11 @@ export default class PwProject extends HTMLElement {
 
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
-    return this.projectSVG(this.svg);
+    return this.projectToSVG(this._svg);
   }
 
-  getProjectSvg() {
-    return new Task((resolve, reject) => Request.get(`http://localhost:3000/projects/${this.id}`)
+  getProject() {
+    return new Task((reject, resolve) => Request.get(`http://localhost:3000/projects/${this.id}`)
      .set('Authorization', Token.getToken().get())
      .set('Content-Type', 'application/json')
         .then((res) => {
@@ -107,9 +65,9 @@ export default class PwProject extends HTMLElement {
   projectToSVG(project) {
     return `<svg width="${project.width}" height="${project.height}" viewBox="${project.viewBox}" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        ${project.patterns.reduce((val, pattern) => val + this.patternSVG(pattern))}
+        ${project.patterns.map(pattern => `${this.patternSVG(pattern)}`).join('')}
       </defs>
-      ${project.polygons.reduce((val, polygon) => val + this.polygonSVG(polygon))}
+      ${project.polygons.map(polygon => `${this.polygonSVG(polygon)}`).join('')}
     </svg>`;
   }
 
@@ -127,20 +85,61 @@ export default class PwProject extends HTMLElement {
   // }
   patternSVG(pattern) {
     return `<pattern id="${pattern.id}" patternUnits="userSpaceOnUse" width="${pattern.width}" height="${pattern.height}">
-              <image xlink:href="${pattern.image.href}" x="${pattern.x}" y="${pattern.y}" width="${pattern.image.width}" height="${pattern.image.height}" />
+              <image xlink:href="${pattern.image.href}" x="${pattern.image.x}" y="${pattern.image.y}" width="${pattern.image.width}" height="${pattern.image.height}" />
             </pattern>`;
   }
 
   // EX: polygon = { points: [[x1, y1], [x2, y2], ... , [xn, yn]], id: "POLYGON ID" }
   polygonSVG(polygon) {
     const points = polygon.points.reduce((val, point) => `${val} ${point[0]},${point[1]}`);
-    return `<polygon points="${points}" fill="url(#${polygon.id})">`;
+    return `<polygon points="${points}" fill="url(#${polygon.id})" id="${polygon.id}"></polygon>`;
   }
 
-  // EX: path = { d: "M 100 100 L 300 100 L 200 300 z", id: "PATH_ID" }
-  pathSVG(path) {
-    return `<path d="${path.d}"
-            fill="url(#${path.id})"/>`;
+  addListenersToPolygons() {
+    /* eslint prefer-arrow-callback:0 array-callback-return:0 */
+    this.svg.chain(H.childNodes).map((nodes) => {
+      Array.prototype.slice.call(nodes).map((node) => {
+        if (node.tagName === 'polygon') {
+          node.addEventListener('click', function clicked() {
+            console.log(`Clicked ${this.id}`); // FIXME
+            H.emitEvent(true, true, this.id, 'show-fabrics', this);
+          });
+        }
+      });
+    });
+  }
+
+  setSvgPatternImage(id, img) {
+    return this.getSvgPatternById(id)
+      .chain(H.childNodes)
+      .chain(H.nth(1))
+      .chain(H.props('href'))
+      .chain(H.changeProps('baseVal', img));
+  }
+
+  getSvgPatternById(id) {
+    /* eslint consistent-return:0 */
+    return this.svg.chain(H.childNodes)
+      .chain(H.nth(1))
+      .chain(H.childNodes)
+      .map(nodes =>
+        Array.prototype.slice.call(nodes).filter(node =>
+          (node && node.tagName === 'pattern' && node.id === id)))
+      .chain(H.nth(0));
+  }
+
+  getSvgPolygonById(id) {
+    /* eslint consistent-return:0 */
+    return this.svg.chain(H.childNodes).map(nodes =>
+      Array.prototype.slice.call(nodes).filter(node =>
+        (node && node.tagName === 'polygon' && node.id === id)))
+      .chain(H.nth(1));
+  }
+
+  get svg() {
+    return H.getShadowRoot(this)
+      .chain(H.childNodes)
+      .chain(H.nth(1));
   }
 
   get id() {
