@@ -57,7 +57,7 @@ const emitEvent = R.curry((bubbles, cancelable, detail, eventName, elem) => {
 });
 
 // childNodes :: HTMLElement :: Either(HTMLElement)
-const childNodes = doc => Either.fromNullable(doc).map(R.prop('childNodes'));
+const childNodes = doc => Either.fromNullable(doc).map(R.prop('childNodes')).chain(isNil);
 
 // firstElementChild :: HTMLElement :: Either(HTMLElement)
 const firstElementChild = doc => Either.fromNullable(doc).map(R.prop('firstElementChild')).chain(isNil);
