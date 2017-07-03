@@ -1,8 +1,10 @@
+import H from '../../lib/Helper/Helper';
 import './pw-project/pw-project';
+import './pw-fabrics-list/pw-fabrics-list';
 
 export default class PwProjectBody extends HTMLElement {
   static get observedAttributes() {
-    return ['id'];
+    return ['visible'];
   }
 
   createdCallback() {
@@ -13,13 +15,47 @@ export default class PwProjectBody extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.render();
 
+    this.addEventListener('svg-image-choosed', this.onSvgImageChoosed.bind(this), false);
+    this.addEventListener('show-fabrics', this.onShowFabrics.bind(this), false);
+
     if (super.createdCallback) {
       super.createdCallback();
     }
   }
 
+  onShowFabrics(evt) {
+    evt.stopPropagation();
+    this.getPwFabricList().map((pwProjectList) => {
+      H.emitEvent(true, true, evt.detail, 'show-fabrics-down', pwProjectList);
+    });
+  }
+
+  onSvgImageChoosed(evt) {
+    /* eslint array-callback-return:0 */
+    evt.stopPropagation();
+    this.getPwProject().map((pwProject) => {
+      H.emitEvent(true, true, evt.detail, 'change-svg-image', pwProject);
+    });
+  }
+
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
+  }
+
+  getPwProject() {
+    return H.getShadowRoot(this)
+      .chain(H.childNodes)
+      .chain(H.nth(1))
+      .chain(H.childNodes)
+      .chain(H.nth(3));
+  }
+
+  getPwFabricList() {
+    return H.getShadowRoot(this)
+      .chain(H.childNodes)
+      .chain(H.nth(1))
+      .chain(H.childNodes)
+      .chain(H.nth(5));
   }
 
   get html() {
@@ -27,6 +63,7 @@ export default class PwProjectBody extends HTMLElement {
     return `<main>
               <slot></slot>
               <pw-project id="${this.id}"></pw-project>
+              <pw-fabrics-list visible=""></pw-fabrics-list>
             </main>`;
   }
 
@@ -46,7 +83,7 @@ export default class PwProjectBody extends HTMLElement {
                 background: #f9dae0;
                 font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
                 color: #fff;
-                padding: 5em;
+                padding: 5em 0 5em 0;
               }
 
               main .helper {

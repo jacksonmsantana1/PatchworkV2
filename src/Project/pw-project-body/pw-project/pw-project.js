@@ -34,6 +34,7 @@ export default class PwProject extends HTMLElement {
     const image = evt.detail.image;
 
     this.setSvgPatternImage(id, image);
+    evt.stopPropagation();
   }
 
   render() {
@@ -96,15 +97,15 @@ export default class PwProject extends HTMLElement {
   }
 
   addListenersToPolygons() {
-    /* eslint prefer-arrow-callback:0 array-callback-return:0 */
-    this.svg.chain(H.childNodes).map((nodes) => {
-      Array.prototype.slice.call(nodes).map((node) => {
-        if (node.tagName === 'polygon') {
-          node.addEventListener('click', function clicked() {
-            console.log(`Clicked ${this.id}`); // FIXME
-            H.emitEvent(true, true, this.id, 'show-fabrics', this);
-          });
+    /* eslint array-callback-return:0 */
+    this.svg.map((elem) => {
+      elem.addEventListener('click', function clicked(evt) {
+        if (evt.target !== evt.currentTarget) {
+          const id = evt.target.id;
+          H.emitEvent(true, true, id, 'show-fabrics', this);
         }
+
+        evt.stopPropagation();
       });
     });
   }

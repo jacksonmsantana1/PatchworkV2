@@ -29,10 +29,28 @@ const isEmpty = (arr) => {
   return Either.Right(arr);
 };
 
+// isNil :: <Element> -> Either(<Element>)
+const isNil = (x) => {
+  if (R.isNil(x)) {
+    return Either.Left('Element is undefined or null');
+  }
+
+  return Either.Right(x);
+};
+
+// isArray :: Array -> Either(Array)
+const isArray = (arr) => {
+  if (Array.isArray(arr) || arr.length) {
+    return Either.Right(arr);
+  }
+
+  return Either.Left(`Element ${arr.toString()} is not an array`);
+};
+
 // logError :: String -> String -> _
 const logError = R.curry((componentName, err) => console.error(`<${componentName}>: ${err}`));
 
-// emitEvent :: Boolean -> String -> HTMLElement
+// emitEvent :: Boolean -> Boolean -> Object -> String -> HTMLElement
 const emitEvent = R.curry((bubbles, cancelable, detail, eventName, elem) => {
   const event = new CustomEvent(eventName, { bubbles, cancelable, detail, composed: true });
   elem.dispatchEvent(event);
@@ -40,6 +58,9 @@ const emitEvent = R.curry((bubbles, cancelable, detail, eventName, elem) => {
 
 // childNodes :: HTMLElement :: Either(HTMLElement)
 const childNodes = doc => Either.fromNullable(doc).map(R.prop('childNodes'));
+
+// firstElementChild :: HTMLElement :: Either(HTMLElement)
+const firstElementChild = doc => Either.fromNullable(doc).map(R.prop('firstElementChild')).chain(isNil);
 
 // getElementByTagsName :: String -> HTMLElement -> HTMLElement
 const getElementByTagsName = R.curry((tag, doc) => doc.getElementsByTagName(tag));
@@ -61,24 +82,6 @@ const changeProperty = R.curry((prop, value, elem) => {
   /* eslint arrow-body-style:0 no-param-reassign:0 */
   elem[prop] = value;
 });
-
-// isNil :: <Element> -> Either(<Element>)
-const isNil = (x) => {
-  if (R.isNil(x)) {
-    return Either.Left('Element is undefined or null');
-  }
-
-  return Either.Right(x);
-};
-
-// isArray :: Array -> Either(Array)
-const isArray = (arr) => {
-  if (Array.isArray(arr) || arr.length) {
-    return Either.Right(arr);
-  }
-
-  return Either.Left(`Element ${arr.toString()} is not an array`);
-};
 
 // nth :: Number -> Array -> Either
 const nth = R.curry((n, arr) => {
@@ -145,6 +148,7 @@ Helper.getShadowRoot = getShadowRoot;
 Helper.logError = logError;
 Helper.emitEvent = emitEvent;
 Helper.childNodes = childNodes;
+Helper.firstElementChild = firstElementChild;
 Helper.getElementByTagName = getElementByTagName;
 Helper.changeProperty = changeProperty;
 Helper.log = log;
