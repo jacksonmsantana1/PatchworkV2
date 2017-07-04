@@ -21,11 +21,11 @@ class ProjectPage extends HTMLElement {
   }
 
   set id(value) {
-    this._id = value;
-    this.getProject().then((res) => {
+    this.getProject(value).then((res) => {
+      this._id = value;
+      this.setAttribute('id', value);
       this.html = res.body;
       this.render();
-      this.setAttribute('id', value);
     })
     .catch((err) => {
       console.log(err.message);
@@ -62,8 +62,8 @@ class ProjectPage extends HTMLElement {
     this.innerHTML = this.style + this.html;
   }
 
-  getProject() {
-    return Request.get(`http://localhost:3000/projects/${this.id}`)
+  getProject(id) {
+    return Request.get(`http://localhost:3000/projects/${id}`)
      .set('Authorization', Token.getToken().get())
      .set('Content-Type', 'application/json');
   }
