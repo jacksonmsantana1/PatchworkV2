@@ -41,11 +41,6 @@ export default class PwProject extends HTMLElement {
     this.shadowRoot.innerHTML = this.style + this.html;
   }
 
-  get html() {
-    /* eslint quotes:0 class-methods-use-this:0 */
-    return this.projectToSVG(this._svg);
-  }
-
   getProject() {
     return new Task((reject, resolve) => Request.get(`http://localhost:3000/projects/${this.id}`)
      .set('Authorization', Token.getToken().get())
@@ -140,7 +135,9 @@ export default class PwProject extends HTMLElement {
   get svg() {
     return H.getShadowRoot(this)
       .chain(H.childNodes)
-      .chain(H.nth(1));
+      .chain(H.nth(1))
+      .chain(H.childNodes)
+      .chain(H.nth(0));
   }
 
   get id() {
@@ -153,8 +150,24 @@ export default class PwProject extends HTMLElement {
     this.render();
   }
 
+  get html() {
+    /* eslint quotes:0 class-methods-use-this:0 */
+    return `<div id="wrapper" class="size1">${this.projectToSVG(this._svg)}</div>`;
+  }
+
   get style() {
     return `<style>
+              #wrapper {
+                position:relative;
+                width:500px;
+                height:500px;
+                margin:0 auto
+              }
+
+              svg {
+                position:absolute;
+                background:yellow
+              }
             </style>`;
   }
 }

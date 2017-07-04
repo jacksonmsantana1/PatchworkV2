@@ -37,6 +37,16 @@ class ProjectPage extends HTMLElement {
     return this._html;
   }
 
+  get style() {
+    return `<style>
+              h1 {
+                text-align: center;
+                font-family: monospace;
+                color: #c1769c;
+              }
+            </style>`;
+  }
+
   set html(project) {
     /* eslint quotes:0 class-methods-use-this:0 */
     this._html = `<pw-nav-bar logo="Patchwork Project">
@@ -44,12 +54,12 @@ class ProjectPage extends HTMLElement {
                     <pw-nav-bar-tab class="active" href="/#/login" slot="tabsSlot">Logout</pw-nav-bar-tab>
                   </pw-nav-bar>
                   <pw-project-body id="${this.id}">
-                    <h1>Project : ${project.name}</h1>
+                    <h1>${project.name}</h1>
                   </pw-project-body>`;
   }
 
   render() {
-    this.innerHTML = this.html;
+    this.innerHTML = this.style + this.html;
   }
 
   getProject() {

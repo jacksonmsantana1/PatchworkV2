@@ -17,10 +17,20 @@ export default class PwProjectBody extends HTMLElement {
 
     this.addEventListener('svg-image-choosed', this.onSvgImageChoosed.bind(this), false);
     this.addEventListener('show-fabrics', this.onShowFabrics.bind(this), false);
+    this.addEventListener('click', this.onClick.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
     }
+  }
+
+  onClick() {
+    this.getPwFabricList().map((list) => {
+      if (list.visible) {
+        /* eslint no-param-reassign:0 */
+        list.visible = '';
+      }
+    });
   }
 
   onShowFabrics(evt) {
@@ -84,6 +94,7 @@ export default class PwProjectBody extends HTMLElement {
                 font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
                 color: #fff;
                 padding: 5em 0 5em 0;
+                padding-top: 15px;
               }
 
               main .helper {

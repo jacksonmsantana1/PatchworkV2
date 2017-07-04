@@ -1,3 +1,7 @@
+import Task from 'data.task';
+import Request from 'superagent';
+import Page from 'page';
+import Token from '../../../lib/Token/Token';
 import H from '../../../lib/Helper/Helper';
 
 export default class PwFabricsList extends HTMLElement {
@@ -11,11 +15,13 @@ export default class PwFabricsList extends HTMLElement {
 
     // setting the inner dom and the styles
     this.attachShadow({ mode: 'open' });
-    this.render();
-    this.hideList();
-
-    this.addListenersToFabrics();
-    this.addEventListener('show-fabrics-down', this.onShowFabrics.bind(this), false);
+    this.getFabricsFromBackend().fork(console.error, (fabrics) => {
+      this.html = fabrics;
+      this.render();
+      this.hideList();
+      this.addListenersToFabrics();
+      this.addEventListener('show-fabrics-down', this.onShowFabrics.bind(this), false);
+    });
 
     if (super.createdcallback) {
       super.createdcallback();
@@ -30,7 +36,7 @@ export default class PwFabricsList extends HTMLElement {
 
   onShowFabrics(evt) {
     this._id = evt.detail;
-    this.showList();
+    this.visible = 'true';
     evt.stopPropagation();
   }
 
@@ -58,16 +64,20 @@ export default class PwFabricsList extends HTMLElement {
   }
 
   onClick(evt) {
-    const detail = {
-      id: this._id,
-      image: evt.target.src,
-    };
+    if (evt.target.src) {
+      const detail = {
+        id: this._id,
+        image: evt.target.src,
+      };
 
-    this.hideList();
-    H.emitEvent(true, true, detail, 'svg-image-choosed', this);
+      this.visible = '';
+      H.emitEvent(true, true, detail, 'svg-image-choosed', this);
+    }
+
     evt.stopPropagation();
   }
 
+  // Not Used
   getFabrics() {
     return this.list
       .chain(H.firstElementChild)
@@ -75,6 +85,23 @@ export default class PwFabricsList extends HTMLElement {
       .chain(H.childNodes)
       .map(nodes =>
         Array.prototype.slice.call(nodes).filter(node => (node && node.tagName === 'DIV')));
+  }
+
+  getFabricsFromBackend() {
+    return new Task((reject, resolve) => Request.get(`http://localhost:3000/fabrics`)
+     .set('Authorization', Token.getToken().get())
+     .set('Content-Type', 'application/json')
+        .then((res) => {
+          if (res) {
+            return resolve(res.body);
+          }
+
+          return reject('Body was empty');
+        })
+        .catch((err) => {
+          console.log(err.message);
+          Page('/#/login'); /* eslint new-cap:0 */
+        }));
   }
 
   get list() {
@@ -134,7 +161,7 @@ export default class PwFabricsList extends HTMLElement {
                 border-radius: 3px;
                 display: block;
                 height: 100%;
-                width: auto;
+                width: 150px;
               }
 
               .gallery .slides .slide:hover {
@@ -151,15 +178,14 @@ export default class PwFabricsList extends HTMLElement {
   }
 
   get html() {
-    return `<div class="page-scroll">
+    return this._html;
+  }
+
+  set html(fabrics) {
+    this._html = `<div class="page-scroll">
               <div class="gallery">
                 <div class="slides">
-                  <div class='slide z-depth-1 hoverable'><img src="http://placehold.it/320x180/3F51B5/FFC107"/></div>
-                  <div class='slide z-depth-1 hoverable'><img src="http://placehold.it/320x180/3F51B5/FFC107"/></div>
-                  <div class='slide z-depth-1 hoverable'><img src="http://placehold.it/320x180/3F51B5/FFC107"/></div>
-                  <div class='slide z-depth-1 hoverable'><img src="http://placehold.it/320x180/3F51B5/FFC107"/></div>
-                  <div class='slide z-depth-1 hoverable'><img src="http://placehold.it/320x180/3F51B5/FFC107"/></div>
-                  <div class='slide z-depth-1 hoverable'><img src="http://placehold.it/320x180/3F51B5/FFC107"/></div>
+                  ${fabrics.map(fabric => `<div class='slide z-depth-1 hoverable'><img src="${fabric.image}"/></div>`).join('')}
                 </div>
               </div>
             </div>`;
