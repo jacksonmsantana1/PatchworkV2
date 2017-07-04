@@ -48,10 +48,6 @@ export default class PwProjectBody extends HTMLElement {
     });
   }
 
-  render() {
-    this.shadowRoot.innerHTML = this.style + this.html;
-  }
-
   getPwProject() {
     return H.getShadowRoot(this)
       .chain(H.childNodes)
@@ -68,13 +64,8 @@ export default class PwProjectBody extends HTMLElement {
       .chain(H.nth(5));
   }
 
-  get html() {
-    /* eslint quotes:0 class-methods-use-this:0 */
-    return `<main>
-              <slot></slot>
-              <pw-project id="${this.id}"></pw-project>
-              <pw-fabrics-list visible=""></pw-fabrics-list>
-            </main>`;
+  render() {
+    this.shadowRoot.innerHTML = this.style + this.html;
   }
 
   get id() {
@@ -85,6 +76,15 @@ export default class PwProjectBody extends HTMLElement {
     this._id = value;
     this.setAttribute('id', value);
     this.render();
+  }
+
+  get html() {
+    /* eslint quotes:0 class-methods-use-this:0 */
+    return `<main>
+              <slot></slot>
+              <pw-project id="${this.id}"></pw-project>
+              <pw-fabrics-list visible=""></pw-fabrics-list>
+            </main>`;
   }
 
   get style() {

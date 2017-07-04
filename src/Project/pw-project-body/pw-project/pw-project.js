@@ -166,7 +166,6 @@ export default class PwProject extends HTMLElement {
 
               svg {
                 position:absolute;
-                background:yellow
               }
             </style>`;
   }
