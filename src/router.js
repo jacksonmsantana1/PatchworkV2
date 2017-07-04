@@ -59,16 +59,10 @@ Page('/', () => {
 });
 
 Page('/login', () => {
-  const token = Token.getToken().getOrElse('');
+  Token.deleteToken();
+  const login = document.createElement('login-page');
 
-  if (token) {
-    const main = document.createElement('main-page');
-    loadPage(main);
-  } else {
-    Token.deleteToken();
-    const login = document.createElement('login-page');
-    loadPage(login);
-  }
+  loadPage(login);
 });
 
 Page('/projects/:id', (ctx) => {
