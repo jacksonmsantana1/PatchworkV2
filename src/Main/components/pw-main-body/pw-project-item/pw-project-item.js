@@ -37,21 +37,11 @@ export default class PwProjectItem extends HTMLElement {
   }
 
   onMouseOut() {
-    H.emitEvent(true, true, this.id, 'project-deselected', this);
     this.button.get().visible = '';
   }
 
   onMouseOver() {
-    H.emitEvent(true, true, this.id, 'project-selected', this);
     this.button.get().visible = true;
-  }
-
-  setOpacity(value) {
-    return H.getShadowRoot(this)
-      .chain(H.childNodes)
-      .chain(H.nth(1))
-      .chain(H.props('style'))
-      .chain(H.changeProps('opacity', value));
   }
 
   get active() {
@@ -114,9 +104,13 @@ export default class PwProjectItem extends HTMLElement {
                 margin: 0 2px 15px;
                 padding: 15px;
                 padding-bottom: 10px;
-                transition: opacity .4s ease-in-out;
                 display: inline-block;
                 column-break-inside: avoid;
+                opacity: 0.4;
+              }
+
+              figure:hover {
+                opacity: 1;
               }
 
               figure img {
