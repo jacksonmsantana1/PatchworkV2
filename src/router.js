@@ -13,13 +13,14 @@ import './Project/project';
 const isLogged = token => new Task((reject, resolve) => {
   Request.put('http://localhost:3000/isLogged')
     .set('Content-Type', 'application/json')
+    .set('Authorization', `${token}`)
     .send(`{ "token": "${token}" }`)
     .then((res) => {
       if (res.status !== 200 || !res.body) {
         resolve(false);
       }
 
-      Token.setToken(res.body);
+      Token.setToken(res.req.header.Authorization);
       resolve(true);
     })
     .catch((err) => {
