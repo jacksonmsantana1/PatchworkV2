@@ -55,7 +55,7 @@ export default class PwProjectLayout extends HTMLElement {
 
               img:not(.png) {
                 width: 100%;
-                height: 31em;
+                height: 35em;
               }
             </style>`;
   }

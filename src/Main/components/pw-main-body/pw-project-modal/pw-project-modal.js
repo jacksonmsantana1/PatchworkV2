@@ -19,10 +19,11 @@ export default class PwProjectModal extends HTMLElement {
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
-    this.render();
+    // this.render();
 
-    // Event handler
-    this.scrollHandler = this.onScroll.bind(this); // Necessary because of the removeEventListener
+    // Event handler variables -> Necessary because of the removeEventListener
+    this.scrollHandler = this.onScroll.bind(this);
+    this.overlayClickHandler = this.onOverlayClick.bind(this);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -37,11 +38,10 @@ export default class PwProjectModal extends HTMLElement {
 
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
-    this.overlay.get().addEventListener('click', this.onOverlayClick.bind(this), false); // FIXME Give a look about it
   }
 
   onOverlayClick() {
-    this.hideModel();
+    this.visible = '';
   }
 
   onScroll(evt) {
@@ -58,8 +58,27 @@ export default class PwProjectModal extends HTMLElement {
   }
 
   showModal() {
-    window.scroll(0, 0);
+    this.getProject()
+      .then((res) => {
+        this.html = res.body;
+        this.render();
+        this.makeModalVisible();
+        Token.setToken(res.req.header.Authorization);
+      })
+      .catch((err) => {
+        console.log(err.message);
+        Page('/#/login'); /* eslint new-cap:0 */
+      });
+  }
+
+  makeModalVisible() {
+    // Putting the modal at the top of the page
+    const yHeight = window.scrollY + 15;
+    this.modal.chain(H.props('style')).chain(H.changeProps('top', `${yHeight}px`));
+
+    // Adding event listeners responsible with the modal scroll and to exit of the modal
     document.addEventListener('scroll', this.scrollHandler);
+    this.overlay.get().addEventListener('click', this.overlayClickHandler, false); // FIXME Give a look about it
 
     H.getShadowRoot(this)
       .chain(H.childNodes)
@@ -68,7 +87,7 @@ export default class PwProjectModal extends HTMLElement {
       .chain(H.addClass('global-modal-show'));
   }
 
-  hideModel() {
+  hideModal() {
     H.getShadowRoot(this)
       .chain(H.childNodes)
       .chain(H.nth(1))
@@ -76,6 +95,9 @@ export default class PwProjectModal extends HTMLElement {
       .chain(H.removeClass('global-modal-show'));
 
     document.removeEventListener('scroll', this.scrollHandler);
+    this.overlay.get().removeEventListener('click', this.overlayClickHandler);
+
+    this.id = '';
   }
 
   get overlay() {
@@ -111,33 +133,26 @@ export default class PwProjectModal extends HTMLElement {
   set visible(value) {
     this._visible = value;
     this.setAttribute('visible', value);
-
-    this.getProject(value)
-      .then((project) => {
-        this._project = project.body;
-        this.render();
-
-        if (value) {
-          this.showModal();
-        } else {
-          this.hideModel();
-        }
-      })
-      .catch((err) => {
-        console.log(err.message);
-        Page('/#/login'); /* eslint new-cap:0 */
-      });
+    if (value) {
+      this.showModal();
+    } else {
+      this.hideModal();
+    }
   }
 
   get html() {
+    return this._html;
+  }
+
+  set html(project) {
     /* eslint quotes:0 class-methods-use-this:0 */
-    return `<div class="global-modal">
+    this._html = `<div class="global-modal">
               <div class="overlay"></div>
               <div class="global-modal_contents modal-transition">
                 <div class="global-modal-header">
                   <span class="mobile-close"> X </span>
-                  <h3> <span> ${this._project.name} </span> </h3>
-                  <pw-project-layout svg="${this._project.svg}"></pw-project-layout>
+                  <h3> <span> ${project.name} </span> </h3>
+                  <pw-project-layout svg="${project.layout}"></pw-project-layout>
                   <pw-project-modal-button id="${this.id}"></pw-project-modal-button>
                 </div>
               </div>
