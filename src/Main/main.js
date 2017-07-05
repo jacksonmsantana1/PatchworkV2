@@ -7,7 +7,6 @@ import './components/pw-main-body/pw-project-item/pw-project-item';
 import './components/pw-nav-bar/pw-nav-bar';
 import './components/pw-nav-bar/pw-nav-bar-tab/pw-nav-bar-tab';
 
-// TODO Refactor the getHtml and the getProjects
 class MainPage extends HTMLElement {
   createdCallback() {
     if (super.createdCallback) {
@@ -21,11 +20,18 @@ class MainPage extends HTMLElement {
     this.getProjects().then((res) => {
       this.html = res.body;
       this.innerHTML = this.html;
+      Token.setToken(res.req.header.Authorization);
     })
     .catch((err) => {
       console.log(err.message);
       Page('/#/login'); /* eslint new-cap:0 */
     });
+  }
+
+  getProjects() {
+    return Request.get('http://localhost:3000/projects')
+     .set('Authorization', Token.getToken().get())
+     .set('Content-Type', 'application/json');
   }
 
   get html() {
@@ -43,12 +49,6 @@ class MainPage extends HTMLElement {
                       ${projects.map(proj => `<pw-project-item active="true" image="${proj.image}" id="${proj._id}">${proj.description}</pw-project-item>`).join('')}
                     </pw-projects-list>
                   </pw-main-body>`;
-  }
-
-  getProjects() {
-    return Request.get('http://localhost:3000/projects')
-     .set('Authorization', Token.getToken().get())
-     .set('Content-Type', 'application/json');
   }
 }
 

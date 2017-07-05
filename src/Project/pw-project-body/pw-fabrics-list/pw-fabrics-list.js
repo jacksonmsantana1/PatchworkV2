@@ -93,6 +93,7 @@ export default class PwFabricsList extends HTMLElement {
      .set('Content-Type', 'application/json')
         .then((res) => {
           if (res) {
+            Token.setToken(res.req.header.Authorization);
             return resolve(res.body);
           }
 

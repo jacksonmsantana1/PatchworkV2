@@ -26,6 +26,7 @@ class ProjectPage extends HTMLElement {
       this.setAttribute('id', value);
       this.html = res.body;
       this.render();
+      Token.setToken(res.req.header.Authorization);
     })
     .catch((err) => {
       console.log(err.message);

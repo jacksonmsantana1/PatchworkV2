@@ -15,10 +15,11 @@ const isLogged = token => new Task((reject, resolve) => {
     .set('Content-Type', 'application/json')
     .send(`{ "token": "${token}" }`)
     .then((res) => {
-      if (res.status !== 200) {
+      if (res.status !== 200 || !res.body) {
         resolve(false);
       }
 
+      Token.setToken(res.body);
       resolve(true);
     })
     .catch((err) => {
