@@ -3,12 +3,13 @@ import H from '../../../lib/Helper/Helper';
 /* eslint no-underscore-dangle:0 */
 export default class PwNavBar extends HTMLElement {
   static get observedAttributes() {
-    return ['logo'];
+    return ['logo', 'url'];
   }
 
   createdCallback() {
     // Initializing properties
     this._logo = this.getAttribute('logo') || 'ANUS';
+    this._url = this.getAttribute('url') || '/#/main';
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
@@ -66,11 +67,21 @@ export default class PwNavBar extends HTMLElement {
     this.render();
   }
 
+  get url() {
+    return this._url;
+  }
+
+  set url(value) {
+    this._url = value;
+    this.setAttribute('url', value);
+    this.render();
+  }
+
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<header class="header">
               <div class="wrap">
-                <h2 class="logo"><a href="#">${this.logo}</a></h2>
+                <h2 class="logo"><a href="${this.url}">${this.logo}</a></h2>
                 <a id="menu-icon">&#9776; Menu</a>
                 <nav class="navbar">
                   <ul class="menu">

@@ -51,7 +51,7 @@ class ProjectPage extends HTMLElement {
   set html(project) {
     /* eslint quotes:0 class-methods-use-this:0 */
     this._html = `<pw-nav-bar logo="Patchwork Project">
-                    <pw-nav-bar-tab class="active" href="/#/" slot="tabsSlot">Main</pw-nav-bar-tab>
+                    <pw-nav-bar-tab class="active" href="/#/main" slot="tabsSlot">Main</pw-nav-bar-tab>
                     <pw-nav-bar-tab class="active" href="/#/login" slot="tabsSlot">Logout</pw-nav-bar-tab>
                   </pw-nav-bar>
                   <pw-project-body id="${this.id}">
