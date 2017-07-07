@@ -1,10 +1,11 @@
-import Request from 'superagent';
-import Page from 'page';
-import Token from '../lib/Token/Token';
 import './pw-project-body/pw-project-body';
 
 // TODO Refactor the getHtml and the getProjects
 class ProjectPage extends HTMLElement {
+  static get observedAttributes() {
+    return ['id', 'session'];
+  }
+
   createdCallback() {
     if (super.createdCallback) {
       super.createdCallback();
@@ -12,8 +13,24 @@ class ProjectPage extends HTMLElement {
 
     // Initializing properties
     this._id = this.getAttribute('id') || '';
+    this._session = this.getAttribute('session') || '';
+    this.render();
+  }
 
-    // Getting the projects from the server
+  attributeChangedCallback(name, oldVal, newVal) {
+    if (this[name] !== newVal) {
+      this[name] = newVal;
+    }
+  }
+
+  get session() {
+    return this._session;
+  }
+
+  set session(value) {
+    this._session = value;
+    this.setAttribute('session', value);
+    this.render();
   }
 
   get id() {
@@ -21,24 +38,22 @@ class ProjectPage extends HTMLElement {
   }
 
   set id(value) {
-    this.getProject(value).then((res) => {
-      this._id = value;
-      this.setAttribute('id', value);
-      this.html = res.body;
-      this.render();
-      Token.setToken(res.req.header.Authorization);
-    })
-    .catch((err) => {
-      console.log(err.message);
-      Page('/#/login'); /* eslint new-cap:0 */
-    });
+    this._id = value;
+    this.setAttribute('id', value);
+    this.render();
   }
 
   get html() {
-    return this._html;
+    return `<pw-nav-bar logo="Patchwork Project">
+              <pw-nav-bar-tab class="active" href="/#/main" slot="tabsSlot">Main</pw-nav-bar-tab>
+              <pw-nav-bar-tab class="active" href="/#/login" slot="tabsSlot">Logout</pw-nav-bar-tab>
+            </pw-nav-bar>
+            <pw-project-body id="${this.id}" session="${this.session}">
+            </pw-project-body>`;
   }
 
   get style() {
+    /* eslint class-methods-use-this:0 */
     return `<style>
               h1 {
                 text-align: center;
@@ -48,25 +63,8 @@ class ProjectPage extends HTMLElement {
             </style>`;
   }
 
-  set html(project) {
-    /* eslint quotes:0 class-methods-use-this:0 */
-    this._html = `<pw-nav-bar logo="Patchwork Project">
-                    <pw-nav-bar-tab class="active" href="/#/main" slot="tabsSlot">Main</pw-nav-bar-tab>
-                    <pw-nav-bar-tab class="active" href="/#/login" slot="tabsSlot">Logout</pw-nav-bar-tab>
-                  </pw-nav-bar>
-                  <pw-project-body id="${this.id}">
-                    <h1>${project.name}</h1>
-                  </pw-project-body>`;
-  }
-
   render() {
     this.innerHTML = this.style + this.html;
-  }
-
-  getProject(id) {
-    return Request.get(`http://localhost:3000/projects/${id}`)
-     .set('Authorization', Token.getToken().get())
-     .set('Content-Type', 'application/json');
   }
 }
 

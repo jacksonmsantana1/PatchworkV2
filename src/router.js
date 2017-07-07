@@ -122,8 +122,8 @@ Page('/projects/:id/:sessionId', isLog, updateUserLastSession, (ctx) => {
   const sessionId = ctx.params.sessionId;
   const project = document.createElement('project-page');
 
-  project.id = id;
-  project.sessionId = sessionId;
+  project.setAttribute('id', id); // The id must be changed before !
+  project.setAttribute('session', sessionId);
   loadPage(project, 'Project');
 });
 

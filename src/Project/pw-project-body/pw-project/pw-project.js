@@ -1,31 +1,31 @@
-import Task from 'data.task';
-import Page from 'page';
 import Request from 'superagent';
 import H from '../../../lib/Helper/Helper';
 import Token from '../../../lib/Token/Token';
 
 export default class PwProject extends HTMLElement {
   static get observedAttributes() {
-    return ['id'];
+    return ['id', 'session'];
   }
 
   createdCallback() {
     // Initializing attributes
-    this._id = this.getAttribute('id') || '';
+    this.id = this.getAttribute('id') || '';
+    this.session = this.getAttribute('session') || '';
     this._svg = {};
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
-    this.getProject().fork(err => console.log(err.message), (proj) => {
-      this._svg = proj.svg;
-      this.render();
-      this.addListenersToPolygons();
-    });
 
     this.addEventListener('change-svg-image', this.onChangeSvgImage.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
+    }
+  }
+
+  attributeChangedCallback(name, oldVal, newVal) {
+    if (this[name] !== newVal) {
+      this[name] = newVal;
     }
   }
 
@@ -39,24 +39,6 @@ export default class PwProject extends HTMLElement {
 
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
-  }
-
-  getProject() {
-    return new Task((reject, resolve) => Request.get(`http://localhost:3000/projects/${this.id}`)
-     .set('Authorization', Token.getToken().get())
-     .set('Content-Type', 'application/json')
-        .then((res) => {
-          if (res) {
-            Token.setToken(res.req.header.Authorization);
-            return resolve(res.body);
-          }
-
-          return reject('Body was empty');
-        })
-        .catch((err) => {
-          console.log(err.message);
-          Page('/#/login'); /* eslint new-cap:0 */
-        }));
   }
 
   projectToSVG(project) {
@@ -133,6 +115,18 @@ export default class PwProject extends HTMLElement {
       .chain(H.nth(1));
   }
 
+  getNewProject(id) {
+    return Request.get(`http://localhost:3000/projects/${id}`)
+     .set('Authorization', Token.getToken().get())
+     .set('Content-Type', 'application/json');
+  }
+
+  getOldProject(email, session) {
+    return Request.get(`http://localhost:3000/users/${email}/projects/${session}`)
+     .set('Authorization', Token.getToken().get())
+     .set('Content-Type', 'application/json');
+  }
+
   get svg() {
     return H.getShadowRoot(this)
       .chain(H.childNodes)
@@ -148,7 +142,35 @@ export default class PwProject extends HTMLElement {
   set id(value) {
     this._id = value;
     this.setAttribute('id', value);
-    this.render();
+
+    if (value) {
+      this.getNewProject(value)
+        .then((res) => {
+          this._svg = res.body.svg;
+          this.render();
+          this.addListenersToPolygons();
+          Token.setToken(res.req.header.Authorization);
+        });
+    }
+  }
+
+  get session() {
+    return this._session;
+  }
+
+  set session(value) {
+    this._session = value;
+    this.setAttribute('session', value);
+
+    if (value) {
+      this.getOldProject(Token.getPayload().get().email, value)
+        .then((res) => {
+          this._svg = res.body.svg;
+          this.render();
+          this.addListenersToPolygons();
+          Token.setToken(res.req.header.Authorization);
+        });
+    }
   }
 
   get html() {

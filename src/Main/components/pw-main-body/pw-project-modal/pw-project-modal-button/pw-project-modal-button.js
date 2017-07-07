@@ -1,4 +1,5 @@
 import Page from 'page';
+import ShortId from 'shortid';
 
 export default class PwProjectModalButton extends HTMLElement {
   static get observedAttributes() {
@@ -27,7 +28,7 @@ export default class PwProjectModalButton extends HTMLElement {
   }
 
   onClick() {
-    Page(`/#/projects/${this.id}`); /* eslint new-cap:0 */
+    Page(`/#/projects/${this.id}/${ShortId.generate()}`); /* eslint new-cap:0 */
   }
 
   render() {

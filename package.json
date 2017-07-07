@@ -90,6 +90,7 @@
     "page": "^1.7.1",
     "ramda": "^0.23.0",
     "redux": "^3.6.0",
+    "shortid": "^2.2.8",
     "superagent": "^3.5.2",
     "virtual-dom": "^2.1.1",
     "webcomponents.js": "^0.7.22"

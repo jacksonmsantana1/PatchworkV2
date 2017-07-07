@@ -4,12 +4,13 @@ import './pw-fabrics-list/pw-fabrics-list';
 
 export default class PwProjectBody extends HTMLElement {
   static get observedAttributes() {
-    return ['visible'];
+    return ['id', 'session'];
   }
 
   createdCallback() {
     // Initializing attributes
     this._id = this.getAttribute('id') || '';
+    this._session = this.getAttribute('session') || '';
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
@@ -21,6 +22,12 @@ export default class PwProjectBody extends HTMLElement {
 
     if (super.createdCallback) {
       super.createdCallback();
+    }
+  }
+
+  attributeChangedCallback(name, oldVal, newVal) {
+    if (this[name] !== newVal) {
+      this[name] = newVal;
     }
   }
 
@@ -78,11 +85,21 @@ export default class PwProjectBody extends HTMLElement {
     this.render();
   }
 
+  get session() {
+    return this._session;
+  }
+
+  set session(value) {
+    this._session = value;
+    this.setAttribute('session', value);
+    this.render();
+  }
+
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<main>
               <slot></slot>
-              <pw-project id="${this.id}"></pw-project>
+              <pw-project id="${this.id}" session="${this.session}"></pw-project>
               <pw-fabrics-list visible=""></pw-fabrics-list>
             </main>`;
   }
