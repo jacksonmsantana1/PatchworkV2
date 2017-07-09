@@ -110,8 +110,7 @@ export default class PwProjectBody extends HTMLElement {
                 background: #f9dae0;
                 font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
                 color: #fff;
-                padding: 5em 0 5em 0;
-                padding-top: 15px;
+                padding: 6em 0 6em 0;
               }
 
               main .helper {
@@ -137,7 +136,7 @@ export default class PwProjectBody extends HTMLElement {
 
               @media screen and (max-width: 750px) {
                 main {
-                  padding: 2em;
+                  padding: 6em;
                 }
               }
             </style>`;
