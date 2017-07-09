@@ -110,13 +110,6 @@ Page('/login', () => {
   loadPage(login, 'Login');
 });
 
-Page('/projects/:id', isLog, updateUserLastSession, (ctx) => {
-  const project = document.createElement('project-page');
-  const id = ctx.params.id;
-  project.id = id;
-  loadPage(project, 'Project');
-});
-
 Page('/projects/:id/:sessionId', isLog, updateUserLastSession, (ctx) => {
   const id = ctx.params.id;
   const sessionId = ctx.params.sessionId;
