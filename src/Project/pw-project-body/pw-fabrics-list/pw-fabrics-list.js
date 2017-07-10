@@ -132,7 +132,7 @@ export default class PwFabricsList extends HTMLElement {
               .page-scroll {
                  position: fixed;
                  bottom: 0;
-                 width:96.5%;
+                 width:96%;
                }
 
                .gallery {
@@ -147,8 +147,10 @@ export default class PwFabricsList extends HTMLElement {
                 padding: 32px;
                 overflow: auto;
                 position: relative;
-                background: gray;
+                background: #e8afaf;
                 border-radius: 10px;
+                border-style: groove;
+                border-width: thick;
               }
 
               .gallery .slides .slide {
@@ -171,6 +173,10 @@ export default class PwFabricsList extends HTMLElement {
               }
 
               @media screen and (max-width: 750px) {
+                .page-scroll {
+                  left:5px;
+                }
+
                 .slides .slide {
                   height: 90px;
                 }
