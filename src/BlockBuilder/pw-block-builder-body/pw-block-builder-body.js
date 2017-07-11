@@ -1,24 +1,15 @@
-import H from '../../lib/Helper/Helper';
-import './pw-project/pw-project';
-import './pw-fabrics-list/pw-fabrics-list';
-
-export default class PwProjectBody extends HTMLElement {
+export default class PwBlockBuilderBody extends HTMLElement {
   static get observedAttributes() {
-    return ['id', 'session'];
+    return ['session'];
   }
 
   createdCallback() {
     // Initializing attributes
-    this._id = this.getAttribute('id') || '';
     this._session = this.getAttribute('session') || '';
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
     this.render();
-
-    this.addEventListener('svg-image-choosed', this.onSvgImageChoosed.bind(this), false);
-    this.addEventListener('show-fabrics', this.onShowFabrics.bind(this), false);
-    this.addEventListener('click', this.onClick.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -31,58 +22,8 @@ export default class PwProjectBody extends HTMLElement {
     }
   }
 
-  onClick() {
-    this.getPwFabricList().map((list) => {
-      if (list.visible) {
-        /* eslint no-param-reassign:0 */
-        list.visible = '';
-      }
-    });
-  }
-
-  onShowFabrics(evt) {
-    evt.stopPropagation();
-    this.getPwFabricList().map((pwProjectList) => {
-      H.emitEvent(true, true, evt.detail, 'show-fabrics-down', pwProjectList);
-    });
-  }
-
-  onSvgImageChoosed(evt) {
-    /* eslint array-callback-return:0 */
-    evt.stopPropagation();
-    this.getPwProject().map((pwProject) => {
-      H.emitEvent(true, true, evt.detail, 'change-svg-image', pwProject);
-    });
-  }
-
-  getPwProject() {
-    return H.getShadowRoot(this)
-      .chain(H.childNodes)
-      .chain(H.nth(1))
-      .chain(H.childNodes)
-      .chain(H.nth(3));
-  }
-
-  getPwFabricList() {
-    return H.getShadowRoot(this)
-      .chain(H.childNodes)
-      .chain(H.nth(1))
-      .chain(H.childNodes)
-      .chain(H.nth(5));
-  }
-
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
-  }
-
-  get id() {
-    return this._id;
-  }
-
-  set id(value) {
-    this._id = value;
-    this.setAttribute('id', value);
-    this.render();
   }
 
   get session() {
@@ -98,7 +39,6 @@ export default class PwProjectBody extends HTMLElement {
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<main>
-              <pw-project id="${this.id}" session="${this.session}"></pw-project>
               <pw-fabrics-list visible=""></pw-fabrics-list>
             </main>`;
   }
@@ -143,6 +83,6 @@ export default class PwProjectBody extends HTMLElement {
 }
 
 // Check that the element hasn't already been registered
-if (!window.customElements.get('pw-project-body')) {
-  document.registerElement('pw-project-body', PwProjectBody);
+if (!window.customElements.get('pw-block-builder-body')) {
+  document.registerElement('pw-block-builder-body', PwBlockBuilderBody);
 }

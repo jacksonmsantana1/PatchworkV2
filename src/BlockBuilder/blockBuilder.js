@@ -1,8 +1,8 @@
-import './pw-project-body/pw-project-body';
+import './pw-block-builder-body/pw-block-builder-body';
 
-class ProjectPage extends HTMLElement {
+class BlockBuilderPage extends HTMLElement {
   static get observedAttributes() {
-    return ['id', 'session'];
+    return ['session'];
   }
 
   createdCallback() {
@@ -11,7 +11,6 @@ class ProjectPage extends HTMLElement {
     }
 
     // Initializing properties
-    this._id = this.getAttribute('id') || '';
     this._session = this.getAttribute('session') || '';
     this.render();
   }
@@ -32,24 +31,12 @@ class ProjectPage extends HTMLElement {
     this.render();
   }
 
-  get id() {
-    return this._id;
-  }
-
-  set id(value) {
-    this._id = value;
-    this.setAttribute('id', value);
-    this.render();
-  }
-
   get html() {
     return `<pw-nav-bar logo="Patchwork Project">
-              <pw-nav-bar-tab class="active" href="/#/blocks" slot="tabsSlot">Block Builder</pw-nav-bar-tab>
               <pw-nav-bar-tab class="active" href="/#/main" slot="tabsSlot">Main</pw-nav-bar-tab>
               <pw-nav-bar-tab class="active" href="/#/login" slot="tabsSlot">Logout</pw-nav-bar-tab>
             </pw-nav-bar>
-            <pw-project-body id="${this.id}" session="${this.session}">
-            </pw-project-body>`;
+            <pw-block-builder-body session="${this.session}"></pw-block-builder-body>`;
   }
 
   get style() {
@@ -69,6 +56,6 @@ class ProjectPage extends HTMLElement {
 }
 
 // Check that the element hasn't already been registered
-if (!window.customElements.get('project-page')) {
-  document.registerElement('project-page', ProjectPage);
+if (!window.customElements.get('block-builder-page')) {
+  document.registerElement('block-builder-page', BlockBuilderPage);
 }

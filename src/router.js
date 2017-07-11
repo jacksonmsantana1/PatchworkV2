@@ -1,10 +1,12 @@
 /* eslint quotes:0 new-cap:0 */
 import Request from 'superagent';
 import Page from 'page';
+import ShortId from 'shortid';
 import Token from './lib/Token/Token';
 import './Login/login';
 import './Main/main';
 import './Project/project';
+import './BlockBuilder/blockBuilder';
 
 /* Helper Functions */
 const backToLogin = (errMessage) => {
@@ -118,6 +120,19 @@ Page('/projects/:id/:sessionId', isLog, updateUserLastSession, (ctx) => {
   project.setAttribute('id', id); // The id must be changed before !
   project.setAttribute('session', sessionId);
   loadPage(project, 'Project');
+});
+
+Page('/blocks', () => {
+  const newSession = ShortId.generate();
+  Page(`/#/blocks/${newSession}`);
+});
+
+Page('/blocks/:sessionId', isLog, updateUserLastSession, (ctx) => {
+  const sessionId = ctx.params.sessionId;
+  const blocks = document.createElement('block-builder-page');
+
+  blocks.setAttribute('session', sessionId);
+  loadPage(blocks, 'Block Builder');
 });
 
 Page('*', () => {
