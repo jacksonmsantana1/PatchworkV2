@@ -1,3 +1,5 @@
+import './pw-project-blocks/pw-project-blocks';
+
 export default class PwBlockBuilderBody extends HTMLElement {
   static get observedAttributes() {
     return ['session'];
@@ -39,6 +41,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<main>
+              <pw-project-blocks session="${this.session}" maxRows="3" maxColumns="3"></pw-project-blocks>
               <pw-fabrics-list visible=""></pw-fabrics-list>
             </main>`;
   }
@@ -72,6 +75,11 @@ export default class PwBlockBuilderBody extends HTMLElement {
                font-size: 0.4em;
                display: block;
               }
+
+              pw-project-blocks {
+                display: flex;
+              }
+
 
               @media screen and (max-width: 750px) {
                 main {
