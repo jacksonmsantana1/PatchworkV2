@@ -77,7 +77,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
               }
 
               pw-project-blocks {
-                display: flex;
+                display: inline-block;
               }
 
 

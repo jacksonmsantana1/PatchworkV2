@@ -60,7 +60,7 @@ export default class PwProjectBody extends HTMLElement {
       .chain(H.childNodes)
       .chain(H.nth(1))
       .chain(H.childNodes)
-      .chain(H.nth(3));
+      .chain(H.nth(1));
   }
 
   getPwFabricList() {
@@ -68,7 +68,7 @@ export default class PwProjectBody extends HTMLElement {
       .chain(H.childNodes)
       .chain(H.nth(1))
       .chain(H.childNodes)
-      .chain(H.nth(5));
+      .chain(H.nth(3));
   }
 
   render() {

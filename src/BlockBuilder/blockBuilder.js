@@ -33,6 +33,7 @@ class BlockBuilderPage extends HTMLElement {
 
   get html() {
     return `<pw-nav-bar logo="Patchwork Project">
+              <pw-nav-bar-tab class="active" href="/#/blocks" slot="tabsSlot">Block Builder</pw-nav-bar-tab>
               <pw-nav-bar-tab class="active" href="/#/main" slot="tabsSlot">Main</pw-nav-bar-tab>
               <pw-nav-bar-tab class="active" href="/#/login" slot="tabsSlot">Logout</pw-nav-bar-tab>
             </pw-nav-bar>
