@@ -35,7 +35,7 @@ export default class PwFabricsList extends HTMLElement {
   }
 
   onShowFabrics(evt) {
-    this._id = evt.detail;
+    this._id = evt.detail.id || evt.detail;
     this.visible = 'true';
     evt.stopPropagation();
   }

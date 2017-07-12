@@ -1,3 +1,5 @@
+import H from '../../../../lib/Helper/Helper';
+
 export default class PwBlock extends HTMLElement {
   static get observedAttributes() {
     return ['column', 'row'];
@@ -12,6 +14,10 @@ export default class PwBlock extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.render();
 
+    // Event Listeners
+    this.addListenersToPolygons();
+    this.addEventListener('change-block-image', this.onChangeBlockImage.bind(this), false);
+
     if (super.createdCallback) {
       super.createdCallback();
     }
@@ -21,6 +27,65 @@ export default class PwBlock extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onChangeBlockImage(evt) {
+    const id = evt.detail.id;
+    const image = evt.detail.image;
+
+    if (this._row === evt.detail.row && this._column === evt.detail.column) {
+      this.setSvgPatternImage(id, image);
+    }
+
+    evt.stopPropagation();
+  }
+
+  setSvgPatternImage(id, img) {
+    return this.getSvgPatternById(id)
+      .chain(H.childNodes)
+      .chain(H.nth(1))
+      .chain(H.props('href'))
+      .chain(H.changeProps('baseVal', img));
+  }
+
+  getSvgPatternById(id) {
+    /* eslint consistent-return:0 */
+    return this.svg.chain(H.childNodes)
+      .chain(H.nth(1))
+      .chain(H.childNodes)
+      .map(nodes =>
+        Array.prototype.slice.call(nodes).filter(node =>
+          (node && node.tagName === 'pattern' && node.id === id)))
+      .chain(H.nth(0));
+  }
+
+  addListenersToPolygons() {
+    /* eslint array-callback-return:0 */
+    this.svg.map((elem) => {
+      const row = this._row;
+      const column = this._column;
+
+      elem.addEventListener('click', function clicked(evt) {
+        if (evt.target !== evt.currentTarget) {
+          const detail = {
+            id: evt.target.id,
+            row,
+            column,
+          };
+
+          H.emitEvent(true, true, detail, 'show-fabrics', this);
+        }
+
+        evt.stopPropagation();
+      });
+    });
+  }
+
+  get svg() {
+    return H.getShadowRoot(this)
+      .chain(H.querySelector('slot'))
+      .chain(H.assignedNodes)
+      .chain(H.nth(0));
   }
 
   render() {

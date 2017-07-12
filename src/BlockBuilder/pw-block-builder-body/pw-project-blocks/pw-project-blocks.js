@@ -1,6 +1,7 @@
 import Request from 'superagent';
 import Page from 'page';
 import Token from '../../../lib/Token/Token';
+import H from '../../../lib/Helper/Helper';
 import './pw-block/pw-block';
 
 /* eslint new-cap:0 */
@@ -18,6 +19,8 @@ export default class PwProjectBlocks extends HTMLElement {
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
+
+    this.addEventListener('change-svg-image', this.onChangeSvgImage.bind(this), false);
 
     this.getOldProject(Token.getPayload().get().email, this.session)
       .then((res) => {
@@ -38,6 +41,13 @@ export default class PwProjectBlocks extends HTMLElement {
     }
   }
 
+  onChangeSvgImage(evt) {
+    // Send a event to the block <change-block-image>
+    const pwBlock = this.getBlock(evt.detail.row, evt.detail.column).get();
+    H.emitEvent(true, true, evt.detail, 'change-block-image', pwBlock);
+    evt.stopPropagation();
+  }
+
   attributeChangedCallback(name, oldVal, newVal) {
     if (this[name] !== newVal) {
       this[name] = newVal;
@@ -46,6 +56,22 @@ export default class PwProjectBlocks extends HTMLElement {
 
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
+  }
+
+  getBlocks() {
+    return H.getShadowRoot(this)
+      .chain(H.childNodes);
+  }
+
+  getBlock(row, column) {
+    return this.getBlocks()
+      .map(nodes =>
+        Array.prototype.slice.call(nodes)
+          .filter(node => (node &&
+              node.tagName === 'PW-BLOCK' &&
+                node.getAttribute('row') === row &&
+                node.getAttribute('column') === column)))
+      .chain(H.nth(0));
   }
 
   getOldProject(email, session) {
@@ -108,6 +134,9 @@ export default class PwProjectBlocks extends HTMLElement {
 
   get style() {
     return `<style>
+            pw-block {
+              z-index:10;
+            }
             </style>`;
   }
 }

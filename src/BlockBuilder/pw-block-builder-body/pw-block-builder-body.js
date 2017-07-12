@@ -1,3 +1,4 @@
+import H from '../../lib/Helper/Helper';
 import './pw-project-blocks/pw-project-blocks';
 
 export default class PwBlockBuilderBody extends HTMLElement {
@@ -8,10 +9,16 @@ export default class PwBlockBuilderBody extends HTMLElement {
   createdCallback() {
     // Initializing attributes
     this._session = this.getAttribute('session') || '';
+    this._lastChange = {};
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
     this.render();
+
+    // Event Listeners
+    this.addEventListener('show-fabrics', this.onShowFabrics.bind(this), false);
+    this.addEventListener('svg-image-choosed', this.onSvgImageChoosed.bind(this), false);
+    this.addEventListener('click', this.onClick.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -22,6 +29,57 @@ export default class PwBlockBuilderBody extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onClick(evt) {
+    this.getPwFabricList().map((list) => {
+      if (list.visible) {
+        /* eslint no-param-reassign:0 */
+        list.visible = '';
+      }
+    });
+
+    evt.stopPropagation();
+  }
+
+  onSvgImageChoosed(evt) {
+    /* eslint array-callback-return:0 */
+    const detail = {
+      id: evt.detail.id,
+      image: evt.detail.image,
+      row: this._lastChange.row,
+      column: this._lastChange.column,
+    };
+
+    this.getPwProjectBlocks().map((pwProjectBlocks) => {
+      H.emitEvent(true, true, detail, 'change-svg-image', pwProjectBlocks);
+    });
+
+    evt.stopPropagation();
+  }
+
+  onShowFabrics(evt) {
+    this._lastChange = {
+      row: evt.detail.row,
+      column: evt.detail.column,
+    };
+
+    this.getPwFabricList().map((pwProjectList) => {
+      /* eslint array-callback-return:0 */
+      H.emitEvent(true, true, evt.detail, 'show-fabrics-down', pwProjectList);
+    });
+
+    evt.stopPropagation();
+  }
+
+  getPwProjectBlocks() {
+    return H.getShadowRoot(this)
+      .chain(H.querySelector('pw-project-blocks'));
+  }
+
+  getPwFabricList() {
+    return H.getShadowRoot(this)
+      .chain(H.querySelector('pw-fabrics-list'));
   }
 
   render() {
