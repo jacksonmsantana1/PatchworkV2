@@ -22,22 +22,34 @@ export default class PwProjectBlocks extends HTMLElement {
 
     this.addEventListener('change-svg-image', this.onChangeSvgImage.bind(this), false);
 
-    this.getOldProject(Token.getPayload().get().email, this.session)
-      .then((res) => {
-        this._blocks = this._blocks.concat(res.body.svg);
+    if (this.session) {
+      this.getOldProject(Token.getPayload().get().email, this.session)
+        .then((res) => {
+          this._blocks = this._blocks.concat(res.body.svg);
+          this.render();
 
-        this.render();
-        this.addListenersToPolygons();
-
-        Token.setToken(res.req.header.Authorization);
-      })
-      .catch(() => {
-        // Render initial Block Builder
-        this.render();
-      });
+          Token.setToken(res.req.header.Authorization);
+        }, (err) => {
+          if (err === 'Project Not Found') {
+            return this.saveNewProject();
+          }
+        })
+        .then(() => {
+          console.log('New Project Saved');
+        });
+    }
 
     if (super.createdCallback) {
       super.createdCallback();
+    }
+  }
+
+  detachedCallback() {
+    const token = Token.getToken().get();
+    const retVal = confirm("Do you want to save this project ?");
+
+    if (retVal !== true) {
+      this.removeProject(token);
     }
   }
 
@@ -51,11 +63,24 @@ export default class PwProjectBlocks extends HTMLElement {
 
     this.updateSvgObject(row, column, id, image);
     this.saveProjectSvg().then((res) => {
-      console.log('Project Saved');
+      console.log('Project Updated');
       H.emitEvent(true, true, evt.detail, 'change-block-image', pwBlock);
       Token.setToken(res.req.header.Authorization);
       evt.stopPropagation();
     });
+  }
+
+  removeProject(token) {
+    return Request.delete(`http://localhost:3000/user/projects/${this.session}`)
+     .set('Authorization', token)
+     .set('Content-Type', 'application/json')
+      .catch((err) => {
+        if (err.message === 'Unauthorized') {
+          Page('/#/login');
+        }
+
+        return Promise.reject(err);
+      });
   }
 
   saveProjectSvg() {
@@ -67,8 +92,13 @@ export default class PwProjectBlocks extends HTMLElement {
      .set('Content-Type', 'application/json')
      .send({ svg: this._blocks })
      .catch((err) => {
+       /* eslint consistent-return:0 */
        if (err.message === 'Unauthorized') {
          Page('/#/login');
+       } else if (err.message === 'Bad Request') {
+         return Promise.reject('Project Not Updated');
+       } else {
+         return Promise.reject('Something occured...');
        }
      });
   }
@@ -88,6 +118,27 @@ export default class PwProjectBlocks extends HTMLElement {
     });
 
     this._blocks = _blocks;
+  }
+
+  saveNewProject() {
+    return Request.post(`http://localhost:3000/user/save/project`)
+      .set('Authorization', Token.getToken().get())
+      .set('Content-Type', 'application/json')
+      .send({
+        projectId: '//TODO see hoe to do thisBlock-Builder',
+        sessionId: this.session,
+        name: '//TODO See how to do this',
+        svg: [],
+      })
+      .catch((err) => {
+        if (err.message === 'Unauthorized') {
+          Page('/#/login');
+        } else if (err.message === 'Bad Request') {
+          return Promise.reject('Project Not Saved');
+        } else {
+          return Promise.reject('Something occured...');
+        }
+      });
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
@@ -123,6 +174,10 @@ export default class PwProjectBlocks extends HTMLElement {
      .catch((err) => {
        if (err.message === 'Unauthorized') {
          Page('/#/login');
+       } else if (err.message === 'Bad Request') {
+         return Promise.reject('Project Not Found');
+       } else {
+         return Promise.reject('Something occured...');
        }
      });
   }
