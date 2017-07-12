@@ -1,4 +1,5 @@
 import H from '../../lib/Helper/Helper';
+import './pw-add-block-button/pw-add-block-button';
 import './pw-project-blocks/pw-project-blocks';
 
 export default class PwBlockBuilderBody extends HTMLElement {
@@ -101,6 +102,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
     return `<main>
               <pw-project-blocks session="${this.session}" maxRows="3" maxColumns="3"></pw-project-blocks>
               <pw-fabrics-list visible=""></pw-fabrics-list>
+              <pw-add-block-button></pw-add-block-button>
             </main>`;
   }
 
