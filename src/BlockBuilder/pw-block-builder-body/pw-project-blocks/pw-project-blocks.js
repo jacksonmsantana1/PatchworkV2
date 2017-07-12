@@ -44,8 +44,50 @@ export default class PwProjectBlocks extends HTMLElement {
   onChangeSvgImage(evt) {
     // Send a event to the block <change-block-image>
     const pwBlock = this.getBlock(evt.detail.row, evt.detail.column).get();
-    H.emitEvent(true, true, evt.detail, 'change-block-image', pwBlock);
-    evt.stopPropagation();
+    const id = evt.detail.id;
+    const image = evt.detail.image;
+    const row = evt.detail.row;
+    const column = evt.detail.column;
+
+    this.updateSvgObject(row, column, id, image);
+    this.saveProjectSvg().then((res) => {
+      console.log('Project Saved');
+      H.emitEvent(true, true, evt.detail, 'change-block-image', pwBlock);
+      Token.setToken(res.req.header.Authorization);
+      evt.stopPropagation();
+    });
+  }
+
+  saveProjectSvg() {
+    const email = Token.getPayload().get().email;
+    const sessionId = this.session;
+
+    return Request.put(`http://localhost:3000/user/${email}/projects/${sessionId}`)
+     .set('Authorization', Token.getToken().get())
+     .set('Content-Type', 'application/json')
+     .send({ svg: this._blocks })
+     .catch((err) => {
+       if (err.message === 'Unauthorized') {
+         Page('/#/login');
+       }
+     });
+  }
+
+
+  updateSvgObject(row, column, id, image) {
+    /* eslint array-callback-return:0 */
+    const _blocks = [...this._blocks];
+    _blocks.map((block) => {
+      if (block.column === parseInt(column, 10) && block.row === parseInt(row, 10)) {
+        block.patterns.map((pattern) => {
+          if (pattern.id === id) {
+            pattern.image.href = image; /* eslint no-param-reassign:0 */
+          }
+        });
+      }
+    });
+
+    this._blocks = _blocks;
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
