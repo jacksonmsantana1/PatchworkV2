@@ -13,14 +13,15 @@ export default class PwProjectBlocks extends HTMLElement {
   createdCallback() {
     // Initializing attributes
     this._session = this.getAttribute('session') || '';
-    this._maxColumns = this.getAttribute('max-columns') || '';
-    this._maxRows = this.getAttribute('max-rows') || '';
+    this._maxColumns = this.getAttribute('maxcolumns') || '';
+    this._maxRows = this.getAttribute('maxrows') || '';
     this._blocks = [];
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
 
     this.addEventListener('change-svg-image', this.onChangeSvgImage.bind(this), false);
+    this.addEventListener('change-svg-block', this.onChangeSvgBlock.bind(this), false);
 
     if (this.session) {
       this.getOldProject(Token.getPayload().get().email, this.session)
@@ -34,7 +35,8 @@ export default class PwProjectBlocks extends HTMLElement {
             return this.saveNewProject();
           }
         })
-        .then(() => {
+        .then((res) => {
+          Token.setToken(res.req.header.Authorization);
           console.log('New Project Saved');
         });
     }
@@ -53,6 +55,63 @@ export default class PwProjectBlocks extends HTMLElement {
     }
   }
 
+  getNextBlockCoord() {
+    const coord = {};
+
+    if (this._blocks.length) {
+      this._blocks.map((block) => {
+        if (block.column === parseInt(this.maxColumns, 10)) {
+          coord.nextBlockColumn = 1;
+          coord.nextBlockRow = block.row + 1;
+        } else {
+          coord.nextBlockColumn = block.column + 1;
+          coord.nextBlockRow = block.row;
+        }
+      });
+    } else {
+      coord.nextBlockColumn = 1;
+      coord.nextBlockRow = 1;
+    }
+
+    return coord;
+  }
+
+  updateNewBlock(block, nextBlockRow, nextBlockColumn) {
+    const newBlock = Object.assign({}, block);
+
+    newBlock.row = nextBlockRow;
+    newBlock.column = nextBlockColumn;
+
+    newBlock.patterns = block.patterns.map((pattern, index) => {
+      const newPattern = Object.assign({}, pattern);
+      newPattern.id = `img_${nextBlockRow}_${nextBlockColumn}_${index + 1}`;
+      return newPattern;
+    });
+
+    newBlock.polygons = block.polygons.map((polygon, index) => {
+      const newPolygon = Object.assign({}, polygon);
+      newPolygon.id = `img_${nextBlockRow}_${nextBlockColumn}_${index + 1}`;
+      return newPolygon;
+    });
+
+    return newBlock;
+  }
+
+  onChangeSvgBlock(evt) {
+    const { nextBlockRow, nextBlockColumn } = this.getNextBlockCoord();
+    const newBlock = this.updateNewBlock(evt.detail.svg, nextBlockRow, nextBlockColumn);
+
+    this._blocks.push(newBlock);
+
+    this.saveProjectSvg().then((res) => {
+      console.log('Project Updated');
+      this.render();
+      Token.setToken(res.req.header.Authorization);
+    });
+
+    evt.stopPropagation();
+  }
+
   onChangeSvgImage(evt) {
     // Send a event to the block <change-block-image>
     const pwBlock = this.getBlock(evt.detail.row, evt.detail.column).get();
@@ -66,8 +125,9 @@ export default class PwProjectBlocks extends HTMLElement {
       console.log('Project Updated');
       H.emitEvent(true, true, evt.detail, 'change-block-image', pwBlock);
       Token.setToken(res.req.header.Authorization);
-      evt.stopPropagation();
     });
+
+    evt.stopPropagation();
   }
 
   removeProject(token) {
@@ -207,8 +267,18 @@ export default class PwProjectBlocks extends HTMLElement {
     return this._maxRows;
   }
 
+  set maxRows(value) {
+    this._maxRows = value;
+    this.setAttribute('maxRows', value);
+  }
+
   get maxColumns() {
     return this._maxColumns;
+  }
+
+  set maxColumns(value) {
+    this._maxColumns = value;
+    this.setAttribute('maxColumns', value);
   }
 
   get session() {
@@ -223,8 +293,6 @@ export default class PwProjectBlocks extends HTMLElement {
 
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
-   // return `${this._blocks.map(block =>
-    // `<div class="col4">${this.projectToSVG(block)}</div>`).join('')}`;
     return `${this._blocks.map(block =>
       `<pw-block column="${block.column}" row="${block.row}">${this.projectToSVG(block)}</pw-block>`).join('')}`;
   }

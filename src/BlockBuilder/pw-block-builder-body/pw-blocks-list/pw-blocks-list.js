@@ -4,7 +4,7 @@ import Page from 'page';
 import Token from '../../../lib/Token/Token';
 import H from '../../../lib/Helper/Helper';
 
-export default class PwFabricsList extends HTMLElement {
+export default class PwBlocksList extends HTMLElement {
   static get observedAttributes() {
     return ['visible'];
   }
@@ -12,15 +12,17 @@ export default class PwFabricsList extends HTMLElement {
   createdCallback() {
     // Initilizing attributes
     this._visible = this.getAttribute('visible') || '';
+    this.blocks = [];
 
     // setting the inner dom and the styles
     this.attachShadow({ mode: 'open' });
-    this.getFabricsFromBackend().fork(console.error, (fabrics) => {
-      this.html = fabrics;
+    this.getBlocksFromBackend().fork(console.error, (blocks) => {
+      this._blocks = blocks;    // FIXME
+      Object.freeze(this._blocks);
+      this.html = this._blocks;
       this.render();
+      this.addListenersToBlocks();
       this.hideList();
-      this.addListenersToFabrics();
-      this.addEventListener('show-fabrics-down', this.onShowFabrics.bind(this), false);
     });
 
     if (super.createdcallback) {
@@ -34,10 +36,27 @@ export default class PwFabricsList extends HTMLElement {
     }
   }
 
-  onShowFabrics(evt) {
-    this._id = evt.detail.id || evt.detail;
-    this.visible = 'true';
+  addListenersToBlocks() {
+    /* eslint array-callback-return:0 */
+    this.list.map((node) => {
+      node.addEventListener('click', this.onClick.bind(this), false);
+    });
+  }
+
+  onClick(evt) {
+    if (evt.target.src) {
+      const detail = this.getBlockById(evt.target.id);
+
+      this.visible = '';
+      H.emitEvent(true, true, detail, 'svg-block-choosed', this);
+    }
+
     evt.stopPropagation();
+  }
+
+  getBlockById(id) {
+    /* eslint consistent-return:0 */
+    return this._blocks.filter(block => (block._id === id));
   }
 
   render() {
@@ -56,39 +75,8 @@ export default class PwFabricsList extends HTMLElement {
       .chain(H.changeProps('display', 'none'));
   }
 
-  addListenersToFabrics() {
-    /* eslint array-callback-return:0 */
-    this.list.map((node) => {
-      node.addEventListener('click', this.onClick.bind(this), false);
-    });
-  }
-
-  onClick(evt) {
-    if (evt.target.src) {
-      const detail = {
-        id: this._id,
-        image: evt.target.src,
-      };
-
-      this.visible = '';
-      H.emitEvent(true, true, detail, 'svg-image-choosed', this);
-    }
-
-    evt.stopPropagation();
-  }
-
-  // Not Used
-  getFabrics() {
-    return this.list
-      .chain(H.firstElementChild)
-      .chain(H.firstElementChild)
-      .chain(H.childNodes)
-      .map(nodes =>
-        Array.prototype.slice.call(nodes).filter(node => (node && node.tagName === 'DIV')));
-  }
-
-  getFabricsFromBackend() {
-    return new Task((reject, resolve) => Request.get(`http://localhost:3000/fabrics`)
+  getBlocksFromBackend() {
+    return new Task((reject, resolve) => Request.get(`http://localhost:3000/blocks`)
      .set('Authorization', Token.getToken().get())
      .set('Content-Type', 'application/json')
         .then((res) => {
@@ -189,11 +177,11 @@ export default class PwFabricsList extends HTMLElement {
     return this._html;
   }
 
-  set html(fabrics) {
+  set html(blocks) {
     this._html = `<div class="page-scroll">
               <div class="gallery">
                 <div class="slides">
-                  ${fabrics.map(fabric => `<div class='slide z-depth-1 hoverable'><img src="${fabric.image}"/></div>`).join('')}
+                  ${blocks.map(block => `<div class='slide z-depth-1 hoverable'><img id="${block._id}" src="${block.image}"/></div>`).join('')}
                 </div>
               </div>
             </div>`;
@@ -201,6 +189,6 @@ export default class PwFabricsList extends HTMLElement {
 }
 
 // Check that the element hasn't already been registered
-if (!window.customElements.get('pw-fabrics-list')) {
-  document.registerElement('pw-fabrics-list', PwFabricsList);
+if (!window.customElements.get('pw-blocks-list')) {
+  document.registerElement('pw-blocks-list', PwBlocksList);
 }

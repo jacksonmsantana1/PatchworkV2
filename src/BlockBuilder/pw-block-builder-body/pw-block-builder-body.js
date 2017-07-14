@@ -1,5 +1,6 @@
 import H from '../../lib/Helper/Helper';
 import './pw-add-block-button/pw-add-block-button';
+import './pw-blocks-list/pw-blocks-list';
 import './pw-project-blocks/pw-project-blocks';
 
 export default class PwBlockBuilderBody extends HTMLElement {
@@ -17,8 +18,10 @@ export default class PwBlockBuilderBody extends HTMLElement {
     this.render();
 
     // Event Listeners
+    this.addEventListener('show-blocks', this.onShowBlocks.bind(this), false);
     this.addEventListener('show-fabrics', this.onShowFabrics.bind(this), false);
     this.addEventListener('svg-image-choosed', this.onSvgImageChoosed.bind(this), false);
+    this.addEventListener('svg-block-choosed', this.onSvgBlockChoosed.bind(this), false);
     this.addEventListener('click', this.onClick.bind(this), false);
 
     if (super.createdCallback) {
@@ -32,6 +35,17 @@ export default class PwBlockBuilderBody extends HTMLElement {
     }
   }
 
+  onShowBlocks(evt) {
+    this.getPwBlockList().map((list) => {
+      if (!list.visible) {
+        /* eslint no-param-reassign:0 */
+        list.visible = 'true';
+      }
+    });
+
+    evt.stopPropagation();
+  }
+
   onClick(evt) {
     this.getPwFabricList().map((list) => {
       if (list.visible) {
@@ -39,6 +53,14 @@ export default class PwBlockBuilderBody extends HTMLElement {
         list.visible = '';
       }
     });
+
+    this.getPwBlockList().map((list) => {
+      if (list.visible) {
+        /* eslint no-param-reassign:0 */
+        list.visible = '';
+      }
+    });
+
 
     evt.stopPropagation();
   }
@@ -54,6 +76,16 @@ export default class PwBlockBuilderBody extends HTMLElement {
 
     this.getPwProjectBlocks().map((pwProjectBlocks) => {
       H.emitEvent(true, true, detail, 'change-svg-image', pwProjectBlocks);
+    });
+
+    evt.stopPropagation();
+  }
+
+  onSvgBlockChoosed(evt) {
+    const block = evt.detail[0];
+
+    this.getPwProjectBlocks().map((pwProjectBlocks) => {
+      H.emitEvent(true, true, block, 'change-svg-block', pwProjectBlocks);
     });
 
     evt.stopPropagation();
@@ -83,6 +115,11 @@ export default class PwBlockBuilderBody extends HTMLElement {
       .chain(H.querySelector('pw-fabrics-list'));
   }
 
+  getPwBlockList() {
+    return H.getShadowRoot(this)
+      .chain(H.querySelector('pw-blocks-list'));
+  }
+
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
   }
@@ -102,6 +139,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
     return `<main>
               <pw-project-blocks session="${this.session}" maxRows="3" maxColumns="3"></pw-project-blocks>
               <pw-fabrics-list visible=""></pw-fabrics-list>
+              <pw-blocks-list visible=""></pw-blocks-list>
               <pw-add-block-button></pw-add-block-button>
             </main>`;
   }
