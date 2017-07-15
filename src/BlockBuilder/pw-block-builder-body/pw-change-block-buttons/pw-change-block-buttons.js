@@ -1,4 +1,5 @@
 import H from '../../../lib/Helper/Helper';
+import './pw-rotate-block-button/pw-rotate-block-button';
 
 export default class PwChangeBlockButtons extends HTMLElement {
   static get observedAttributes() {
@@ -16,8 +17,6 @@ export default class PwChangeBlockButtons extends HTMLElement {
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
     this.render();
-
-    // Event Listeners
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -107,7 +106,7 @@ export default class PwChangeBlockButtons extends HTMLElement {
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<div class="wrap">
-              <slot></slot>
+              <pw-rotate-block-button row="${this.row}" column="${this.column}"></pw-rotate-block-button>
             </div>`;
   }
 
