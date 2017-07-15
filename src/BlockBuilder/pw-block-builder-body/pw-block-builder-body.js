@@ -142,7 +142,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
               <pw-fabrics-list visible=""></pw-fabrics-list>
               <pw-blocks-list visible=""></pw-blocks-list>
               <pw-add-block-button></pw-add-block-button>
-              <pw-change-block-buttons row="" column="" x="8" y="144" visible="true"></pw-change-block-buttons>
+              <pw-change-block-buttons row="" column="" x="8" y="94" visible="true"></pw-change-block-buttons>
             </main>`;
   }
 

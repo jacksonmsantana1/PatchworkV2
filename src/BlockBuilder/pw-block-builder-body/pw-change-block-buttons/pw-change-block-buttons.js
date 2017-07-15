@@ -118,9 +118,12 @@ export default class PwChangeBlockButtons extends HTMLElement {
     return `<style>
               .wrap {
                 position:absolute;
-                background-color: red;
+                background-color: #fbbaba;
                 top: ${this.y}px;
                 left: ${this.x}px;
+                padding: 0.5em;
+                border-radius: 50%;
+                border-style: ridge;
               }
             </style>`;
   }
