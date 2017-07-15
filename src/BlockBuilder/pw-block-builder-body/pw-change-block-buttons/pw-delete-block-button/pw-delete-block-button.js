@@ -1,6 +1,6 @@
 import H from '../../../../lib/Helper/Helper';
 
-export default class PwRotateBlockButton extends HTMLElement {
+export default class PwDeleteBlockButton extends HTMLElement {
   static get observedAttributes() {
     return ['row', 'column'];
   }
@@ -34,7 +34,7 @@ export default class PwRotateBlockButton extends HTMLElement {
       column: this.column,
     };
 
-    H.emitEvent(true, true, detail, 'rotate-block-up', this);
+    H.emitEvent(true, true, detail, 'delete-block-up', this);
     evt.stopPropagation();
   }
 
@@ -90,14 +90,15 @@ export default class PwRotateBlockButton extends HTMLElement {
 
               i:before {
                 font-family:fontawesome;
-                content: "\u267B";
+                content: "\u2297";
                 font-style:normal;
+                font-size: larger;
               }
             </style>`;
   }
 }
 
 // Check that the element hasn't already been registered
-if (!window.customElements.get('pw-rotate-block-button')) {
-  document.registerElement('pw-rotate-block-button', PwRotateBlockButton);
+if (!window.customElements.get('pw-delete-block-button')) {
+  document.registerElement('pw-delete-block-button', PwDeleteBlockButton);
 }

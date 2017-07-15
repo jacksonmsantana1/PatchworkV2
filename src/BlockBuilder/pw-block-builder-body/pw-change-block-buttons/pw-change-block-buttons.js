@@ -1,5 +1,6 @@
 import H from '../../../lib/Helper/Helper';
 import './pw-rotate-block-button/pw-rotate-block-button';
+import './pw-delete-block-button/pw-delete-block-button';
 
 export default class PwChangeBlockButtons extends HTMLElement {
   static get observedAttributes() {
@@ -107,6 +108,7 @@ export default class PwChangeBlockButtons extends HTMLElement {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<div class="wrap">
               <pw-rotate-block-button row="${this.row}" column="${this.column}"></pw-rotate-block-button>
+              <pw-delete-block-button row="${this.row}" column="${this.column}"></pw-rotate-block-button>
             </div>`;
   }
 
@@ -114,8 +116,6 @@ export default class PwChangeBlockButtons extends HTMLElement {
     return `<style>
               .wrap {
                 position:absolute;
-                width: 100px;
-                height: 25px;
                 background-color: red;
                 top: ${this.y}px;
                 left: ${this.x}px;
