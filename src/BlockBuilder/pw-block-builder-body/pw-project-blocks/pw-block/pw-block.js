@@ -17,6 +17,7 @@ export default class PwBlock extends HTMLElement {
     // Event Listeners
     this.addListenersToPolygons();
     this.addEventListener('change-block-image', this.onChangeBlockImage.bind(this), false);
+    this.addEventListener('mouseover', this.onMouseOver.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -27,6 +28,19 @@ export default class PwBlock extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onMouseOver(evt) {
+    const detail = {
+      row: this._row,
+      column: this._column,
+      x: this.offsetLeft.get(),
+      y: this.offsetTop.get(),
+    };
+
+    H.emitEvent(true, true, detail, 'show-change-buttons', this);
+
+    evt.stopPropagation();
   }
 
   onChangeBlockImage(evt) {
@@ -86,6 +100,20 @@ export default class PwBlock extends HTMLElement {
       .chain(H.querySelector('slot'))
       .chain(H.assignedNodes)
       .chain(H.nth(0));
+  }
+
+  get offsetTop() {
+    return H.getShadowRoot(this)
+      .chain(H.childNodes)
+      .chain(H.nth(1))
+      .chain(H.props('offsetTop'));
+  }
+
+  get offsetLeft() {
+    return H.getShadowRoot(this)
+      .chain(H.childNodes)
+      .chain(H.nth(1))
+      .chain(H.props('offsetLeft'));
   }
 
   render() {

@@ -19,6 +19,7 @@ export default class PwChangeBlockButtons extends HTMLElement {
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
     this.render();
+    this.visible = '';
 
     if (super.createdCallback) {
       super.createdCallback();

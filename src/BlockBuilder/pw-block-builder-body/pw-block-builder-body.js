@@ -24,6 +24,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
     this.addEventListener('svg-image-choosed', this.onSvgImageChoosed.bind(this), false);
     this.addEventListener('svg-block-choosed', this.onSvgBlockChoosed.bind(this), false);
     this.addEventListener('click', this.onClick.bind(this), false);
+    this.addEventListener('show-change-buttons', this.onShowChangeButtons.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -34,6 +35,21 @@ export default class PwBlockBuilderBody extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onShowChangeButtons(evt) {
+    const detail = evt.detail;
+
+    this.getPwChangeBlockButtons()
+      .chain((elem) => {
+        elem.row = detail.row;
+        elem.column = detail.column;
+        elem.x = detail.x;
+        elem.y = detail.y;
+        elem.visible = "true";
+      });
+
+    evt.stopPropagation();
   }
 
   onShowBlocks(evt) {
@@ -61,7 +77,6 @@ export default class PwBlockBuilderBody extends HTMLElement {
         list.visible = '';
       }
     });
-
 
     evt.stopPropagation();
   }
@@ -121,6 +136,11 @@ export default class PwBlockBuilderBody extends HTMLElement {
       .chain(H.querySelector('pw-blocks-list'));
   }
 
+  getPwChangeBlockButtons() {
+    return H.getShadowRoot(this)
+      .chain(H.querySelector('pw-change-block-buttons'));
+  }
+
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
   }
@@ -142,7 +162,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
               <pw-fabrics-list visible=""></pw-fabrics-list>
               <pw-blocks-list visible=""></pw-blocks-list>
               <pw-add-block-button></pw-add-block-button>
-              <pw-change-block-buttons row="" column="" x="8" y="94" visible="true"></pw-change-block-buttons>
+              <pw-change-block-buttons row="" column="" x="8" y="94" visible=""></pw-change-block-buttons>
             </main>`;
   }
 
