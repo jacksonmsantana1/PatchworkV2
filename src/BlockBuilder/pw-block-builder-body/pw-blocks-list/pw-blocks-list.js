@@ -18,7 +18,6 @@ export default class PwBlocksList extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.getBlocksFromBackend().fork(console.error, (blocks) => {
       this._blocks = blocks;    // FIXME
-      Object.freeze(this._blocks);
       this.html = this._blocks;
       this.render();
       this.addListenersToBlocks();
