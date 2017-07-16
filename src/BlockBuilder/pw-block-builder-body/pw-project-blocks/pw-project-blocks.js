@@ -21,6 +21,7 @@ export default class PwProjectBlocks extends HTMLElement {
     this.attachShadow({ mode: 'open' });
 
     this.addEventListener('change-svg-image', this.onChangeSvgImage.bind(this), false);
+    this.addEventListener('add-svg-block', this.onAddSvgBlock.bind(this), false);
     this.addEventListener('change-svg-block', this.onChangeSvgBlock.bind(this), false);
     this.addEventListener('rotate-block-down', this.onRotateBlock.bind(this), false);
 
@@ -82,6 +83,7 @@ export default class PwProjectBlocks extends HTMLElement {
 
     newBlock.row = nextBlockRow;
     newBlock.column = nextBlockColumn;
+    newBlock.rotate = 0;
 
     newBlock.patterns = block.patterns.map((pattern, index) => {
       const newPattern = Object.assign({}, pattern);
@@ -119,6 +121,23 @@ export default class PwProjectBlocks extends HTMLElement {
   }
 
   onChangeSvgBlock(evt) {
+    const row = parseInt(evt.detail.row, 10);
+    const column = parseInt(evt.detail.column, 10);
+    const blockSvg = evt.detail.block.svg;
+    const index = this.getIndexBlockObject(row, column);
+    const newBlock = this.updateNewBlock(blockSvg, row, column);
+
+    this.saveProjectSvg().then((res) => {
+      console.log('Project Updated');
+      this._blocks.splice(index, 1, newBlock);
+      this.render();
+      Token.setToken(res.req.header.Authorization);
+    });
+
+    evt.stopPropagation();
+  }
+
+  onAddSvgBlock(evt) {
     const { nextBlockRow, nextBlockColumn } = this.getNextBlockCoord();
     const newBlock = this.updateNewBlock(evt.detail.svg, nextBlockRow, nextBlockColumn);
 
@@ -248,6 +267,18 @@ export default class PwProjectBlocks extends HTMLElement {
 
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
+  }
+
+  getIndexBlockObject(row, column) {
+    let result = 1;
+
+    this._blocks.map((block, index) => {
+      if (block.row === row && block.column === column) {
+        result = index;
+      }
+    });
+
+    return result;
   }
 
   getBlocks() {

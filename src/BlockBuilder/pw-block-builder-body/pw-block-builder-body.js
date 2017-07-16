@@ -14,6 +14,10 @@ export default class PwBlockBuilderBody extends HTMLElement {
     this._session = this.getAttribute('session') || '';
     this._lastChange = {};
 
+    // FIXME
+    this._blockToBeChanged = {};
+    this._isToChangeBlock = false;
+
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
     this.render();
@@ -26,6 +30,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
     this.addEventListener('click', this.onClick.bind(this), false);
     this.addEventListener('show-change-buttons', this.onShowChangeButtons.bind(this), false);
     this.addEventListener('rotate-block-up', this.onRotateBlockUp.bind(this), false);
+    this.addEventListener('change-block-up', this.onChangeBlockUp.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -38,13 +43,26 @@ export default class PwBlockBuilderBody extends HTMLElement {
     }
   }
 
+  onChangeBlockUp(evt) {
+    this._isToChangeBlock = true;
+    this._blockToBeChanged = evt.detail;
+
+    this.getPwBlockList().map((list) => {
+      if (!list.visible) {
+        /* eslint no-param-reassign:0 */
+        list.visible = 'true';
+      }
+    });
+
+    evt.stopPropagation();
+  }
+
   onRotateBlockUp(evt) {
     const detail = evt.detail;
 
     this.getPwProjectBlocks().map((pwProjectBlocks) => {
       H.emitEvent(true, true, detail, 'rotate-block-down', pwProjectBlocks);
     });
-
 
     evt.stopPropagation();
   }
@@ -65,6 +83,8 @@ export default class PwBlockBuilderBody extends HTMLElement {
   }
 
   onShowBlocks(evt) {
+    this._isToChangeBlock = false;
+
     this.getPwBlockList().map((list) => {
       if (!list.visible) {
         /* eslint no-param-reassign:0 */
@@ -112,9 +132,21 @@ export default class PwBlockBuilderBody extends HTMLElement {
   onSvgBlockChoosed(evt) {
     const block = evt.detail[0];
 
-    this.getPwProjectBlocks().map((pwProjectBlocks) => {
-      H.emitEvent(true, true, block, 'change-svg-block', pwProjectBlocks);
-    });
+    if (this._isToChangeBlock) {
+      const detail = {
+        row: this._blockToBeChanged.row,
+        column: this._blockToBeChanged.column,
+        block,
+      };
+
+      this.getPwProjectBlocks().map((pwProjectBlocks) => {
+        H.emitEvent(true, true, detail, 'change-svg-block', pwProjectBlocks);
+      });
+    } else {
+      this.getPwProjectBlocks().map((pwProjectBlocks) => {
+        H.emitEvent(true, true, block, 'add-svg-block', pwProjectBlocks);
+      });
+    }
 
     evt.stopPropagation();
   }

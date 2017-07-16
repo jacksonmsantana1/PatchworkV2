@@ -12,7 +12,7 @@ export default class PwBlocksList extends HTMLElement {
   createdCallback() {
     // Initilizing attributes
     this._visible = this.getAttribute('visible') || '';
-    this.blocks = [];
+    this._blocks = [];
 
     // setting the inner dom and the styles
     this.attachShadow({ mode: 'open' });
