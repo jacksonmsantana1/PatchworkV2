@@ -25,6 +25,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
     this.addEventListener('svg-block-choosed', this.onSvgBlockChoosed.bind(this), false);
     this.addEventListener('click', this.onClick.bind(this), false);
     this.addEventListener('show-change-buttons', this.onShowChangeButtons.bind(this), false);
+    this.addEventListener('rotate-block-up', this.onRotateBlockUp.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -35,6 +36,17 @@ export default class PwBlockBuilderBody extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onRotateBlockUp(evt) {
+    const detail = evt.detail;
+
+    this.getPwProjectBlocks().map((pwProjectBlocks) => {
+      H.emitEvent(true, true, detail, 'rotate-block-down', pwProjectBlocks);
+    });
+
+
+    evt.stopPropagation();
   }
 
   onShowChangeButtons(evt) {

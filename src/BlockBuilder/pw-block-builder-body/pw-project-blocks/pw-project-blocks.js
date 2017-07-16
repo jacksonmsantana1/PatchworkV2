@@ -22,6 +22,7 @@ export default class PwProjectBlocks extends HTMLElement {
 
     this.addEventListener('change-svg-image', this.onChangeSvgImage.bind(this), false);
     this.addEventListener('change-svg-block', this.onChangeSvgBlock.bind(this), false);
+    this.addEventListener('rotate-block-down', this.onRotateBlock.bind(this), false);
 
     if (this.session) {
       this.getOldProject(Token.getPayload().get().email, this.session)
@@ -95,6 +96,26 @@ export default class PwProjectBlocks extends HTMLElement {
     });
 
     return newBlock;
+  }
+
+  onRotateBlock(evt) {
+    const row = evt.detail.row;
+    const column = evt.detail.column;
+    const rotate = this.updateSvgObjectRotate(row, column, 90);
+
+    this.getBlock(row, column)
+      .chain(H.props('svg'))
+      .chain((svg) => {
+        svg.get().setAttribute('transform', `rotate(${rotate})`);
+      });
+
+    this.saveProjectSvg().then((res) => {
+      console.log('Project Updated');
+      // this.render();
+      Token.setToken(res.req.header.Authorization);
+    });
+
+    evt.stopPropagation();
   }
 
   onChangeSvgBlock(evt) {
@@ -180,6 +201,24 @@ export default class PwProjectBlocks extends HTMLElement {
     this._blocks = _blocks;
   }
 
+  updateSvgObjectRotate(row, column, rotate) {
+    let result;
+
+    this._blocks.map((block) => {
+      if (block.column === parseInt(column, 10) && block.row === parseInt(row, 10)) {
+        if (block.rotate) {
+          block.rotate += rotate;
+        } else {
+          block.rotate = rotate;
+        }
+
+        result = block.rotate;
+      }
+    });
+
+    return result;
+  }
+
   saveNewProject() {
     return Request.post(`http://localhost:3000/user/save/project`)
       .set('Authorization', Token.getToken().get())
@@ -243,7 +282,7 @@ export default class PwProjectBlocks extends HTMLElement {
   }
 
   projectToSVG(project) {
-    return `<svg width="${project.width}" height="${project.height}" viewBox="${project.viewBox}" xmlns="http://www.w3.org/2000/svg">
+    return `<svg width="${project.width}" height="${project.height}" viewBox="${project.viewBox}" transform="rotate(${project.rotate})" xmlns="http://www.w3.org/2000/svg">
       <defs>
         ${project.patterns.map(pattern => `${this.patternSVG(pattern)}`).join('')}
       </defs>
