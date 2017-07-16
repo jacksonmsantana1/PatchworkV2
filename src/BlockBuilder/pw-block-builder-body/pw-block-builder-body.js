@@ -31,6 +31,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
     this.addEventListener('show-change-buttons', this.onShowChangeButtons.bind(this), false);
     this.addEventListener('rotate-block-up', this.onRotateBlockUp.bind(this), false);
     this.addEventListener('change-block-up', this.onChangeBlockUp.bind(this), false);
+    this.addEventListener('remove-block-up', this.onRemoveBlockUp.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -41,6 +42,16 @@ export default class PwBlockBuilderBody extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onRemoveBlockUp(evt) {
+    const detail = evt.detail;
+
+    this.getPwProjectBlocks().map((pwProjectBlocks) => {
+      H.emitEvent(true, true, detail, 'remove-block-down', pwProjectBlocks);
+    });
+
+    evt.stopPropagation();
   }
 
   onChangeBlockUp(evt) {

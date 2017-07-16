@@ -34,7 +34,7 @@ export default class PwDeleteBlockButton extends HTMLElement {
       column: this.column,
     };
 
-    H.emitEvent(true, true, detail, 'delete-block-up', this);
+    H.emitEvent(true, true, detail, 'remove-block-up', this);
     evt.stopPropagation();
   }
 

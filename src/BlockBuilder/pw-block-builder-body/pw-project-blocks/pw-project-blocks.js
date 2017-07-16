@@ -1,10 +1,11 @@
 import Request from 'superagent';
 import Page from 'page';
+import L from 'lodash';
 import Token from '../../../lib/Token/Token';
 import H from '../../../lib/Helper/Helper';
 import './pw-block/pw-block';
 
-/* eslint new-cap:0 */
+/* eslint new-cap:0 array-callback-return:0 */
 export default class PwProjectBlocks extends HTMLElement {
   static get observedAttributes() {
     return ['session', 'max-columns', 'max-rows'];
@@ -24,6 +25,7 @@ export default class PwProjectBlocks extends HTMLElement {
     this.addEventListener('add-svg-block', this.onAddSvgBlock.bind(this), false);
     this.addEventListener('change-svg-block', this.onChangeSvgBlock.bind(this), false);
     this.addEventListener('rotate-block-down', this.onRotateBlock.bind(this), false);
+    this.addEventListener('remove-block-down', this.onRemoveBlock.bind(this), false);
 
     if (this.session) {
       this.getOldProject(Token.getPayload().get().email, this.session)
@@ -57,6 +59,7 @@ export default class PwProjectBlocks extends HTMLElement {
     }
   }
 
+  // FIXME
   getNextBlockCoord() {
     const coord = {};
 
@@ -78,31 +81,91 @@ export default class PwProjectBlocks extends HTMLElement {
     return coord;
   }
 
-  updateNewBlock(block, nextBlockRow, nextBlockColumn) {
-    const newBlock = Object.assign({}, block);
+  updateSvgObjectImage(row, column, id, image) {
+    const index = this.getIndexBlockObject(row, column);
+    const block = this._blocks[index];
+    const newBlock = L.cloneDeep(block);
 
-    newBlock.row = nextBlockRow;
-    newBlock.column = nextBlockColumn;
-    newBlock.rotate = 0;
-
-    newBlock.patterns = block.patterns.map((pattern, index) => {
-      const newPattern = Object.assign({}, pattern);
-      newPattern.id = `img_${nextBlockRow}_${nextBlockColumn}_${index + 1}`;
-      return newPattern;
-    });
-
-    newBlock.polygons = block.polygons.map((polygon, index) => {
-      const newPolygon = Object.assign({}, polygon);
-      newPolygon.id = `img_${nextBlockRow}_${nextBlockColumn}_${index + 1}`;
-      return newPolygon;
+    newBlock.patterns.forEach((pattern, i, arr) => {
+      if (pattern.id === id) {
+        arr[i].image.href = image; /* eslint no-param-reassign:0 */
+      }
     });
 
     return newBlock;
   }
 
+  updateNewBlock(block, nextBlockRow, nextBlockColumn) {
+    const newBlock = L.cloneDeep(block);
+
+    newBlock.row = nextBlockRow;
+    newBlock.column = nextBlockColumn;
+    newBlock.rotate = newBlock.rotate || 0;
+
+    newBlock.patterns.forEach((pattern, index, arr) => {
+      arr[index].id = `img_${nextBlockRow}_${nextBlockColumn}_${index + 1}`;
+    });
+
+    newBlock.polygons.map((polygon, index, arr) => {
+      arr[index].id = `img_${nextBlockRow}_${nextBlockColumn}_${index + 1}`;
+    });
+
+    return newBlock;
+  }
+
+  updateSvgObjectRotate(row, column, rotate) {
+    let result;
+
+    this._blocks.map((block) => {
+      if (block.column === column && block.row === row) {
+        if (block.rotate) {
+          block.rotate += rotate;
+        } else {
+          block.rotate = rotate;
+        }
+
+        result = block.rotate;
+      }
+    });
+
+    return result;
+  }
+
+  updateSvgObjectRemove(row, column, index) {
+    let _row = 1;
+    let _column = 0;
+
+    this._blocks.splice(index, 1);
+    this._blocks = this._blocks.map((block) => {
+      if (_column === parseInt(this.maxColumns, 10)) {
+        _column = 1;
+        _row += 1;
+        return this.updateNewBlock(block, _row, _column);
+      }
+
+      _column += 1;
+      return this.updateNewBlock(block, _row, _column);
+    });
+  }
+
+  onRemoveBlock(evt) {
+    const row = parseInt(evt.detail.row, 10);
+    const column = parseInt(evt.detail.column, 10);
+    const index = this.getIndexBlockObject(row, column);
+
+    this.updateSvgObjectRemove(row, column, index);
+    this.saveProjectSvg().then((res) => {
+      console.log('Project Updated');
+      this.render();
+      Token.setToken(res.req.header.Authorization);
+    });
+
+    evt.stopPropagation();
+  }
+
   onRotateBlock(evt) {
-    const row = evt.detail.row;
-    const column = evt.detail.column;
+    const row = parseInt(evt.detail.row, 10);
+    const column = parseInt(evt.detail.column, 10);
     const rotate = this.updateSvgObjectRotate(row, column, 90);
 
     this.getBlock(row, column)
@@ -113,7 +176,7 @@ export default class PwProjectBlocks extends HTMLElement {
 
     this.saveProjectSvg().then((res) => {
       console.log('Project Updated');
-      // this.render();
+      this.render();
       Token.setToken(res.req.header.Authorization);
     });
 
@@ -157,10 +220,12 @@ export default class PwProjectBlocks extends HTMLElement {
     const pwBlock = this.getBlock(evt.detail.row, evt.detail.column).get();
     const id = evt.detail.id;
     const image = evt.detail.image;
-    const row = evt.detail.row;
-    const column = evt.detail.column;
+    const row = parseInt(evt.detail.row, 10);
+    const column = parseInt(evt.detail.column, 10);
+    const index = this.getIndexBlockObject(row, column);
+    const newBlock = this.updateSvgObjectImage(row, column, id, image);
 
-    this.updateSvgObject(row, column, id, image);
+    this._blocks.splice(index, 1, newBlock);
     this.saveProjectSvg().then((res) => {
       console.log('Project Updated');
       H.emitEvent(true, true, evt.detail, 'change-block-image', pwBlock);
@@ -201,41 +266,6 @@ export default class PwProjectBlocks extends HTMLElement {
          return Promise.reject('Something occured...');
        }
      });
-  }
-
-
-  updateSvgObject(row, column, id, image) {
-    /* eslint array-callback-return:0 */
-    const _blocks = [...this._blocks];
-    _blocks.map((block) => {
-      if (block.column === parseInt(column, 10) && block.row === parseInt(row, 10)) {
-        block.patterns.map((pattern) => {
-          if (pattern.id === id) {
-            pattern.image.href = image; /* eslint no-param-reassign:0 */
-          }
-        });
-      }
-    });
-
-    this._blocks = _blocks;
-  }
-
-  updateSvgObjectRotate(row, column, rotate) {
-    let result;
-
-    this._blocks.map((block) => {
-      if (block.column === parseInt(column, 10) && block.row === parseInt(row, 10)) {
-        if (block.rotate) {
-          block.rotate += rotate;
-        } else {
-          block.rotate = rotate;
-        }
-
-        result = block.rotate;
-      }
-    });
-
-    return result;
   }
 
   saveNewProject() {
