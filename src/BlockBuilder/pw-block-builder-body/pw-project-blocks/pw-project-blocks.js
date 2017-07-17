@@ -17,6 +17,7 @@ export default class PwProjectBlocks extends HTMLElement {
     this._maxColumns = this.getAttribute('maxcolumns') || '';
     this._maxRows = this.getAttribute('maxrows') || '';
     this._blocks = [];
+    this._zoomScale = 100;
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
@@ -26,6 +27,8 @@ export default class PwProjectBlocks extends HTMLElement {
     this.addEventListener('change-svg-block', this.onChangeSvgBlock.bind(this), false);
     this.addEventListener('rotate-block-down', this.onRotateBlock.bind(this), false);
     this.addEventListener('remove-block-down', this.onRemoveBlock.bind(this), false);
+    this.addEventListener('zoom-in-down', this.onZoomIn.bind(this), false);
+    this.addEventListener('zoom-out-down', this.onZoomOut.bind(this), false);
 
     if (this.session) {
       this.getOldProject(Token.getPayload().get().email, this.session)
@@ -48,6 +51,32 @@ export default class PwProjectBlocks extends HTMLElement {
     if (super.createdCallback) {
       super.createdCallback();
     }
+  }
+
+  onZoomIn(evt) {
+    const scale = evt.detail.scale;
+
+    // Maximum scale of 100
+    if (this._zoomScale <= 30) {
+      this._zoomScale = 30;
+    }
+
+    this._zoomScale += scale;
+    this.render();
+    evt.stopPropagation();
+  }
+
+  onZoomOut(evt) {
+    const scale = evt.detail.scale;
+
+    // Minimum scale of 30
+    if (this._zoomScale >= 100) {
+      this._zoomScale = 100;
+    }
+
+    this._zoomScale -= scale;
+    this.render();
+    evt.stopPropagation();
   }
 
   detachedCallback() {
@@ -393,8 +422,8 @@ export default class PwProjectBlocks extends HTMLElement {
 
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
-    return `${this._blocks.map(block =>
-      `<pw-block column="${block.column}" row="${block.row}">${this.projectToSVG(block)}</pw-block>`).join('')}`;
+    return `<div style="display:inline-block;width:${this._zoomScale}%;">${this._blocks.map(block =>
+      `<pw-block column="${block.column}" row="${block.row}">${this.projectToSVG(block)}</pw-block>`).join('')}</div>`;
   }
 
   get style() {

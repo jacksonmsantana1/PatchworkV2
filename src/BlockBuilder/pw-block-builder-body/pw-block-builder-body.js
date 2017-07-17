@@ -3,6 +3,7 @@ import './pw-add-block-button/pw-add-block-button';
 import './pw-blocks-list/pw-blocks-list';
 import './pw-project-blocks/pw-project-blocks';
 import './pw-change-block-buttons/pw-change-block-buttons';
+import './pw-zoom-buttons/pw-zoom-buttons';
 
 export default class PwBlockBuilderBody extends HTMLElement {
   static get observedAttributes() {
@@ -32,6 +33,8 @@ export default class PwBlockBuilderBody extends HTMLElement {
     this.addEventListener('rotate-block-up', this.onRotateBlockUp.bind(this), false);
     this.addEventListener('change-block-up', this.onChangeBlockUp.bind(this), false);
     this.addEventListener('remove-block-up', this.onRemoveBlockUp.bind(this), false);
+    this.addEventListener('zoom-in-block-up', this.onZoomInUp.bind(this), false);
+    this.addEventListener('zoom-out-block-up', this.onZoomOutUp.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -42,6 +45,26 @@ export default class PwBlockBuilderBody extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onZoomOutUp(evt) {
+    const detail = evt.detail;
+
+    this.getPwProjectBlocks().map((pwProjectBlocks) => {
+      H.emitEvent(true, true, detail, 'zoom-out-down', pwProjectBlocks);
+    });
+
+    evt.stopPropagation();
+  }
+
+  onZoomInUp(evt) {
+    const detail = evt.detail;
+
+    this.getPwProjectBlocks().map((pwProjectBlocks) => {
+      H.emitEvent(true, true, detail, 'zoom-in-down', pwProjectBlocks);
+    });
+
+    evt.stopPropagation();
   }
 
   onRemoveBlockUp(evt) {
@@ -217,6 +240,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
               <pw-fabrics-list visible=""></pw-fabrics-list>
               <pw-blocks-list visible=""></pw-blocks-list>
               <pw-add-block-button></pw-add-block-button>
+              <pw-zoom-buttons></pw-zoom-buttons>
               <pw-change-block-buttons row="" column="" x="8" y="94" visible=""></pw-change-block-buttons>
             </main>`;
   }
