@@ -43,8 +43,10 @@ export default class PwProjectBlocks extends HTMLElement {
           }
         })
         .then((res) => {
-          Token.setToken(res.req.header.Authorization);
-          console.log('New Project Saved');
+          if (res) {
+            Token.setToken(res.req.header.Authorization);
+            console.log('New Project Saved');
+          }
         });
     }
 
@@ -347,12 +349,13 @@ export default class PwProjectBlocks extends HTMLElement {
 
   getBlock(row, column) {
     return this.getBlocks()
-      .map(nodes =>
-        Array.prototype.slice.call(nodes)
-          .filter(node => (node &&
-              node.tagName === 'PW-BLOCK' &&
-                node.getAttribute('row') === row &&
-                node.getAttribute('column') === column)))
+      .chain(H.nth(1))
+      .chain(H.childNodes)
+      .map(nodes => Array.prototype.slice.call(nodes)
+        .filter(node => (node &&
+          node.tagName === 'PW-BLOCK' &&
+          node.getAttribute('row') === row &&
+          node.getAttribute('column') === column)))
       .chain(H.nth(0));
   }
 

@@ -18,24 +18,23 @@ export default class PwProject extends HTMLElement {
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
 
+    // Event listeners
     this.addEventListener('change-svg-image', this.onChangeSvgImage.bind(this), false);
 
     if (this.session && this.id) {
       this.getOldProject(Token.getPayload().get().email, this.session)
         .then((res) => {
-          if (res.body.projectId === this.id) {
+          if (res.body && res.body.projectId === this.id) {
             this._svg = res.body.svg;
             this.render();
             this.addListenersToPolygons();
+            Token.setToken(res.req.header.Authorization);
           } else {
             console.error('Session ID is not bounded with the this project');
             Page('/#/main');
           }
-
-          Token.setToken(res.req.header.Authorization);
         })
-        .catch((err) => {
-          console.error(err.message);
+        .catch(() => {
           this.getNewProject(this.id)
             .then((res) => {
               this._svg = res.body.svg;
@@ -45,8 +44,10 @@ export default class PwProject extends HTMLElement {
               return this.saveNewProject();
             })
             .then((res) => {
-              console.log('New project Saved');
-              Token.setToken(res.req.header.Authorization);
+              if (res.body) {
+                console.log('New project Saved');
+                Token.setToken(res.req.header.Authorization);
+              }
             });
         });
     }
@@ -85,7 +86,7 @@ export default class PwProject extends HTMLElement {
   }
 
   updateSvgObject(id, image) {
-    const _svg = Object.assign({}, this._svg);
+    const _svg = Object.assign({}, this._svg); // FIXME - use _.deepCopy
     _svg.patterns.map((pattern) => {
       if (pattern.id === id) {
         pattern.image.href = image; /* eslint no-param-reassign:0 */
@@ -108,18 +109,6 @@ export default class PwProject extends HTMLElement {
     </svg>`;
   }
 
-  // EX: pattern = {
-  //   id: "PATERN_ID",
-  //   width: "PATTERN_WIDTH",
-  //   height: "PATTERN_HEIGHT",
-  //   image: {
-  //     href: "http://blablac.com.br",
-  //     x: 150,
-  //     y: 150,
-  //     width: 100,
-  //     height: 100
-  //   }
-  // }
   patternSVG(pattern) {
     return `<pattern id="${pattern.id}" patternUnits="userSpaceOnUse" width="${pattern.width}" height="${pattern.height}">
               <image xlink:href="${pattern.image.href}" x="${pattern.image.x}" y="${pattern.image.y}" width="${pattern.image.width}" height="${pattern.image.height}" />
@@ -186,6 +175,10 @@ export default class PwProject extends HTMLElement {
       .catch((err) => {
         if (err.message === 'Unauthorized') {
           Page('/#/login');
+        } else if (err.message === 'Bad Request') {
+          return Promise.reject('User Project Not Saved');
+        } else {
+          return Promise.reject('Something occured...');
         }
       });
   }
@@ -201,6 +194,10 @@ export default class PwProject extends HTMLElement {
      .catch((err) => {
        if (err.message === 'Unauthorized') {
          Page('/#/login');
+       } else if (err.message === 'Bad Request') {
+         return Promise.reject('User Project Not Updated');
+       } else {
+         return Promise.reject('Something occured...');
        }
      });
   }
@@ -209,11 +206,15 @@ export default class PwProject extends HTMLElement {
     return Request.delete(`http://localhost:3000/user/projects/${this.session}`)
      .set('Authorization', token)
      .set('Content-Type', 'application/json')
-      .catch((err) => {
-        if (err.message === 'Unauthorized') {
-          Page('/#/login');
-        }
-      });
+     .catch((err) => {
+       if (err.message === 'Unauthorized') {
+         Page('/#/login');
+       } else if (err.message === 'Bad Request') {
+         return Promise.reject('Project Not Removed');
+       } else {
+         return Promise.reject('Something occured...');
+       }
+     });
   }
 
   getNewProject(id) {
@@ -223,6 +224,10 @@ export default class PwProject extends HTMLElement {
       .catch((err) => {
         if (err.message === 'Unauthorized') {
           Page('/#/login');
+        } else if (err.message === 'Bad Request') {
+          return Promise.reject('Project Not Found');
+        } else {
+          return Promise.reject('Something occured...');
         }
       });
   }
@@ -234,6 +239,10 @@ export default class PwProject extends HTMLElement {
      .catch((err) => {
        if (err.message === 'Unauthorized') {
          Page('/#/login');
+       } else if (err.message === 'Bad Request') {
+         return Promise.reject('User Project Not Found');
+       } else {
+         return Promise.reject('Something occured...');
        }
      });
   }
