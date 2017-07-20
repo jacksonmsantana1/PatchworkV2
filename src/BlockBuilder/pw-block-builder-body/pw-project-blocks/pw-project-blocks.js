@@ -5,6 +5,9 @@ import Token from '../../../lib/Token/Token';
 import H from '../../../lib/Helper/Helper';
 import './pw-block/pw-block';
 
+const MAX_ZOOM = 100;
+const MIN_ZOOM = 50;
+
 /* eslint new-cap:0 array-callback-return:0 */
 export default class PwProjectBlocks extends HTMLElement {
   static get observedAttributes() {
@@ -59,8 +62,8 @@ export default class PwProjectBlocks extends HTMLElement {
     const scale = evt.detail.scale;
 
     // Maximum scale of 100
-    if (this._zoomScale >= 100) {
-      this._zoomScale = 100;
+    if (this._zoomScale >= MAX_ZOOM) {
+      this._zoomScale = MAX_ZOOM;
     } else {
       this._zoomScale += scale;
     }
@@ -72,9 +75,9 @@ export default class PwProjectBlocks extends HTMLElement {
   onZoomOut(evt) {
     const scale = evt.detail.scale;
 
-    // Minimum scale of 30
-    if (this._zoomScale <= 50) {
-      this._zoomScale = 50;
+    // Minimum scale of 50
+    if (this._zoomScale <= MIN_ZOOM) {
+      this._zoomScale = MIN_ZOOM;
     } else {
       this._zoomScale -= scale;
     }
