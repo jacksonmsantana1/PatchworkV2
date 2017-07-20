@@ -30,6 +30,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
     this.addEventListener('svg-block-choosed', this.onSvgBlockChoosed.bind(this), false);
     this.addEventListener('click', this.onClick.bind(this), false);
     this.addEventListener('show-change-buttons', this.onShowChangeButtons.bind(this), false);
+    this.addEventListener('hide-change-buttons', this.onHideChangeButtons.bind(this), false);
     this.addEventListener('rotate-block-up', this.onRotateBlockUp.bind(this), false);
     this.addEventListener('change-block-up', this.onChangeBlockUp.bind(this), false);
     this.addEventListener('remove-block-up', this.onRemoveBlockUp.bind(this), false);
@@ -110,7 +111,16 @@ export default class PwBlockBuilderBody extends HTMLElement {
         elem.column = detail.column;
         elem.x = detail.x;
         elem.y = detail.y;
-        elem.visible = "true";
+        elem.visible = 'true';
+      });
+
+    evt.stopPropagation();
+  }
+
+  onHideChangeButtons(evt) {
+    this.getPwChangeBlockButtons()
+      .chain((elem) => {
+        elem.visible = '';
       });
 
     evt.stopPropagation();

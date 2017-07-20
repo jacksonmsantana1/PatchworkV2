@@ -18,6 +18,7 @@ export default class PwBlock extends HTMLElement {
     this.addListenersToPolygons();
     this.addEventListener('change-block-image', this.onChangeBlockImage.bind(this), false);
     this.addEventListener('mouseover', this.onMouseOver.bind(this), false);
+    this.svg.get().addEventListener('mouseout', this.onMouseOut.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -28,6 +29,16 @@ export default class PwBlock extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onMouseOut(evt) {
+    // This avoid the problem when the mouse is over the pw-change-buttons and
+    // make it hiding and appearing
+    if (evt.toElement.localName !== 'pw-change-block-buttons') {
+      H.emitEvent(true, true, '', 'hide-change-buttons', this);
+    }
+
+    evt.stopPropagation();
   }
 
   onMouseOver(evt) {
