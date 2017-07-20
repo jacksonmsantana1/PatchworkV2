@@ -262,6 +262,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
                 font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
                 color: #fff;
                 padding: 6em 0 6em 0;
+                min-height: 500px;
               }
 
               main .helper {
