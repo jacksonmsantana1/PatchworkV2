@@ -4,6 +4,7 @@ import './pw-blocks-list/pw-blocks-list';
 import './pw-project-blocks/pw-project-blocks';
 import './pw-change-block-buttons/pw-change-block-buttons';
 import './pw-zoom-buttons/pw-zoom-buttons';
+import './pw-initial-image/pw-initial-image';
 
 export default class PwBlockBuilderBody extends HTMLElement {
   static get observedAttributes() {
@@ -36,6 +37,8 @@ export default class PwBlockBuilderBody extends HTMLElement {
     this.addEventListener('remove-block-up', this.onRemoveBlockUp.bind(this), false);
     this.addEventListener('zoom-in-block-up', this.onZoomInUp.bind(this), false);
     this.addEventListener('zoom-out-block-up', this.onZoomOutUp.bind(this), false);
+    this.addEventListener('show-initial-image', this.onShowInitialImage.bind(this), false);
+    this.addEventListener('hide-initial-image', this.onHideInitialImage.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -46,6 +49,22 @@ export default class PwBlockBuilderBody extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onHideInitialImage(evt) {
+    this.getPwInitialImage().map((pwInitialImage) => {
+      pwInitialImage.visible = '';
+    });
+
+    evt.stopPropagation();
+  }
+
+  onShowInitialImage(evt) {
+    this.getPwInitialImage().map((pwInitialImage) => {
+      pwInitialImage.visible = 'true';
+    });
+
+    evt.stopPropagation();
   }
 
   onZoomOutUp(evt) {
@@ -229,6 +248,11 @@ export default class PwBlockBuilderBody extends HTMLElement {
       .chain(H.querySelector('pw-change-block-buttons'));
   }
 
+  getPwInitialImage() {
+    return H.getShadowRoot(this)
+      .chain(H.querySelector('pw-initial-image'));
+  }
+
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
   }
@@ -252,11 +276,17 @@ export default class PwBlockBuilderBody extends HTMLElement {
               <pw-add-block-button></pw-add-block-button>
               <pw-zoom-buttons></pw-zoom-buttons>
               <pw-change-block-buttons row="" column="" x="8" y="94" visible=""></pw-change-block-buttons>
+              <pw-initial-image visible="" src="http://localhost:3000/images/add.svg">Start adding your first block</pw-initial-image>
             </main>`;
   }
 
   get style() {
     return `<style>
+              initial {
+                width: 500px;
+                height: 500px;
+              }
+
               main {
                 background: #f9dae0;
                 font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;

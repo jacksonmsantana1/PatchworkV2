@@ -113,6 +113,8 @@ export default class PwChangeBlockButtons extends HTMLElement {
     } else {
       this.showButtons();
     }
+
+    this.setAttribute('visible', value);
   }
 
   get html() {

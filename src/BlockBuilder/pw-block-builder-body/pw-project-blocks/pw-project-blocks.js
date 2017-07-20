@@ -37,11 +37,15 @@ export default class PwProjectBlocks extends HTMLElement {
       this.getOldProject(Token.getPayload().get().email, this.session)
         .then((res) => {
           this._blocks = this._blocks.concat(res.body.svg);
+          if (!this._blocks.length) {
+            H.emitEvent(true, true, '', 'show-initial-image', this);
+          }
           this.render();
 
           Token.setToken(res.req.header.Authorization);
         }, (err) => {
           if (err === 'Project Not Found') {
+            H.emitEvent(true, true, '', 'show-initial-image', this);
             return this.saveNewProject();
           }
         })
@@ -196,6 +200,10 @@ export default class PwProjectBlocks extends HTMLElement {
       Token.setToken(res.req.header.Authorization);
     });
 
+    if (!this._blocks.length) {
+      H.emitEvent(true, true, '', 'show-initial-image', this);
+    }
+
     evt.stopPropagation();
   }
 
@@ -248,6 +256,8 @@ export default class PwProjectBlocks extends HTMLElement {
       Token.setToken(res.req.header.Authorization);
     });
 
+
+    H.emitEvent(true, true, '', 'hide-initial-image', this);
     evt.stopPropagation();
   }
 
