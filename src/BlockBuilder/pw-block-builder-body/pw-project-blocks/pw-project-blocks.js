@@ -430,12 +430,18 @@ export default class PwProjectBlocks extends HTMLElement {
 
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
-    return `<div style="display:inline-block;width:${this._zoomScale}%;">${this._blocks.map(block =>
+    return `<div class="wrapper">${this._blocks.map(block =>
       `<pw-block column="${block.column}" row="${block.row}">${this.projectToSVG(block)}</pw-block>`).join('')}</div>`;
   }
 
   get style() {
     return `<style>
+            .wrapper {
+              display: block;
+              width: ${this._zoomScale}%;
+              margin:auto;
+            }
+
             pw-block {
               z-index:10;
             }
