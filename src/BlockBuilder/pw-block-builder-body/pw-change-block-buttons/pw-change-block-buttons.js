@@ -3,6 +3,8 @@ import './pw-rotate-block-button/pw-rotate-block-button';
 import './pw-delete-block-button/pw-delete-block-button';
 import './pw-change-block-button/pw-change-block-button';
 
+const Y_MARGIN = -60;
+
 export default class PwChangeBlockButtons extends HTMLElement {
   static get observedAttributes() {
     return ['visible', 'x', 'y', 'row', 'column'];
@@ -120,7 +122,7 @@ export default class PwChangeBlockButtons extends HTMLElement {
               .wrap {
                 position:absolute;
                 background-color: #fbbaba;
-                top: ${this.y}px;
+                top: ${this.y + Y_MARGIN}px;
                 left: ${this.x}px;
                 padding: 0.5em;
                 border-radius: 50%;
