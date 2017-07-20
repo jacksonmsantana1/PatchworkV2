@@ -59,11 +59,12 @@ export default class PwProjectBlocks extends HTMLElement {
     const scale = evt.detail.scale;
 
     // Maximum scale of 100
-    if (this._zoomScale <= 30) {
-      this._zoomScale = 30;
+    if (this._zoomScale >= 100) {
+      this._zoomScale = 100;
+    } else {
+      this._zoomScale += scale;
     }
 
-    this._zoomScale += scale;
     this.render();
     evt.stopPropagation();
   }
@@ -72,11 +73,12 @@ export default class PwProjectBlocks extends HTMLElement {
     const scale = evt.detail.scale;
 
     // Minimum scale of 30
-    if (this._zoomScale >= 100) {
-      this._zoomScale = 100;
+    if (this._zoomScale <= 50) {
+      this._zoomScale = 50;
+    } else {
+      this._zoomScale -= scale;
     }
 
-    this._zoomScale -= scale;
     this.render();
     evt.stopPropagation();
   }
