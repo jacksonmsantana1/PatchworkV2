@@ -23,6 +23,8 @@ export default class PwChangeBlockButtons extends HTMLElement {
     this.render();
     this.visible = '';
 
+    this.addEventListener('mouseout', this.onMouseOut.bind(this), false);
+
     if (super.createdCallback) {
       super.createdCallback();
     }
@@ -32,6 +34,11 @@ export default class PwChangeBlockButtons extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onMouseOut(evt) {
+    H.emitEvent(true, true, '', 'hide-change-buttons', evt.currentTarget);
+    evt.stopPropagation();
   }
 
   render() {
