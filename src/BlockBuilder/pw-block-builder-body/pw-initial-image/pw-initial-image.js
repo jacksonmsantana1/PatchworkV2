@@ -74,7 +74,7 @@ export default class PwInitialImage extends HTMLElement {
       this.show();
     }
 
-    // this.setAttribute('visible', value);
+    this.setAttribute('visible', value);
   }
 
   get html() {

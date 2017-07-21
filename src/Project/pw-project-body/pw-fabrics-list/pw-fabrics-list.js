@@ -3,6 +3,7 @@ import Request from 'superagent';
 import Page from 'page';
 import Token from '../../../lib/Token/Token';
 import H from '../../../lib/Helper/Helper';
+import '../../../components/pw-close-button/pw-close-button'; // FIXME See if theres a better place to put it
 
 export default class PwFabricsList extends HTMLElement {
   static get observedAttributes() {
@@ -21,6 +22,7 @@ export default class PwFabricsList extends HTMLElement {
       this.hideList();
       this.addListenersToFabrics();
       this.addEventListener('show-fabrics-down', this.onShowFabrics.bind(this), false);
+      this.addEventListener('close-pw-fabrics-list', this.onClosePwFabricsList.bind(this), false);
     });
 
     if (super.createdcallback) {
@@ -32,6 +34,11 @@ export default class PwFabricsList extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onClosePwFabricsList(evt) {
+    this.visible = '';
+    evt.stopPropagation();
   }
 
   onShowFabrics(evt) {
@@ -129,6 +136,11 @@ export default class PwFabricsList extends HTMLElement {
   get style() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<style>
+              pw-close-button {
+                position: absolute;
+                z-index: 10;
+              }
+
               .page-scroll {
                  position: fixed;
                  bottom: 0;
@@ -191,6 +203,7 @@ export default class PwFabricsList extends HTMLElement {
 
   set html(fabrics) {
     this._html = `<div class="page-scroll">
+              <pw-close-button target="pw-fabrics-list"></pw-close-button>
               <div class="gallery">
                 <div class="slides">
                   ${fabrics.map(fabric => `<div class='slide z-depth-1 hoverable'><img src="${fabric.image}"/></div>`).join('')}

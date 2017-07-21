@@ -3,6 +3,7 @@ import Request from 'superagent';
 import Page from 'page';
 import Token from '../../../lib/Token/Token';
 import H from '../../../lib/Helper/Helper';
+import '../../../components/pw-close-button/pw-close-button';
 
 export default class PwBlocksList extends HTMLElement {
   static get observedAttributes() {
@@ -21,6 +22,7 @@ export default class PwBlocksList extends HTMLElement {
       this.html = this._blocks;
       this.render();
       this.addListenersToBlocks();
+      this.addEventListener('close-pw-blocks-list', this.onClosePwBlocksList.bind(this), false);
       this.hideList();
     });
 
@@ -33,6 +35,11 @@ export default class PwBlocksList extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onClosePwBlocksList(evt) {
+    this.visible = '';
+    evt.stopPropagation();
   }
 
   addListenersToBlocks() {
@@ -116,6 +123,11 @@ export default class PwBlocksList extends HTMLElement {
   get style() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<style>
+              pw-close-button {
+                position: absolute;
+                z-index: 10;
+              }
+
               .page-scroll {
                  position: fixed;
                  bottom: 0;
@@ -178,6 +190,7 @@ export default class PwBlocksList extends HTMLElement {
 
   set html(blocks) {
     this._html = `<div class="page-scroll">
+              <pw-close-button target="pw-blocks-list"></pw-close-button>
               <div class="gallery">
                 <div class="slides">
                   ${blocks.map(block => `<div class='slide z-depth-1 hoverable'><img id="${block._id}" src="${block.image}"/></div>`).join('')}
