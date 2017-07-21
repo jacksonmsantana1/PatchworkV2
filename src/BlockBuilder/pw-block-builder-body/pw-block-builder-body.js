@@ -274,7 +274,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
               <pw-fabrics-list visible=""></pw-fabrics-list>
               <pw-blocks-list visible=""></pw-blocks-list>
               <pw-add-block-button></pw-add-block-button>
-              <pw-zoom-buttons></pw-zoom-buttons>
+              <pw-zoom-buttons scale="1"></pw-zoom-buttons>
               <pw-change-block-buttons row="" column="" x="8" y="94" visible=""></pw-change-block-buttons>
               <pw-initial-image visible="" src="http://localhost:3000/images/add.svg">Start adding your first block</pw-initial-image>
             </main>`;

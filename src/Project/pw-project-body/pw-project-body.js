@@ -123,7 +123,7 @@ export default class PwProjectBody extends HTMLElement {
     return `<main>
               <pw-project id="${this.id}" session="${this.session}"></pw-project>
               <pw-fabrics-list visible=""></pw-fabrics-list>
-              <pw-zoom-buttons></pw-zoom-buttons>
+              <pw-zoom-buttons scale="10"></pw-zoom-buttons>
             </main>`;
   }
 

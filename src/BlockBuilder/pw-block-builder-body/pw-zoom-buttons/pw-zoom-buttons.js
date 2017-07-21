@@ -2,7 +2,14 @@ import './pw-zoom-minus-button/pw-zoom-minus-button';
 import './pw-zoom-plus-button/pw-zoom-plus-button';
 
 export default class PwZoomButtons extends HTMLElement {
+  static get observedAttributes() {
+    return ['scale'];
+  }
+
   createdCallback() {
+    // Initializing attributes
+    this._scale = parseInt(this.getAttribute('scale'), 10) || 1;
+
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
 
@@ -22,11 +29,21 @@ export default class PwZoomButtons extends HTMLElement {
     this.shadowRoot.innerHTML = this.style + this.html;
   }
 
+  get scale() {
+    return this._scale;
+  }
+
+  set scale(value) {
+    this._scale = parseInt(value, 10);
+    this.setAttribute('scale', value);
+    this.render();
+  }
+
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<div class="wrap">
-              <pw-zoom-plus-button scale="1"></pw-zoom-plus-button>
-              <pw-zoom-minus-button scale="1"></pw-zoom-minus-button>
+              <pw-zoom-plus-button scale="${this.scale}"></pw-zoom-plus-button>
+              <pw-zoom-minus-button scale="${this.scale}"></pw-zoom-minus-button>
             </div>`;
   }
 

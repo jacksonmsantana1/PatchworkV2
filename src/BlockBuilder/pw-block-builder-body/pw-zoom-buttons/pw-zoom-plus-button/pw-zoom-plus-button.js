@@ -1,9 +1,14 @@
 import H from '../../../../lib/Helper/Helper';
 
-const ZOOM_CONSTANT = 1;
-
 export default class PwZoomPlusButton extends HTMLElement {
+  static get observedAttributes() {
+    return ['scale'];
+  }
+
   createdCallback() {
+    // Initializing attributes
+    this._scale = parseInt(this.getAttribute('scale'), 10) || 1;
+
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
     this.render();
@@ -24,7 +29,7 @@ export default class PwZoomPlusButton extends HTMLElement {
 
   onClick(evt) {
     const detail = {
-      scale: ZOOM_CONSTANT,
+      scale: this.scale,
     };
 
     H.emitEvent(true, true, detail, 'zoom-in-block-up', this);
@@ -33,6 +38,16 @@ export default class PwZoomPlusButton extends HTMLElement {
 
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
+  }
+
+  get scale() {
+    return this._scale;
+  }
+
+  set scale(value) {
+    this._scale = parseInt(value, 10);
+    this.setAttribute('scale', value);
+    this.render();
   }
 
   get html() {
