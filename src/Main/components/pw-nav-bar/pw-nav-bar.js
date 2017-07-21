@@ -91,6 +91,7 @@ export default class PwNavBar extends HTMLElement {
               </div>
             </header>`;
   }
+
   get style() {
     return `<style>
               @import url(https://fonts.googleapis.com/css?family=Nunito);
@@ -98,14 +99,6 @@ export default class PwNavBar extends HTMLElement {
                 box-sizing: border-box;
                 margin: 0;
                 padding: 0;
-              }
-
-              html {
-                font-size: 100%;
-                font-family: "Nunito", Arial, sans-serif;
-                font-weight: normal;
-                line-height: 1.5;
-                -webkit-font-smoothing: antialiased;
               }
 
               a {
@@ -187,6 +180,8 @@ export default class PwNavBar extends HTMLElement {
                 -o-transition: max-height 0.4s;
                 -webkit-transition: max-height 0.4s;
                 transition: max-height 0.4s;
+                position: relative;
+                z-index: 10;
               }
 
               .navbar .menu {
