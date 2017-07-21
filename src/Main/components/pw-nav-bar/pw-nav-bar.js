@@ -101,22 +101,6 @@ export default class PwNavBar extends HTMLElement {
                 padding: 0;
               }
 
-              a {
-                color: #e29797;
-                opacity: 1;
-                text-decoration: none;
-              }
-
-              a:hover {
-                opacity: 0.85;
-                text-decoration: underline;
-              }
-
-              .content {
-                text-align: center;
-                margin-top: 2em;
-              }
-
               .header {
                 position: relative;
                 width: 100%;
@@ -190,31 +174,6 @@ export default class PwNavBar extends HTMLElement {
                 list-style-type: none;
               }
 
-               li {
-                list-style-type: none;
-                display: block;
-              }
-
-              .navbar .menu li a {
-                display: block;
-                text-decoration: none;
-                color: #fff;
-                padding: 0 0.8em;
-                -moz-transition: all 0.2s ease;
-                -o-transition: all 0.2s ease;
-                -webkit-transition: all 0.2s ease;
-                transition: all 0.2s ease;
-                border-bottom: 1px solid #db8b8b;
-              }
-
-              .navbar .menu li a:hover {
-                background-color: #df9797;
-              }
-
-              .navbar .menu li a.active {
-                background-color: #d98383;
-              }
-
               .expand {
                 max-height: 20em;
               }
@@ -245,25 +204,6 @@ export default class PwNavBar extends HTMLElement {
 
                 .navbar .menu {
                   box-shadow: 0 -3px 0 #bc3a3a inset;
-                }
-
-                .navbar .menu li {
-                  list-style-type: none;
-                  display: inline-block;
-                  text-align: center;
-                }
-
-                .navbar .menu li a {
-                  display: block;
-                  border-bottom: 0;
-                }
-
-                .navbar .menu li a:hover {
-                  box-shadow: 0 -3px 0 indianred inset;
-                }
-
-                .navbar .menu li a.active {
-                  box-shadow: 0 -3px 0 indianred inset;
                 }
               }
             </style>`;
