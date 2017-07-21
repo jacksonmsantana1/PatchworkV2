@@ -19,6 +19,8 @@ export default class PwProjectBody extends HTMLElement {
     this.addEventListener('svg-image-choosed', this.onSvgImageChoosed.bind(this), false);
     this.addEventListener('show-fabrics', this.onShowFabrics.bind(this), false);
     this.addEventListener('click', this.onClick.bind(this), false);
+    this.addEventListener('zoom-in-block-up', this.onZoomInUp.bind(this), false);
+    this.addEventListener('zoom-out-block-up', this.onZoomOutUp.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -54,6 +56,27 @@ export default class PwProjectBody extends HTMLElement {
       H.emitEvent(true, true, evt.detail, 'change-svg-image', pwProject);
     });
   }
+
+  onZoomOutUp(evt) {
+    const detail = evt.detail;
+
+    this.getPwProject().map((pwProject) => {
+      H.emitEvent(true, true, detail, 'zoom-out-down', pwProject);
+    });
+
+    evt.stopPropagation();
+  }
+
+  onZoomInUp(evt) {
+    const detail = evt.detail;
+
+    this.getPwProject().map((pwProject) => {
+      H.emitEvent(true, true, detail, 'zoom-in-down', pwProject);
+    });
+
+    evt.stopPropagation();
+  }
+
 
   getPwProject() {
     return H.getShadowRoot(this)
@@ -100,6 +123,7 @@ export default class PwProjectBody extends HTMLElement {
     return `<main>
               <pw-project id="${this.id}" session="${this.session}"></pw-project>
               <pw-fabrics-list visible=""></pw-fabrics-list>
+              <pw-zoom-buttons></pw-zoom-buttons>
             </main>`;
   }
 

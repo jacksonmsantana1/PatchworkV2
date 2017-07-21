@@ -3,6 +3,9 @@ import Request from 'superagent';
 import H from '../../../lib/Helper/Helper';
 import Token from '../../../lib/Token/Token';
 
+const MAX_ZOOM = 100;
+const MIN_ZOOM = 20;
+
 /* eslint  new-cap:0 */
 export default class PwProject extends HTMLElement {
   static get observedAttributes() {
@@ -14,12 +17,15 @@ export default class PwProject extends HTMLElement {
     this.id = this.getAttribute('id') || '';
     this.session = this.getAttribute('session') || '';
     this._svg = {};
+    this._zoomScale = 100;
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
 
     // Event listeners
     this.addEventListener('change-svg-image', this.onChangeSvgImage.bind(this), false);
+    this.addEventListener('zoom-in-down', this.onZoomIn.bind(this), false);
+    this.addEventListener('zoom-out-down', this.onZoomOut.bind(this), false);
 
     if (this.session && this.id) {
       this.getOldProject(Token.getPayload().get().email, this.session)
@@ -70,6 +76,34 @@ export default class PwProject extends HTMLElement {
     if (retVal !== true) {
       this.removeProject(token);
     }
+  }
+
+  onZoomIn(evt) {
+    const scale = evt.detail.scale;
+
+    // Maximum scale of 100
+    if (this._zoomScale >= MAX_ZOOM) {
+      this._zoomScale = MAX_ZOOM;
+    } else {
+      this._zoomScale += scale;
+    }
+
+    this.render();
+    evt.stopPropagation();
+  }
+
+  onZoomOut(evt) {
+    const scale = evt.detail.scale;
+
+    // Minimum scale of 50
+    if (this._zoomScale <= MIN_ZOOM) {
+      this._zoomScale = MIN_ZOOM;
+    } else {
+      this._zoomScale -= scale;
+    }
+
+    this.render();
+    evt.stopPropagation();
   }
 
   onChangeSvgImage(evt) {
@@ -281,14 +315,13 @@ export default class PwProject extends HTMLElement {
   get style() {
     return `<style>
               #wrapper {
-                position:relative;
-                width:500px;
-                height:500px;
-                margin:0 auto
+                display: block;
               }
 
               svg {
-                position:absolute;
+                display: table;
+                margin: auto;
+                width: ${this._zoomScale}%;
               }
             </style>`;
   }
