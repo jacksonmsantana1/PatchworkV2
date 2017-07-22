@@ -96,6 +96,10 @@ const nth = R.curry((n, arr) => {
 const querySelector = R.curry((query, doc) =>
   Either.fromNullable(doc).map(_doc => _doc.querySelector(query)).chain(isNil));
 
+// querySelectorAll :: String -> HTMLElement -> Either(HTMLElement)
+const querySelectorAll = R.curry((query, doc) =>
+  Either.fromNullable(doc).map(_doc => _doc.querySelectorAll(query)).chain(isArray));
+
 // assignedNodes :: HTMLElement<slot> ->Either([HTMLELement])
 const assignedNodes = doc => Either.fromNullable(doc)
                                 .map(_elem => _elem.assignedNodes())
@@ -155,6 +159,7 @@ Helper.log = log;
 Helper.isNil = isNil;
 Helper.nth = nth;
 Helper.querySelector = querySelector;
+Helper.querySelectorAll = querySelectorAll;
 Helper.assignedNodes = assignedNodes;
 Helper.equals = equals;
 Helper.diffs = diffs;

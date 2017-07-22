@@ -1,5 +1,6 @@
 import H from '../../lib/Helper/Helper';
 
+// FIXME Change the name
 export default class PwSaveDialog extends HTMLElement {
   static get observedAttributes() {
     return ['title', 'message'];
@@ -31,22 +32,16 @@ export default class PwSaveDialog extends HTMLElement {
 
   get saveButton() {
     return H.getShadowRoot(this)
-      .chain(H.childNodes)
-      .chain(H.nth(1))
-      .chain(H.childNodes)
-      .chain(H.nth(1))
-      .chain(H.childNodes)
-      .chain(H.nth(5));
+      .chain(H.querySelector('div'))
+      .chain(H.querySelectorAll('button'))
+      .chain(H.nth(0));
   }
 
   get dontSaveButton() {
     return H.getShadowRoot(this)
-      .chain(H.childNodes)
-      .chain(H.nth(1))
-      .chain(H.childNodes)
-      .chain(H.nth(1))
-      .chain(H.childNodes)
-      .chain(H.nth(7));
+      .chain(H.querySelector('div'))
+      .chain(H.querySelectorAll('button'))
+      .chain(H.nth(1));
   }
 
 
