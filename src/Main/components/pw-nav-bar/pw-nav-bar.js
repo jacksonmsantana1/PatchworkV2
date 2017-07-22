@@ -34,7 +34,6 @@ export default class PwNavBar extends HTMLElement {
 
   onMenuIconClick() {
     this.getNav().get().classList.toggle('expand');
-    console.log('ANUS');
   }
 
   getNav() {
