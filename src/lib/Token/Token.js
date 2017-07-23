@@ -37,6 +37,7 @@ class Token {
   }
 
   static setToken(str) {
+    console.log(`New Token: ${str}`); // FIXME
     localStorage.setItem('token', str);
   }
 

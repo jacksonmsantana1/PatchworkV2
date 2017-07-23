@@ -6,7 +6,7 @@ import Token from '../../../lib/Token/Token';
 const MAX_ZOOM = 100;
 const MIN_ZOOM = 20;
 
-/* eslint  new-cap:0 */
+/* eslint  new-cap:0 prefer-arrow-callback:0 */
 export default class PwProject extends HTMLElement {
   static get observedAttributes() {
     return ['id', 'session'];
@@ -36,7 +36,6 @@ export default class PwProject extends HTMLElement {
           if (res.body && res.body.projectId === this.id) {
             this._svg = res.body.svg;
             this.render();
-            this.addListenersToPolygons();
             Token.setToken(res.req.header.Authorization);
           } else {
             console.error('Session ID is not bounded with the this project');
@@ -49,6 +48,8 @@ export default class PwProject extends HTMLElement {
               this._svg = res.body.svg;
               this.render();
               this.addListenersToPolygons();
+              this.addMouseOverListenersToPolygons();
+              this.addMouseOutListenersToPolygons();
               Token.setToken(res.req.header.Authorization);
               return this.saveNewProject();
             })
@@ -152,10 +153,12 @@ export default class PwProject extends HTMLElement {
 
     this.updateSvgObject(id, image);
     this.saveProjectSvg().then((res) => {
-      console.log('Project Saved');
-      this.setSvgPatternImage(id, image);
-      evt.stopPropagation();
-      Token.setToken(res.req.header.Authorization);
+      if (res) {
+        console.log('Project Saved');
+        this.setSvgPatternImage(id, image);
+        evt.stopPropagation();
+        Token.setToken(res.req.header.Authorization);
+      }
     });
   }
 
@@ -172,6 +175,9 @@ export default class PwProject extends HTMLElement {
 
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
+    this.addListenersToPolygons();
+    this.addMouseOverListenersToPolygons();
+    this.addMouseOutListenersToPolygons();
   }
 
   projectToSVG(project) {
@@ -209,6 +215,43 @@ export default class PwProject extends HTMLElement {
     });
   }
 
+  addMouseOverListenersToPolygons() {
+    const _this = this;
+    this.svg.map((elem) => {
+      elem.addEventListener('mouseover', function mouseover(evt) {
+        if (evt.target !== evt.currentTarget) {
+          const id = evt.target.id;
+          _this.setSvgPolygonStroke(id, 'white', 1.5);
+        }
+
+        evt.stopPropagation();
+      });
+    });
+  }
+
+  addMouseOutListenersToPolygons() {
+    const _this = this;
+    this.svg.map((elem) => {
+      elem.addEventListener('mouseout', function mouseover(evt) {
+        if (evt.target !== evt.currentTarget) {
+          const id = evt.target.id;
+          _this.setSvgPolygonStroke(id, '', 0);
+        }
+
+        evt.stopPropagation();
+      });
+    });
+  }
+
+  setSvgPolygonStroke(id, stroke, width) {
+    this.getSvgPolygonById(id).map((polygon) => {
+      const _polygon = polygon;
+
+      _polygon.style.stroke = stroke;
+      _polygon.style.strokeWidth = width;
+    });
+  }
+
   setSvgPatternImage(id, img) {
     return this.getSvgPatternById(id)
       .chain(H.childNodes)
@@ -219,21 +262,18 @@ export default class PwProject extends HTMLElement {
 
   getSvgPatternById(id) {
     /* eslint consistent-return:0 */
-    return this.svg.chain(H.childNodes)
-      .chain(H.nth(1))
-      .chain(H.childNodes)
-      .map(nodes =>
-        Array.prototype.slice.call(nodes).filter(node =>
-          (node && node.tagName === 'pattern' && node.id === id)))
+    return this.svg.chain(H.querySelector('defs'))
+      .chain(H.querySelectorAll('pattern'))
+      .map(nodes => Array.prototype.slice.call(nodes).filter(node =>
+          (node && node.id === id)))
       .chain(H.nth(0));
   }
 
   getSvgPolygonById(id) {
-    /* eslint consistent-return:0 */
-    return this.svg.chain(H.childNodes).map(nodes =>
-      Array.prototype.slice.call(nodes).filter(node =>
-        (node && node.tagName === 'polygon' && node.id === id)))
-      .chain(H.nth(1));
+    return this.svg.chain(H.querySelectorAll('polygon'))
+      .map(nodes => Array.prototype.slice.call(nodes).filter(node =>
+          (node && node.id === id)))
+      .chain(H.nth(0));
   }
 
   saveNewProject() {
