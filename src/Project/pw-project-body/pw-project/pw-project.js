@@ -18,6 +18,7 @@ export default class PwProject extends HTMLElement {
     this.session = this.getAttribute('session') || '';
     this._svg = {};
     this._zoomScale = 100;
+    this._exit = false;
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
@@ -73,12 +74,25 @@ export default class PwProject extends HTMLElement {
 
   // FIXME - See how to do it
   detachedCallback() {
-    /* const token = Token.getToken().get();
-    const retVal = confirm("Do you want to save this project ?");
-
-    if (retVal !== true) {
-      this.removeProject(token);
-    } */
+    if (!this._exit) {
+      window.alert('Would you like to save this project ?', (toSave) => {
+        if (toSave) {
+          this.saveProjectSvg().then((res) => {
+            if (res) {
+              console.log('Project Saved');
+              Token.setToken(res.req.header.Authorization);
+            }
+          });
+        } else {
+          this.removeProject().then((res) => {
+            if (res) {
+              console.log('Project Removed');
+              Token.setToken(res.req.header.Authorization);
+            }
+          });
+        }
+      });
+    }
   }
 
   onSaveProject(evt) {
@@ -89,6 +103,7 @@ export default class PwProject extends HTMLElement {
       }
     });
 
+    this._exit = true;
     evt.stopPropagation();
   }
 
@@ -100,6 +115,7 @@ export default class PwProject extends HTMLElement {
       }
     });
 
+    this._exit = true;
     evt.stopPropagation();
   }
 

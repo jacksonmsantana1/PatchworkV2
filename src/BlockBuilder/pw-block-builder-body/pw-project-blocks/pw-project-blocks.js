@@ -21,6 +21,7 @@ export default class PwProjectBlocks extends HTMLElement {
     this._maxRows = this.getAttribute('maxrows') || '';
     this._blocks = [];
     this._zoomScale = 100;
+    this._exit = false;
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
@@ -64,6 +65,28 @@ export default class PwProjectBlocks extends HTMLElement {
     }
   }
 
+  detachedCallback() {
+    if (!this._exit) {
+      window.alert('Would you like to save this project ?', (toSave) => {
+        if (toSave) {
+          this.saveProjectSvg().then((res) => {
+            if (res) {
+              console.log('Project Saved');
+              Token.setToken(res.req.header.Authorization);
+            }
+          });
+        } else {
+          this.removeProject().then((res) => {
+            if (res) {
+              console.log('Project Removed');
+              Token.setToken(res.req.header.Authorization);
+            }
+          });
+        }
+      });
+    }
+  }
+
   onSaveProject(evt) {
     this.saveProjectSvg().then((res) => {
       if (res) {
@@ -72,6 +95,7 @@ export default class PwProjectBlocks extends HTMLElement {
       }
     });
 
+    this._exit = true;
     evt.stopPropagation();
   }
 
@@ -83,6 +107,7 @@ export default class PwProjectBlocks extends HTMLElement {
       }
     });
 
+    this._exit = true;
     evt.stopPropagation();
   }
 
@@ -112,15 +137,6 @@ export default class PwProjectBlocks extends HTMLElement {
 
     this.render();
     evt.stopPropagation();
-  }
-
-  detachedCallback() {
-    /* const token = Token.getToken().get();
-    const retVal = confirm("Do you want to save this project ?");
-
-    if (retVal !== true) {
-      this.removeProject(token);
-    } */
   }
 
   // FIXME

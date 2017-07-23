@@ -124,7 +124,7 @@ Page('/projects/:id/:sessionId', isLog, updateUserLastSession, (ctx) => {
 
 Page('/blocks', () => {
   const newSession = ShortId.generate();
-  Page(`/#/blocks/${newSession}`);
+  Page.redirect(`/#/blocks/${newSession}`);
 });
 
 Page('/blocks/:sessionId', isLog, updateUserLastSession, (ctx) => {
