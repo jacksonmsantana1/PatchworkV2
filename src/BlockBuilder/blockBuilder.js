@@ -1,5 +1,9 @@
+import Page from 'page';
+import Either from 'data.either';
+import H from '../lib/Helper/Helper';
 import './pw-block-builder-body/pw-block-builder-body';
 
+/* eslint new-cap:0 */
 class BlockBuilderPage extends HTMLElement {
   static get observedAttributes() {
     return ['session'];
@@ -13,12 +17,39 @@ class BlockBuilderPage extends HTMLElement {
     // Initializing properties
     this._session = this.getAttribute('session') || '';
     this.render();
+
+    // Event Listeners
+    this.addEventListener('go-to-page', this.onGoToPage.bind(this), false);
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onGoToPage(evt) {
+    const detail = evt.detail;
+    const pwBlockBuilderBody = this.getPwBlockBuilderBody().get();
+
+    if (detail !== '/#/blocks') {
+      window.alert('Would you like to save this project ?', (toSave) => {
+        if (toSave) {
+          H.emitEvent(true, true, '', 'save-project', pwBlockBuilderBody);
+        } else {
+          H.emitEvent(true, true, '', 'remove-project', pwBlockBuilderBody);
+        }
+
+        Page(`${detail}`);
+      });
+    }
+
+    evt.stopPropagation();
+  }
+
+  getPwBlockBuilderBody() {
+    return Either.fromNullable(this)
+      .chain(H.querySelector('pw-block-builder-body'));
   }
 
   get session() {

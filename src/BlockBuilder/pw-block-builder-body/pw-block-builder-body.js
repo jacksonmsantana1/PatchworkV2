@@ -39,6 +39,8 @@ export default class PwBlockBuilderBody extends HTMLElement {
     this.addEventListener('zoom-out-block-up', this.onZoomOutUp.bind(this), false);
     this.addEventListener('show-initial-image', this.onShowInitialImage.bind(this), false);
     this.addEventListener('hide-initial-image', this.onHideInitialImage.bind(this), false);
+    this.addEventListener('save-project', this.onSaveProject.bind(this), false);
+    this.addEventListener('remove-project', this.onRemoveProject.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -49,6 +51,26 @@ export default class PwBlockBuilderBody extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onRemoveProject(evt) {
+    const detail = evt.detail;
+
+    this.getPwProjectBlocks().map((pwProjectBlocks) => {
+      H.emitEvent(true, true, detail, 'remove-project', pwProjectBlocks);
+    });
+
+    evt.stopPropagation();
+  }
+
+  onSaveProject(evt) {
+    const detail = evt.detail;
+
+    this.getPwProjectBlocks().map((pwProjectBlocks) => {
+      H.emitEvent(true, true, detail, 'save-project', pwProjectBlocks);
+    });
+
+    evt.stopPropagation();
   }
 
   onHideInitialImage(evt) {

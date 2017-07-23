@@ -32,6 +32,8 @@ export default class PwProjectBlocks extends HTMLElement {
     this.addEventListener('remove-block-down', this.onRemoveBlock.bind(this), false);
     this.addEventListener('zoom-in-down', this.onZoomIn.bind(this), false);
     this.addEventListener('zoom-out-down', this.onZoomOut.bind(this), false);
+    this.addEventListener('save-project', this.onSaveProject.bind(this), false);
+    this.addEventListener('remove-project', this.onRemoveProject.bind(this), false);
 
     if (this.session) {
       this.getOldProject(Token.getPayload().get().email, this.session)
@@ -60,6 +62,28 @@ export default class PwProjectBlocks extends HTMLElement {
     if (super.createdCallback) {
       super.createdCallback();
     }
+  }
+
+  onSaveProject(evt) {
+    this.saveProjectSvg().then((res) => {
+      if (res) {
+        console.log('Project Saved');
+        Token.setToken(res.req.header.Authorization);
+      }
+    });
+
+    evt.stopPropagation();
+  }
+
+  onRemoveProject(evt) {
+    this.removeProject().then((res) => {
+      if (res) {
+        console.log('Project Removed');
+        Token.setToken(res.req.header.Authorization);
+      }
+    });
+
+    evt.stopPropagation();
   }
 
   onZoomIn(evt) {
@@ -91,12 +115,12 @@ export default class PwProjectBlocks extends HTMLElement {
   }
 
   detachedCallback() {
-    const token = Token.getToken().get();
+    /* const token = Token.getToken().get();
     const retVal = confirm("Do you want to save this project ?");
 
     if (retVal !== true) {
       this.removeProject(token);
-    }
+    } */
   }
 
   // FIXME
@@ -256,7 +280,6 @@ export default class PwProjectBlocks extends HTMLElement {
       Token.setToken(res.req.header.Authorization);
     });
 
-
     H.emitEvent(true, true, '', 'hide-initial-image', this);
     evt.stopPropagation();
   }
@@ -281,9 +304,9 @@ export default class PwProjectBlocks extends HTMLElement {
     evt.stopPropagation();
   }
 
-  removeProject(token) {
+  removeProject() {
     return Request.delete(`http://localhost:3000/user/projects/${this.session}`)
-     .set('Authorization', token)
+     .set('Authorization', Token.getToken().get())
      .set('Content-Type', 'application/json')
       .catch((err) => {
         if (err.message === 'Unauthorized') {

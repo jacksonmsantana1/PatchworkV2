@@ -71,6 +71,7 @@ export default class PwProject extends HTMLElement {
     }
   }
 
+  // FIXME - See how to do it
   detachedCallback() {
     /* const token = Token.getToken().get();
     const retVal = confirm("Do you want to save this project ?");
