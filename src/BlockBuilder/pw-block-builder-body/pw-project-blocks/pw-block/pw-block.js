@@ -1,5 +1,6 @@
 import H from '../../../../lib/Helper/Helper';
 
+/* eslint prefer-arrow-callback:0 */
 export default class PwBlock extends HTMLElement {
   static get observedAttributes() {
     return ['column', 'row'];
@@ -15,9 +16,11 @@ export default class PwBlock extends HTMLElement {
     this.render();
 
     // Event Listeners
-    this.addListenersToPolygons();
+    this.addClickListenersToPolygons();
+    this.addMouseOverListenersToPolygons();
+    this.addMouseOutListenersToPolygons();
     this.addEventListener('change-block-image', this.onChangeBlockImage.bind(this), false);
-    this.addEventListener('mouseover', this.onMouseOver.bind(this), false);
+    this.svg.get().addEventListener('mouseover', this.onMouseOver.bind(this), false);
     this.svg.get().addEventListener('mouseout', this.onMouseOut.bind(this), false);
 
     if (super.createdCallback) {
@@ -34,7 +37,7 @@ export default class PwBlock extends HTMLElement {
   onMouseOut(evt) {
     // This avoid the problem when the mouse is over the pw-change-buttons and
     // make it hiding and appearing
-    if (evt.toElement.localName !== 'pw-change-block-buttons') {
+    if (evt && evt.toElement && evt.toElement.localName && evt.toElement.localName !== 'pw-change-block-buttons') {
       H.emitEvent(true, true, '', 'hide-change-buttons', this);
     }
 
@@ -84,7 +87,23 @@ export default class PwBlock extends HTMLElement {
       .chain(H.nth(0));
   }
 
-  addListenersToPolygons() {
+  getSvgPolygonById(id) {
+    return this.svg.chain(H.querySelectorAll('polygon'))
+      .map(nodes => Array.prototype.slice.call(nodes).filter(node =>
+          (node && node.id === id)))
+      .chain(H.nth(0));
+  }
+
+  setSvgPolygonStroke(id, stroke, width) {
+    this.getSvgPolygonById(id).chain((polygon) => {
+      const _polygon = polygon;
+
+      _polygon.style.stroke = stroke;
+      _polygon.style.strokeWidth = width;
+    });
+  }
+
+  addClickListenersToPolygons() {
     /* eslint array-callback-return:0 */
     this.svg.map((elem) => {
       const row = this._row;
@@ -106,6 +125,30 @@ export default class PwBlock extends HTMLElement {
     });
   }
 
+  addMouseOverListenersToPolygons() {
+    const _this = this;
+    this.svg.get().addEventListener('mouseover', function clicked(evt) {
+      if (evt.target !== evt.currentTarget) {
+        const id = evt.target.id;
+        _this.setSvgPolygonStroke(id, 'white', 1.5);
+      }
+
+      evt.stopPropagation();
+    });
+  }
+
+  addMouseOutListenersToPolygons() {
+    const _this = this;
+    this.svg.get().addEventListener('mouseout', function clicked(evt) {
+      if (evt.target !== evt.currentTarget) {
+        const id = evt.target.id;
+        _this.setSvgPolygonStroke(id, '', 0);
+      }
+
+      evt.stopPropagation();
+    });
+  }
+
   get svg() {
     return H.getShadowRoot(this)
       .chain(H.querySelector('slot'))
@@ -115,15 +158,13 @@ export default class PwBlock extends HTMLElement {
 
   get offsetTop() {
     return H.getShadowRoot(this)
-      .chain(H.childNodes)
-      .chain(H.nth(1))
+      .chain(H.querySelector('div'))
       .chain(H.props('offsetTop'));
   }
 
   get offsetLeft() {
     return H.getShadowRoot(this)
-      .chain(H.childNodes)
-      .chain(H.nth(1))
+      .chain(H.querySelector('div'))
       .chain(H.props('offsetLeft'));
   }
 

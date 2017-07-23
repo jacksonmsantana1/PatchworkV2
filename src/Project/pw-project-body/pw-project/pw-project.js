@@ -72,7 +72,6 @@ export default class PwProject extends HTMLElement {
     }
   }
 
-  // FIXME - See how to do it
   detachedCallback() {
     if (!this._exit) {
       window.alert('Would you like to save this project ?', (toSave) => {
