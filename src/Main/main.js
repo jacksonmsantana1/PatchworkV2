@@ -18,14 +18,24 @@ class MainPage extends HTMLElement {
 
     // Getting the projects from the server
     this.getProjects().then((res) => {
-      this.html = res.body;
-      this.innerHTML = this.html;
-      Token.setToken(res.req.header.Authorization);
+      if (res) {
+        this.html = res.body;
+        this.innerHTML = this.html;
+        this.addEventListener('go-to-page', this.onGoToPage.bind(this), false);
+        Token.setToken(res.req.header.Authorization);
+      }
     })
     .catch((err) => {
       console.log(err.message);
       Page('/#/login'); /* eslint new-cap:0 */
     });
+  }
+
+  onGoToPage(evt) {
+    const url = evt.detail;
+
+    Page(url);
+    evt.stopPropagation();
   }
 
   getProjects() {
