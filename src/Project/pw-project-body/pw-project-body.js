@@ -21,6 +21,8 @@ export default class PwProjectBody extends HTMLElement {
     this.addEventListener('click', this.onClick.bind(this), false);
     this.addEventListener('zoom-in-block-up', this.onZoomInUp.bind(this), false);
     this.addEventListener('zoom-out-block-up', this.onZoomOutUp.bind(this), false);
+    this.addEventListener('save-project', this.onSaveProject.bind(this), false);
+    this.addEventListener('remove-project', this.onRemoveProject.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -33,6 +35,26 @@ export default class PwProjectBody extends HTMLElement {
     }
   }
 
+  onRemoveProject(evt) {
+    const detail = evt.detail;
+
+    this.getPwProject().map((pwProject) => {
+      H.emitEvent(true, true, detail, 'remove-project', pwProject);
+    });
+
+    evt.stopPropagation();
+  }
+
+  onSaveProject(evt) {
+    const detail = evt.detail;
+
+    this.getPwProject().map((pwProject) => {
+      H.emitEvent(true, true, detail, 'save-project', pwProject);
+    });
+
+    evt.stopPropagation();
+  }
+
   onClick() {
     this.getPwFabricList().map((list) => {
       if (list.visible) {
@@ -43,18 +65,24 @@ export default class PwProjectBody extends HTMLElement {
   }
 
   onShowFabrics(evt) {
-    evt.stopPropagation();
+    const detail = evt.detail;
+
     this.getPwFabricList().map((pwProjectList) => {
-      H.emitEvent(true, true, evt.detail, 'show-fabrics-down', pwProjectList);
+      H.emitEvent(true, true, detail, 'show-fabrics-down', pwProjectList);
     });
+
+    evt.stopPropagation();
   }
 
   onSvgImageChoosed(evt) {
     /* eslint array-callback-return:0 */
-    evt.stopPropagation();
+    const detail = evt.detail;
+
     this.getPwProject().map((pwProject) => {
-      H.emitEvent(true, true, evt.detail, 'change-svg-image', pwProject);
+      H.emitEvent(true, true, detail, 'change-svg-image', pwProject);
     });
+
+    evt.stopPropagation();
   }
 
   onZoomOutUp(evt) {

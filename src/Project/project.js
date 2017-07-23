@@ -1,5 +1,9 @@
+import Either from 'data.either';
+import Page from 'page';
+import H from '../lib/Helper/Helper';
 import './pw-project-body/pw-project-body';
 
+/* eslint new-cap:0 */
 class ProjectPage extends HTMLElement {
   static get observedAttributes() {
     return ['id', 'session'];
@@ -14,12 +18,36 @@ class ProjectPage extends HTMLElement {
     this._id = this.getAttribute('id') || '';
     this._session = this.getAttribute('session') || '';
     this.render();
+
+    this.addEventListener('go-to-page', this.onGoToPage.bind(this), false);
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onGoToPage(evt) {
+    const detail = evt.detail;
+    const pwProjectBody = this.getPwProjectBody().get();
+
+    window.alert('Would you like to save this project ?', (toSave) => {
+      if (toSave) {
+        H.emitEvent(true, true, '', 'save-project', pwProjectBody);
+      } else {
+        H.emitEvent(true, true, '', 'remove-project', pwProjectBody);
+      }
+
+      Page(`${detail}`);
+    });
+
+    evt.stopPropagation();
+  }
+
+  getPwProjectBody() {
+    return Either.fromNullable(this)
+      .chain(H.querySelector('pw-project-body'));
   }
 
   get session() {

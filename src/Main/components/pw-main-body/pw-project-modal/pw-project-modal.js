@@ -194,7 +194,7 @@ export default class PwProjectModal extends HTMLElement {
                 top: 15%;
                 min-height: 95%;
                 min-width: 80%;
-                z-index: 2;
+                z-index: 10;
               }
 
               .global-modal-header{

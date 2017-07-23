@@ -1,4 +1,5 @@
 import Page from 'page';
+import H from '../../../../lib/Helper/Helper';
 
 /* eslint no-underscore-dangle:0 new-cap:0 */
 export default class PwNavBarTab extends HTMLElement {
@@ -32,8 +33,14 @@ export default class PwNavBarTab extends HTMLElement {
     this.shadowRoot.innerHTML = this.style + this.html;
   }
 
-  onClick() {
-    Page(`${this.href}`);
+  onClick(evt) {
+    if (this.href === '/#/login') {
+      Page(`${this.href}`);
+    } else {
+      const detail = this.href;
+      H.emitEvent(true, true, detail, 'go-to-page', this);
+      evt.stopPropagation();
+    }
   }
 
   get class() {
@@ -58,14 +65,14 @@ export default class PwNavBarTab extends HTMLElement {
 
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
-    return `<li><a class="${this.class}" href="${this.href}"><slot></slot></a></li>`;
+    return `<li><span class="${this.class}" href="${this.href}"><slot></slot></span></li>`;
   }
 
   get style() {
     return `<style>
               @import url(https://fonts.googleapis.com/css?family=Nunito);
 
-              li a {
+              li span {
                 display: block;
                 text-decoration: none;
                 padding: 0 0.8em;
@@ -76,24 +83,25 @@ export default class PwNavBarTab extends HTMLElement {
                 border-bottom: 1px solid #db8b8b;
               }
 
-              li a:hover {
+              li span:hover {
                 text-decoration: none;
                 background-color: #e29797;
               }
 
-              li a.active {
+              li span.active {
                 background-color: #d98383;
               }
 
-              a {
+              span {
                 color: #8e4040;
                 opacity: 1;
                 text-decoration: none;
               }
 
-              a:hover {
+              span:hover {
                 opacity: 0.85;
                 text-decoration: underline;
+                cursor: pointer;
               }
 
               @media only screen and (min-width: 768px) {
@@ -105,19 +113,19 @@ export default class PwNavBarTab extends HTMLElement {
                   box-shadow: 0 -3px 0 #f19292 inset;
                 }
 
-                li a {
+                li span {
                   color: #ca6161;
                   display: block;
                   border-bottom: 0;
                   padding: 0 0.8em;
                 }
 
-                li a:hover {
+                li span:hover {
                   text-decoration: none;
                   box-shadow: 0 -3px 0 indianred inset;
                 }
 
-                li a.active {
+                li span.active {
                   box-shadow: 0 -3px 0 indianred inset;
                 }
               }
