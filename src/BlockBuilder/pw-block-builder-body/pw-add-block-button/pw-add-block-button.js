@@ -29,6 +29,13 @@ export default class PwAddBlockButton extends HTMLElement {
     this.shadowRoot.innerHTML = this.style + this.html;
   }
 
+  get width() {
+    return H.getShadowRoot(this)
+      .chain(H.querySelector('button'))
+      .map(button => button.offsetWidth)
+      .getOrElse(0);
+  }
+
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<button type="button" class="button buttonBlue">
@@ -43,7 +50,7 @@ export default class PwAddBlockButton extends HTMLElement {
     return `<style>
       .button {
         position: fixed;
-        left: 17em;
+        left: ${(document.documentElement.scrollWidth) / 4}px;
         bottom: 1em;
         display: inline-block;
         padding: 24px 24px;

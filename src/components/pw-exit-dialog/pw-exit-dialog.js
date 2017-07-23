@@ -44,6 +44,12 @@ export default class PwSaveDialog extends HTMLElement {
       .chain(H.nth(1));
   }
 
+  get width() {
+    return H.getShadowRoot(this)
+      .chain(H.querySelector('h1'))
+      .map(h1 => h1.offsetWidth)
+      .getOrElse(0);
+  }
 
   get title() {
     return this._title;
@@ -100,7 +106,7 @@ export default class PwSaveDialog extends HTMLElement {
                 background-color:#ffc5c5;
                 background-repeat:no-repeat;
                 top:30%;
-                left: ${(document.documentElement.scrollWidth - this.offsetWidth) / 2}px;
+                left: ${(document.documentElement.scrollWidth - this.width) / 2}px;
               }
 
               h1 {
