@@ -36,6 +36,7 @@ export default class PwProjectBlocks extends HTMLElement {
     this.addEventListener('save-project', this.onSaveProject.bind(this), false);
     this.addEventListener('remove-project', this.onRemoveProject.bind(this), false);
     this.addEventListener('add-column-down', this.onAddColumnDown.bind(this), false);
+    this.addEventListener('remove-column-down', this.onRemoveColumnDown.bind(this), false);
 
     if (this.session) {
       this.getOldProject(Token.getPayload().get().email, this.session)
@@ -91,6 +92,21 @@ export default class PwProjectBlocks extends HTMLElement {
 
   onAddColumnDown(evt) {
     this.maxColumns += 1;
+    this.updateSvgObjectColumns();
+
+    this.saveProjectSvg().then((res) => {
+      if (res) {
+        console.log('Project Saved');
+        this.render();
+        Token.setToken(res.req.header.Authorization);
+      }
+    });
+
+    evt.stopPropagation();
+  }
+
+  onRemoveColumnDown(evt) {
+    this.maxColumns -= 1;
     this.updateSvgObjectColumns();
 
     this.saveProjectSvg().then((res) => {

@@ -1,5 +1,6 @@
 import H from '../../../lib/Helper/Helper';
 import './pw-add-column-button/pw-add-column-button';
+import './pw-remove-column-button/pw-remove-column-button';
 
 export default class PwHelperButtons extends HTMLElement {
   static get observedAttributes() {
@@ -60,7 +61,8 @@ export default class PwHelperButtons extends HTMLElement {
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<div class="plus-button ${this.active ? 'open' : ''}"></div>
-              <pw-add-column-button active="${this.active ? 'true' : ''}"></pw-add-column-button>`;
+              <pw-add-column-button active="${this.active ? 'true' : ''}"></pw-add-column-button>
+              <pw-remove-column-button active="${this.active ? 'true' : ''}"></pw-remove-column-button>`;
   }
 
   get style() {

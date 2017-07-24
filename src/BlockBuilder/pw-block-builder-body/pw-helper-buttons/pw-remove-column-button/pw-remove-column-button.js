@@ -1,6 +1,6 @@
 import H from '../../../../lib/Helper/Helper';
 
-export default class PwAddColumnButton extends HTMLElement {
+export default class PwRemoveColumnButton extends HTMLElement {
   static get observedAttributes() {
     return ['active'];
   }
@@ -26,7 +26,7 @@ export default class PwAddColumnButton extends HTMLElement {
   }
 
   onClick(evt) {
-    H.emitEvent(true, true, '', 'add-column-up', this);
+    H.emitEvent(true, true, '', 'remove-column-up', this);
     evt.stopPropagation();
   }
 
@@ -81,11 +81,11 @@ export default class PwAddColumnButton extends HTMLElement {
               }
 
               .social-button.pinterest-button {
-                background: url("https://cdn1.iconfinder.com/data/icons/twitter-ui/48/jee-02-128.png") no-repeat center;
+                background: url("https://cdn1.iconfinder.com/data/icons/twitter-ui/48/jee-01-128.png") no-repeat center;
               }
 
               .social-button.pinterest-button.active {
-                bottom: 67px;
+                bottom: 15px;
                 right: 105px;
                 display: block;
               }
@@ -94,6 +94,6 @@ export default class PwAddColumnButton extends HTMLElement {
 }
 
 // Check that the element hasn't already been registered
-if (!window.customElements.get('pw-add-column-button')) {
-  document.registerElement('pw-add-column-button', PwAddColumnButton);
+if (!window.customElements.get('pw-remove-column-button')) {
+  document.registerElement('pw-remove-column-button', PwRemoveColumnButton);
 }

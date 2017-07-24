@@ -43,6 +43,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
     this.addEventListener('save-project', this.onSaveProject.bind(this), false);
     this.addEventListener('remove-project', this.onRemoveProject.bind(this), false);
     this.addEventListener('add-column-up', this.onAddColumnUp.bind(this), false);
+    this.addEventListener('remove-column-up', this.onRemoveColumnUp.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -53,6 +54,14 @@ export default class PwBlockBuilderBody extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onRemoveColumnUp(evt) {
+    this.getPwProjectBlocks().map((pwProjectBlocks) => {
+      H.emitEvent(true, true, '', 'remove-column-down', pwProjectBlocks);
+    });
+
+    evt.stopPropagation();
   }
 
   onAddColumnUp(evt) {
