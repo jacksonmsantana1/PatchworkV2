@@ -17,7 +17,7 @@ export default class PwProjectBlocks extends HTMLElement {
   createdCallback() {
     // Initializing attributes
     this._session = this.getAttribute('session') || '';
-    this._maxColumns = this.getAttribute('maxcolumns') || '';
+    this._maxColumns = parseInt(this.getAttribute('maxcolumns'), 10) || 3;
     this._maxRows = this.getAttribute('maxrows') || '';
     this._blocks = [];
     this._zoomScale = 100;
@@ -35,11 +35,13 @@ export default class PwProjectBlocks extends HTMLElement {
     this.addEventListener('zoom-out-down', this.onZoomOut.bind(this), false);
     this.addEventListener('save-project', this.onSaveProject.bind(this), false);
     this.addEventListener('remove-project', this.onRemoveProject.bind(this), false);
+    this.addEventListener('add-column-down', this.onAddColumnDown.bind(this), false);
 
     if (this.session) {
       this.getOldProject(Token.getPayload().get().email, this.session)
         .then((res) => {
-          this._blocks = this._blocks.concat(res.body.svg);
+          this._blocks = this._blocks.concat(res.body.svg.blocks);
+          this.maxColumns = res.body.svg.columns;
           if (!this._blocks.length) {
             H.emitEvent(true, true, '', 'show-initial-image', this);
           }
@@ -85,6 +87,21 @@ export default class PwProjectBlocks extends HTMLElement {
         }
       });
     }
+  }
+
+  onAddColumnDown(evt) {
+    this.maxColumns += 1;
+    this.updateSvgObjectColumns();
+
+    this.saveProjectSvg().then((res) => {
+      if (res) {
+        console.log('Project Saved');
+        this.render();
+        Token.setToken(res.req.header.Authorization);
+      }
+    });
+
+    evt.stopPropagation();
   }
 
   onSaveProject(evt) {
@@ -228,6 +245,22 @@ export default class PwProjectBlocks extends HTMLElement {
     });
   }
 
+  updateSvgObjectColumns() {
+    let _row = 1;
+    let _column = 0;
+
+    this._blocks = this._blocks.map((block) => {
+      if (_column === parseInt(this.maxColumns, 10)) {
+        _column = 1;
+        _row += 1;
+        return this.updateNewBlock(block, _row, _column);
+      }
+
+      _column += 1;
+      return this.updateNewBlock(block, _row, _column);
+    });
+  }
+
   onRemoveBlock(evt) {
     const row = parseInt(evt.detail.row, 10);
     const column = parseInt(evt.detail.column, 10);
@@ -235,9 +268,11 @@ export default class PwProjectBlocks extends HTMLElement {
 
     this.updateSvgObjectRemove(row, column, index);
     this.saveProjectSvg().then((res) => {
-      console.log('Project Updated');
-      this.render();
-      Token.setToken(res.req.header.Authorization);
+      if (res) {
+        console.log('Project Updated');
+        this.render();
+        Token.setToken(res.req.header.Authorization);
+      }
     });
 
     if (!this._blocks.length) {
@@ -259,9 +294,11 @@ export default class PwProjectBlocks extends HTMLElement {
       });
 
     this.saveProjectSvg().then((res) => {
-      console.log('Project Updated');
-      this.render();
-      Token.setToken(res.req.header.Authorization);
+      if (res) {
+        console.log('Project Updated');
+        this.render();
+        Token.setToken(res.req.header.Authorization);
+      }
     });
 
     evt.stopPropagation();
@@ -275,10 +312,12 @@ export default class PwProjectBlocks extends HTMLElement {
     const newBlock = this.updateNewBlock(blockSvg, row, column);
 
     this.saveProjectSvg().then((res) => {
-      console.log('Project Updated');
-      this._blocks.splice(index, 1, newBlock);
-      this.render();
-      Token.setToken(res.req.header.Authorization);
+      if (res) {
+        console.log('Project Updated');
+        this._blocks.splice(index, 1, newBlock);
+        this.render();
+        Token.setToken(res.req.header.Authorization);
+      }
     });
 
     evt.stopPropagation();
@@ -291,9 +330,11 @@ export default class PwProjectBlocks extends HTMLElement {
     this._blocks.push(newBlock);
 
     this.saveProjectSvg().then((res) => {
-      console.log('Project Updated');
-      this.render();
-      Token.setToken(res.req.header.Authorization);
+      if (res) {
+        console.log('Project Updated');
+        this.render();
+        Token.setToken(res.req.header.Authorization);
+      }
     });
 
     H.emitEvent(true, true, '', 'hide-initial-image', this);
@@ -312,9 +353,11 @@ export default class PwProjectBlocks extends HTMLElement {
 
     this._blocks.splice(index, 1, newBlock);
     this.saveProjectSvg().then((res) => {
-      console.log('Project Updated');
-      H.emitEvent(true, true, evt.detail, 'change-block-image', pwBlock);
-      Token.setToken(res.req.header.Authorization);
+      if (res) {
+        console.log('Project Updated');
+        H.emitEvent(true, true, evt.detail, 'change-block-image', pwBlock);
+        Token.setToken(res.req.header.Authorization);
+      }
     });
 
     evt.stopPropagation();
@@ -340,7 +383,7 @@ export default class PwProjectBlocks extends HTMLElement {
     return Request.put(`http://localhost:3000/user/${email}/projects/${sessionId}`)
      .set('Authorization', Token.getToken().get())
      .set('Content-Type', 'application/json')
-     .send({ svg: this._blocks })
+     .send({ svg: { blocks: this._blocks, columns: this.maxColumns } })
      .catch((err) => {
        /* eslint consistent-return:0 */
        if (err.message === 'Unauthorized') {
@@ -361,7 +404,7 @@ export default class PwProjectBlocks extends HTMLElement {
         projectId: '//TODO see hoe to do thisBlock-Builder',
         sessionId: this.session,
         name: '//TODO See how to do this',
-        svg: [],
+        svg: {},
       })
       .catch((err) => {
         if (err.message === 'Unauthorized') {
@@ -463,7 +506,7 @@ export default class PwProjectBlocks extends HTMLElement {
   }
 
   set maxColumns(value) {
-    this._maxColumns = value;
+    this._maxColumns = parseInt(value, 10);
     this.setAttribute('maxColumns', value);
   }
 
@@ -480,7 +523,7 @@ export default class PwProjectBlocks extends HTMLElement {
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<div class="wrapper">${this._blocks.map(block =>
-      `<pw-block column="${block.column}" row="${block.row}">${this.projectToSVG(block)}</pw-block>`).join('')}</div>`;
+      `<pw-block size="${100 / this.maxColumns}" column="${block.column}" row="${block.row}">${this.projectToSVG(block)}</pw-block>`).join('')}</div>`;
   }
 
   get style() {

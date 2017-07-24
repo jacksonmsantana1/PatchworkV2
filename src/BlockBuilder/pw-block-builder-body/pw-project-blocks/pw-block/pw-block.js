@@ -3,13 +3,14 @@ import H from '../../../../lib/Helper/Helper';
 /* eslint prefer-arrow-callback:0 */
 export default class PwBlock extends HTMLElement {
   static get observedAttributes() {
-    return ['column', 'row'];
+    return ['column', 'row', 'size'];
   }
 
   createdCallback() {
     // Initializing attributes
     this._column = this.getAttribute('column') || '';
     this._row = this.getAttribute('row') || '';
+    this._size = this.getAttribute('size') || '';
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
@@ -202,6 +203,16 @@ export default class PwBlock extends HTMLElement {
     this.render();
   }
 
+  get size() {
+    return this._size;
+  }
+
+  set size(value) {
+    this._size = value;
+    this.setAttribute('size', value);
+    this.render();
+  }
+
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<div class="col4">
@@ -212,7 +223,7 @@ export default class PwBlock extends HTMLElement {
   get style() {
     return `<style>
               .col4 {
-                width: 33%;
+                width: ${this.size}%;
                 float: left;
                 display: inline;
               }

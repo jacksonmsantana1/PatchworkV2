@@ -11,8 +11,9 @@ export default class PwAddColumnButton extends HTMLElement {
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
-
     this.render();
+
+    this.addEventListener('click', this.onClick.bind(this), false);
     if (super.createdCallback) {
       super.createdCallback();
     }
@@ -25,7 +26,7 @@ export default class PwAddColumnButton extends HTMLElement {
   }
 
   onClick(evt) {
-    H.emitEvent(true, true, '', 'add-column', this);
+    H.emitEvent(true, true, '', 'add-column-up', this);
     evt.stopPropagation();
   }
 
@@ -36,7 +37,6 @@ export default class PwAddColumnButton extends HTMLElement {
 
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
-    this.addEventListener('click', this.onClick.bind(this), false);
   }
 
   get active() {
@@ -58,6 +58,8 @@ export default class PwAddColumnButton extends HTMLElement {
     return `<style>
               .social-button {
                 position: fixed;
+                bottom 43px;
+                right 41px;
                 height: 50px;
                 width: 50px;
                 -webkit-transform: scale(0.8);

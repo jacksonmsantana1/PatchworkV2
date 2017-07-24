@@ -42,6 +42,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
     this.addEventListener('hide-initial-image', this.onHideInitialImage.bind(this), false);
     this.addEventListener('save-project', this.onSaveProject.bind(this), false);
     this.addEventListener('remove-project', this.onRemoveProject.bind(this), false);
+    this.addEventListener('add-column-up', this.onAddColumnUp.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -52,6 +53,14 @@ export default class PwBlockBuilderBody extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onAddColumnUp(evt) {
+    this.getPwProjectBlocks().map((pwProjectBlocks) => {
+      H.emitEvent(true, true, '', 'add-column-down', pwProjectBlocks);
+    });
+
+    evt.stopPropagation();
   }
 
   onRemoveProject(evt) {
