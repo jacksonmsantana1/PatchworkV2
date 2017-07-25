@@ -1,6 +1,6 @@
 import H from '../../../../lib/Helper/Helper';
 
-export default class PwAddColumnButton extends HTMLElement {
+export default class PwShowMeasurementsButton extends HTMLElement {
   static get observedAttributes() {
     return ['active'];
   }
@@ -26,7 +26,7 @@ export default class PwAddColumnButton extends HTMLElement {
   }
 
   onClick(evt) {
-    H.emitEvent(true, true, '', 'add-column-up', this);
+    H.emitEvent(true, true, '', 'show-measurements-modal', this);
     evt.stopPropagation();
   }
 
@@ -80,12 +80,12 @@ export default class PwAddColumnButton extends HTMLElement {
               }
 
               .social-button.pinterest-button {
-                background: url("https://cdn1.iconfinder.com/data/icons/twitter-ui/48/jee-02-128.png") no-repeat center;
+                background: url("https://cdn0.iconfinder.com/data/icons/office-icon-set-2/100/Noun_Project_100Icon_10px_grid-99-128.png") no-repeat center;
               }
 
               .social-button.pinterest-button.active {
-                bottom: 67px;
-                right: 105px;
+                bottom: 107px;
+                right: 83px;
                 display: block;
               }
             </style>`;
@@ -93,6 +93,6 @@ export default class PwAddColumnButton extends HTMLElement {
 }
 
 // Check that the element hasn't already been registered
-if (!window.customElements.get('pw-add-column-button')) {
-  document.registerElement('pw-add-column-button', PwAddColumnButton);
+if (!window.customElements.get('pw-show-measurements-button')) {
+  document.registerElement('pw-show-measurements-button', PwShowMeasurementsButton);
 }

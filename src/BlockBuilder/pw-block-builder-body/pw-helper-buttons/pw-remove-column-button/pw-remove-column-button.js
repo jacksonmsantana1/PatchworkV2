@@ -55,7 +55,6 @@ export default class PwRemoveColumnButton extends HTMLElement {
   }
 
   get style() {
-    // FIXME
     return `<style>
               .social-button {
                 position: fixed;

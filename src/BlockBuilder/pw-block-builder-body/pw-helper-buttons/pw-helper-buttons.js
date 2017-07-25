@@ -1,6 +1,7 @@
 import H from '../../../lib/Helper/Helper';
 import './pw-add-column-button/pw-add-column-button';
 import './pw-remove-column-button/pw-remove-column-button';
+import './pw-show-measurements-button/pw-show-measurements-button';
 
 export default class PwHelperButtons extends HTMLElement {
   static get observedAttributes() {
@@ -62,7 +63,8 @@ export default class PwHelperButtons extends HTMLElement {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<div class="plus-button ${this.active ? 'open' : ''}"></div>
               <pw-add-column-button active="${this.active ? 'true' : ''}"></pw-add-column-button>
-              <pw-remove-column-button active="${this.active ? 'true' : ''}"></pw-remove-column-button>`;
+              <pw-remove-column-button active="${this.active ? 'true' : ''}"></pw-remove-column-button>
+              <pw-show-measurements-button active="${this.active ? 'true' : ''}"></pw-show-measurements-button>`;
   }
 
   get style() {
@@ -125,56 +127,6 @@ export default class PwHelperButtons extends HTMLElement {
                 transform: scale(0.96) rotate(45deg);
                 box-shadow: 2px 3px 11px 1px rgba(0,0,0,0.53);
               }
-.social-button {
-  position: fixed;
-  bottom: 43px;
-  right: 41px;
-  height: 50px;
-  width: 50px;
-  -webkit-transform: scale(0.8);
-          transform: scale(0.8);
-  background-size: 153% !important;
-  border-radius: 100%;
-  box-shadow: 2px 2px 7px 0px rgba(0,0,0,0.4);
-  cursor: pointer;
-  z-index: 99;
-  -webkit-backface-visibility: hidden;
-          backface-visibility: hidden;
-}
-.social-button:hover {
-  -webkit-transform: scale(1);
-          transform: scale(1);
-  -webkit-transition: 0.35s cubic-bezier(0.3, 0.2, 0, 2.5);
-  transition: 0.35s cubic-bezier(0.3, 0.2, 0, 2.5);
-}
-.social-button.twitter-button {
-  background: url("https://cdn4.iconfinder.com/data/icons/social-icon-4/842/twitter-256.png") no-repeat center;
-}
-.social-button.twitter-button.active {
-  bottom: 110px;
-  right: 21px;
-}
-.social-button.facebook-button {
-  background: url("https://cdn4.iconfinder.com/data/icons/social-icon-4/842/facebook-256.png") no-repeat center;
-}
-.social-button.facebook-button.active {
-  bottom: 105px;
-  right: 73px;
-}
-.social-button.pinterest-button {
-  background: url("https://cdn4.iconfinder.com/data/icons/social-icon-4/842/pinterest-256.png") no-repeat center;
-}
-.social-button.pinterest-button.active {
-  bottom: 67px;
-  right: 109px;
-}
-.social-button.insta-button {
-  background: url("https://cdn4.iconfinder.com/data/icons/social-icon-4/842/instagram-256.png") no-repeat center;
-}
-.social-button.insta-button.active {
-  bottom: 15px;
-  right: 105px;
-}
             </style>`;
   }
 }
