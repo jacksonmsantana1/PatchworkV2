@@ -26,7 +26,7 @@ export default class PwShowMeasurementsButton extends HTMLElement {
   }
 
   onClick(evt) {
-    H.emitEvent(true, true, '', 'show-measurements-modal', this);
+    H.emitEvent(true, true, '', 'show-measurements-modal-up', this);
     evt.stopPropagation();
   }
 

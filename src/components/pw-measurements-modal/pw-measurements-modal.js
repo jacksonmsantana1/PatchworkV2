@@ -8,6 +8,7 @@ export default class PwMeasurementsModal extends HTMLElement {
   createdCallback() {
     // Setting the initial attributes
     this._visible = this.getAttribute('visible') || '';
+    this._measurements = {};
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
@@ -16,6 +17,7 @@ export default class PwMeasurementsModal extends HTMLElement {
     // Event handler variables -> Necessary because of the removeEventListener
     this.scrollHandler = this.onScroll.bind(this);
     this.overlayClickHandler = this.onOverlayClick.bind(this);
+    this.addEventListener('show-measurements-modal-down', this.onShowMeasurementsModalDown.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -30,6 +32,12 @@ export default class PwMeasurementsModal extends HTMLElement {
 
   render() {
     this.shadowRoot.innerHTML = this.style + this.html;
+  }
+
+  onShowMeasurementsModalDown(evt) {
+    this._measurements = evt.detail;
+    this.showModal();
+    evt.stopPropagation();
   }
 
   onOverlayClick() {
@@ -164,6 +172,7 @@ export default class PwMeasurementsModal extends HTMLElement {
                 min-height: 95%;
                 min-width: 80%;
                 z-index: 10;
+                background: mistyrose;
               }
 
               .global-modal-header{

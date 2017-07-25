@@ -1,4 +1,5 @@
 import H from '../../lib/Helper/Helper';
+import Measurement from '../../lib/Measurement/Measurement';
 import './pw-add-block-button/pw-add-block-button';
 import './pw-blocks-list/pw-blocks-list';
 import './pw-project-blocks/pw-project-blocks';
@@ -45,6 +46,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
     this.addEventListener('remove-project', this.onRemoveProject.bind(this), false);
     this.addEventListener('add-column-up', this.onAddColumnUp.bind(this), false);
     this.addEventListener('remove-column-up', this.onRemoveColumnUp.bind(this), false);
+    this.addEventListener('show-measurements-modal-up', this.onShowMeasurementsModalUp.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -55,6 +57,17 @@ export default class PwBlockBuilderBody extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onShowMeasurementsModalUp(evt) {
+    const blocks = this.getPwProjectBlocks().get()._blocks; // TODO Think a better way
+    const detail = Measurement.groupMeasurements(blocks);
+
+    this.getPwMeasurementsModal().map((pwMeasurementsModal) => {
+      H.emitEvent(true, true, detail, 'show-measurements-modal-down', pwMeasurementsModal);
+    });
+
+    evt.stopPropagation();
   }
 
   onRemoveColumnUp(evt) {
@@ -268,6 +281,11 @@ export default class PwBlockBuilderBody extends HTMLElement {
     });
 
     evt.stopPropagation();
+  }
+
+  getPwMeasurementsModal() {
+    return H.getShadowRoot(this)
+      .chain(H.querySelector('pw-measurements-modal'));
   }
 
   getPwProjectBlocks() {
