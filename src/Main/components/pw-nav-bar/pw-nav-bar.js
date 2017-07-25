@@ -164,7 +164,7 @@ export default class PwNavBar extends HTMLElement {
                 -webkit-transition: max-height 0.4s;
                 transition: max-height 0.4s;
                 position: relative;
-                z-index: 10;
+                z-index: 1;
               }
 
               .navbar .menu {
