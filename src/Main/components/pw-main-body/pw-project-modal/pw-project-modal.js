@@ -148,7 +148,7 @@ export default class PwProjectModal extends HTMLElement {
     /* eslint quotes:0 class-methods-use-this:0 */
     this._html = `<div class="global-modal">
               <div class="overlay"></div>
-              <div class="global-modal_contents modal-transition">
+              <div class="global-modal_contents global-modal-transition">
                 <div class="global-modal-header">
                   <span class="mobile-close"> X </span>
                   <h3> <span> ${project.name} </span> </h3>
@@ -161,13 +161,6 @@ export default class PwProjectModal extends HTMLElement {
 
   get style() {
     return `<style>
-              .credit {
-                position: fixed;
-                bottom: 10px;
-                width: 100%;
-                left: 0;
-              }
-
               .overlay {
                 background: rgba(255, 255, 255, 0.77);
                 position: fixed;
@@ -206,63 +199,6 @@ export default class PwProjectModal extends HTMLElement {
                 text-align: center;
                 font-weight: bold;
                 font-size: 22px;
-              }
-
-              .global-modal-header .mobile-close{
-                display: none;
-              }
-
-              .global-modal-header span{
-                font-weight: 200;
-              }
-
-              .global-modal-body{
-                width: 100%;
-              }
-
-              .global-modal-body p{
-                color: #34495E;
-                font-size: 16px;
-                line-height: 23px;
-                text-align: center;
-              }
-
-              .global-modal-body .content-left {
-                height: 225px;
-                width: 50%;
-                position: relative;
-                top: 55px;
-                float: left;
-                border-right: 1px solid #CCC;
-              }
-
-              .global-modal-body .content-right{
-                height: 225px;
-                width: 50%;
-                position: relative;
-                top: 55px;
-                float: left;
-              }
-
-              .content-right .sponsor-name{
-                font-weight: bold;
-                color: #000;
-              }
-
-              .global-modal_contents h1 {
-                margin: 0;
-                padding: 0;
-                line-height: 32rem;
-                text-align: center;
-                display: block;
-              }
-
-              .global-modal_close {
-                position: absolute;
-                right: 2rem;
-                top: 2rem;
-                text-decoration: none;
-                display: none;
               }
 
               .global-modal-show {
