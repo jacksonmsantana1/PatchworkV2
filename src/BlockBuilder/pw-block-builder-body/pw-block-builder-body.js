@@ -6,6 +6,7 @@ import './pw-change-block-buttons/pw-change-block-buttons';
 import './pw-zoom-buttons/pw-zoom-buttons';
 import './pw-initial-image/pw-initial-image';
 import './pw-helper-buttons/pw-helper-buttons';
+import '../../components/pw-measurements-modal/pw-measurements-modal';
 
 export default class PwBlockBuilderBody extends HTMLElement {
   static get observedAttributes() {
@@ -319,6 +320,7 @@ export default class PwBlockBuilderBody extends HTMLElement {
               <pw-helper-buttons></pw-helper-buttons>
               <pw-change-block-buttons row="" column="" x="8" y="94" visible=""></pw-change-block-buttons>
               <pw-initial-image visible="" src="http://localhost:3000/images/add.svg">Start adding your first block</pw-initial-image>
+              <pw-measurements-modal visible="true"></pw-measurements-modal>
             </main>`;
   }
 
