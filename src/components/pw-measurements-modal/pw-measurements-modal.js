@@ -152,7 +152,7 @@ export default class PwMeasurementsModal extends HTMLElement {
                 left: 0;
                 width: 100%;
                 height: 100%;
-                z-index: 1;
+                z-index: 100;
               }
 
               .global-modal {
@@ -171,7 +171,7 @@ export default class PwMeasurementsModal extends HTMLElement {
                 top: 15%;
                 min-height: 95%;
                 min-width: 80%;
-                z-index: 10;
+                z-index: 150;
                 background: mistyrose;
               }
 
