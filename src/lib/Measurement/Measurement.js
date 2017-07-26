@@ -25,7 +25,7 @@ const groupMeasurements = blocks =>
     const b = measure.b || 0;
     const type = measure.type || '';
     const image = measure.image || '';
-    const val = `${type}_${a}_${b}_${image}`;
+    const val = `${type}*${a}*${b}*${image}`;
 
     measurements[val] = measurements[val] || 0;
     measurements[val] += 1;
@@ -34,7 +34,7 @@ const groupMeasurements = blocks =>
   }, {});
 
 const getMeasurementFromStr = (str) => {
-  const props = str.split('_');
+  const props = str.split('*');
   return {
     type: props[0],
     a: parseInt(props[1], 10),

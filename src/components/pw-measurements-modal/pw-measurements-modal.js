@@ -132,17 +132,53 @@ export default class PwMeasurementsModal extends HTMLElement {
     }
   }
 
-  squareTriangule(measurement) {
+  squareTriangule(measurement, id) {
     return `<div class="measure">
               <div class="amount">x${measurement.times}</div>
               <div class="form">
                 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-triangle" width='150' height='150'>
                   <defs>
-                    <pattern patternUnits="userSpaceOnUse" width="150" height="150" id="measure">
+                    <pattern patternUnits="userSpaceOnUse" width="150" height="150" id="${id}">
                       <image xlink:href="${measurement.image}" x="0" y="0" width="150" height="150"></image>
                     </pattern>
                   </defs>
-                  <polygon fill="url(#measure)" points="25,25 25,125 125,125"/>
+                  <polygon fill="url(#${id})" points="25,25 25,125 125,125"/>
+                  <text fill="#000000" stroke="#000" x="5" y="85" font-size="10">${measurement.a}</text>
+                  <text fill="#000000" stroke="#000" x="65" y="140" font-size="10">${measurement.b}</text>
+                </svg>
+              </div>
+            </div>`;
+  }
+
+  square(measurement, id) {
+    return `<div class="measure">
+              <div class="amount">x${measurement.times}</div>
+              <div class="form">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-triangle" width='150' height='150'>
+                  <defs>
+                    <pattern patternUnits="userSpaceOnUse" width="150" height="150" id="${id}">
+                      <image xlink:href="${measurement.image}" x="0" y="0" width="150" height="150"></image>
+                    </pattern>
+                  </defs>
+                  <polygon fill="url(#${id})" points="25,25 25,125 125,125 125, 25"/>
+                  <text fill="#000000" stroke="#000" x="5" y="85" font-size="10">${measurement.a}</text>
+                  <text fill="#000000" stroke="#000" x="65" y="140" font-size="10">${measurement.b}</text>
+                </svg>
+              </div>
+            </div>`;
+  }
+
+  triangule(measurement, id) {
+    return `<div class="measure">
+              <div class="amount">x${measurement.times}</div>
+              <div class="form">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-triangle" width='150' height='150'>
+                  <defs>
+                    <pattern patternUnits="userSpaceOnUse" width="150" height="150" id="${id}">
+                      <image xlink:href="${measurement.image}" x="0" y="0" width="150" height="150"></image>
+                    </pattern>
+                  </defs>
+                  <polygon fill="url(#${id})" points="20,125 140,125 80,50"/>
                   <text fill="#000000" stroke="#000" x="5" y="85" font-size="10">${measurement.a}</text>
                   <text fill="#000000" stroke="#000" x="65" y="140" font-size="10">${measurement.b}</text>
                 </svg>
@@ -155,10 +191,14 @@ export default class PwMeasurementsModal extends HTMLElement {
     return `<div class="global-modal">
               <div class="overlay"></div>
               <div class="global-modal_contents global-modal-transition">
-                  ${this._measurements.map((m) => {
+                  ${this._measurements.map((m, index) => {
                     /* eslint consistent-return:0 */
                     if (m.type === 'square-triangule') {
-                      return this.squareTriangule(m);
+                      return this.squareTriangule(m, index);
+                    } else if (m.type === 'square') {
+                      return this.square(m, index);
+                    } else if (m.type === 'triangule') {
+                      return this.triangule(m, index);
                     }
                   }).join('')}
               </div>
