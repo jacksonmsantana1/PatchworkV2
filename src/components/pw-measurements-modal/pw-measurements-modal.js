@@ -1,4 +1,5 @@
 import H from '../../lib/Helper/Helper';
+import Measurement from '../../lib/Measurement/Measurement';
 
 export default class PwMeasurementsModal extends HTMLElement {
   static get observedAttributes() {
@@ -8,14 +9,14 @@ export default class PwMeasurementsModal extends HTMLElement {
   createdCallback() {
     // Setting the initial attributes
     this._visible = this.getAttribute('visible') || '';
-    this._measurements = {};
+    this._measurements = [];
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
     this.render();
 
     // Event handler variables -> Necessary because of the removeEventListener
-    this.scrollHandler = this.onScroll.bind(this);
+    // this.scrollHandler = this.onScroll.bind(this);
     this.overlayClickHandler = this.onOverlayClick.bind(this);
     this.addEventListener('show-measurements-modal-down', this.onShowMeasurementsModalDown.bind(this), false);
 
@@ -35,7 +36,12 @@ export default class PwMeasurementsModal extends HTMLElement {
   }
 
   onShowMeasurementsModalDown(evt) {
-    this._measurements = evt.detail;
+    const measures = Object.entries(evt.detail);
+    this._measurements = measures.map((arr) => {
+      const obj = Measurement.getMeasurementFromStr(arr[0]);
+      obj.times = arr[1];
+      return obj;
+    });
     this.showModal();
     evt.stopPropagation();
   }
@@ -44,28 +50,30 @@ export default class PwMeasurementsModal extends HTMLElement {
     this.visible = '';
   }
 
-  onScroll(evt) {
-    /* eslint no-unused-vars:0 */
+  /* onScroll(evt) {
+    [> eslint no-unused-vars:0 <]
     const yHeight = window.scrollY + 15;
     this.globalModalContents.chain(H.props('style')).chain(H.changeProps('top', `${yHeight}px`));
     evt.stopPropagation();
-  }
+  } */
 
   addListeners() {
     // Adding event listeners responsible with the modal scroll and to exit of the modal
-    document.addEventListener('scroll', this.scrollHandler);
+    // document.addEventListener('scroll', this.scrollHandler);
     this.overlay.get().addEventListener('click', this.overlayClickHandler, false); // FIXME Give a look about it
   }
 
   removeListeners() {
-    document.removeEventListener('scroll', this.scrollHandler);
+    // document.removeEventListener('scroll', this.scrollHandler);
     this.overlay.get().removeEventListener('click', this.overlayClickHandler);
   }
 
   gotToPageTop() {
     // Putting the modal at the top of the page
     const yHeight = window.scrollY + 15;
-    this.globalModalContents.chain(H.props('style')).chain(H.changeProps('top', `${yHeight}px`));
+    this.globalModalContents
+      .chain(H.props('style'))
+      .chain(H.changeProps('top', `${yHeight}px`));
   }
 
   showModal() {
@@ -124,17 +132,74 @@ export default class PwMeasurementsModal extends HTMLElement {
     }
   }
 
+  squareTriangule(measurement) {
+    return `<div class="measure">
+              <div class="amount">x${measurement.times}</div>
+              <div class="form">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-triangle" width='150' height='150'>
+                  <defs>
+                    <pattern patternUnits="userSpaceOnUse" width="150" height="150" id="measure">
+                      <image xlink:href="${measurement.image}" x="0" y="0" width="150" height="150"></image>
+                    </pattern>
+                  </defs>
+                  <polygon fill="url(#measure)" points="25,25 25,125 125,125"/>
+                  <text fill="#000000" stroke="#000" x="5" y="85" font-size="10">${measurement.a}</text>
+                  <text fill="#000000" stroke="#000" x="65" y="140" font-size="10">${measurement.b}</text>
+                </svg>
+              </div>
+            </div>`;
+  }
+
   get html() {
-    /* eslint class-methods-use-this:0 */
+    /* eslint class-methods-use-this:0 array-callback-return:0 */
     return `<div class="global-modal">
               <div class="overlay"></div>
               <div class="global-modal_contents global-modal-transition">
+                  ${this._measurements.map((m) => {
+                    /* eslint consistent-return:0 */
+                    if (m.type === 'square-triangule') {
+                      return this.squareTriangule(m);
+                    }
+                  }).join('')}
+              </div>
               </div>
             </div>`;
   }
 
   get style() {
     return `<style>
+              .measure {
+                background: #e4a0a0;
+                width: 45%;
+                height: 150px;
+                margin: 10px;
+                border-style: dashed;
+                float: left;
+              }
+
+              .amount {
+                width: 20%;
+                display: inline-block;
+                background: #bb7d7d;
+                font-size: -webkit-xxx-large;
+                text-align: right;
+                position: relative;
+                top: -50px;
+              }
+
+              .form > svg {
+                display: block;
+                margin: auto;
+              }
+
+              .form {
+                width: 33%;
+                height: 100%;
+                display: inline-block;
+                background: #e4a0a0;
+                margin-left: 50px;
+              }
+
               .credit {
                 position: fixed;
                 bottom: 10px;
