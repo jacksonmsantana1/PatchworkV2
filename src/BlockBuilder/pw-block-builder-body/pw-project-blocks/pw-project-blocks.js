@@ -41,14 +41,16 @@ export default class PwProjectBlocks extends HTMLElement {
     if (this.session) {
       this.getOldProject(Token.getPayload().get().email, this.session)
         .then((res) => {
-          this._blocks = this._blocks.concat(res.body.svg.blocks);
-          this.maxColumns = res.body.svg.columns;
-          if (!this._blocks.length) {
-            H.emitEvent(true, true, '', 'show-initial-image', this);
+          if (!!res && !!res.body && !!res.body.svg) {
+            if (res.body.svg.blocks && res.body.svg.blocks.length) {
+              this._blocks = this._blocks.concat(res.body.svg.blocks);
+              this.maxColumns = res.body.svg.columns;
+              this.render();
+              Token.setToken(res.req.header.Authorization);
+            } else {
+              H.emitEvent(true, true, '', 'show-initial-image', this);
+            }
           }
-          this.render();
-
-          Token.setToken(res.req.header.Authorization);
         }, (err) => {
           if (err === 'Project Not Found') {
             H.emitEvent(true, true, '', 'show-initial-image', this);
