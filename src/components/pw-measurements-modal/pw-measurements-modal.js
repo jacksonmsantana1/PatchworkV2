@@ -10,6 +10,7 @@ export default class PwMeasurementsModal extends HTMLElement {
     // Setting the initial attributes
     this._visible = this.getAttribute('visible') || '';
     this._measurements = [];
+    this._blockSize = 1;
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
@@ -35,6 +36,32 @@ export default class PwMeasurementsModal extends HTMLElement {
     this.shadowRoot.innerHTML = this.style + this.html;
   }
 
+  onFocusOut(evt) {
+    const value = parseFloat(this.input.get().value);
+
+    if (value) {
+      this._blockSize = value;
+      this.showModal();
+      this.input.get().value = value;
+    }
+
+    evt.stopPropagation();
+  }
+
+  onKeyPress(evt) {
+    const value = this.input.get().value || '';
+    let result = '';
+
+    if (evt.which !== 46 && (evt.which < 48 || evt.which > 57)) {
+      result = value;
+    } else {
+      result = value + evt.key;
+    }
+
+    this.input.get().value = result;
+    evt.preventDefault();
+  }
+
   onShowMeasurementsModalDown(evt) {
     const measures = Object.entries(evt.detail);
     this._measurements = measures.map((arr) => {
@@ -51,7 +78,6 @@ export default class PwMeasurementsModal extends HTMLElement {
   }
 
   /* onScroll(evt) {
-    [> eslint no-unused-vars:0 <]
     const yHeight = window.scrollY + 15;
     this.globalModalContents.chain(H.props('style')).chain(H.changeProps('top', `${yHeight}px`));
     evt.stopPropagation();
@@ -61,6 +87,8 @@ export default class PwMeasurementsModal extends HTMLElement {
     // Adding event listeners responsible with the modal scroll and to exit of the modal
     // document.addEventListener('scroll', this.scrollHandler);
     this.overlay.get().addEventListener('click', this.overlayClickHandler, false); // FIXME Give a look about it
+    this.input.get().addEventListener('focusout', this.onFocusOut.bind(this), false);
+    this.input.get().addEventListener('keypress', this.onKeyPress.bind(this), false);
   }
 
   removeListeners() {
@@ -70,13 +98,19 @@ export default class PwMeasurementsModal extends HTMLElement {
 
   gotToPageTop() {
     // Putting the modal at the top of the page
-    const yHeight = window.scrollY + 15;
+    const yHeight = 15;
+    window.scrollTo(yHeight, 0);
+
     this.globalModalContents
       .chain(H.props('style'))
       .chain(H.changeProps('top', `${yHeight}px`));
   }
 
   showModal() {
+    if (!this._blockSize) {
+      this._blockSize = 1;
+    }
+
     this.render();
     this.gotToPageTop();
     this.addListeners();
@@ -91,6 +125,11 @@ export default class PwMeasurementsModal extends HTMLElement {
       .chain(H.removeClass('global-modal-show'));
 
     this.removeListeners();
+  }
+
+  get input() {
+    return H.getShadowRoot(this)
+      .chain(H.querySelector('input'));
   }
 
   get globalModal() {
@@ -132,7 +171,11 @@ export default class PwMeasurementsModal extends HTMLElement {
     }
   }
 
-  squareTriangule(measurement, id) {
+  squareTriangule(blockSize, measurement, id) {
+    const a = ((blockSize * measurement.a) / 100).toFixed(2);
+    const b = ((blockSize * measurement.b) / 100).toFixed(2);
+    const total = (((a * b) / 2) * measurement.times).toFixed(2);
+
     return `<div class="measure">
               <div class="amount">x${measurement.times}</div>
               <div class="form">
@@ -142,15 +185,20 @@ export default class PwMeasurementsModal extends HTMLElement {
                       <image xlink:href="${measurement.image}" x="0" y="0" width="150" height="150"></image>
                     </pattern>
                   </defs>
-                  <polygon fill="url(#${id})" points="25,25 25,125 125,125"/>
-                  <text fill="#000000" stroke="#000" x="5" y="85" font-size="10">${measurement.a}</text>
-                  <text fill="#000000" stroke="#000" x="65" y="140" font-size="10">${measurement.b}</text>
+                  <polygon fill="url(#${id})" points="30,25 30,125 130,125"/>
+                  <text fill="#000000" stroke="#000" x="0" y="85" font-size="10">${a}</text>
+                  <text fill="#000000" stroke="#000" x="65" y="140" font-size="10">${b}</text>
                 </svg>
               </div>
+              <div class="total">Total: ${total} cm<sup>2</sup></div>
             </div>`;
   }
 
-  square(measurement, id) {
+  square(blockSize, measurement, id) {
+    const a = ((blockSize * measurement.a) / 100).toFixed(2);
+    const b = ((blockSize * measurement.b) / 100).toFixed(2);
+    const total = (a * b * measurement.times).toFixed(2);
+
     return `<div class="measure">
               <div class="amount">x${measurement.times}</div>
               <div class="form">
@@ -160,15 +208,20 @@ export default class PwMeasurementsModal extends HTMLElement {
                       <image xlink:href="${measurement.image}" x="0" y="0" width="150" height="150"></image>
                     </pattern>
                   </defs>
-                  <polygon fill="url(#${id})" points="25,25 25,125 125,125 125, 25"/>
-                  <text fill="#000000" stroke="#000" x="5" y="85" font-size="10">${measurement.a}</text>
-                  <text fill="#000000" stroke="#000" x="65" y="140" font-size="10">${measurement.b}</text>
+                  <polygon fill="url(#${id})" points="30,25 30,125 130,125 130, 25"/>
+                  <text fill="#000000" stroke="#000" x="0" y="80" font-size="10">${a}</text>
+                  <text fill="#000000" stroke="#000" x="70" y="140" font-size="10">${b}</text>
                 </svg>
               </div>
+              <div class="total">Total: ${total} cm<sup>2</sup></div>
             </div>`;
   }
 
-  triangule(measurement, id) {
+  triangule(blockSize, measurement, id) {
+    const a = ((blockSize * measurement.a) / 100).toFixed(2);
+    const b = ((blockSize * measurement.b) / 100).toFixed(2);
+    const total = (((a * b) / 2) * measurement.times).toFixed(2);
+
     return `<div class="measure">
               <div class="amount">x${measurement.times}</div>
               <div class="form">
@@ -179,10 +232,34 @@ export default class PwMeasurementsModal extends HTMLElement {
                     </pattern>
                   </defs>
                   <polygon fill="url(#${id})" points="20,125 140,125 80,50"/>
-                  <text fill="#000000" stroke="#000" x="5" y="85" font-size="10">${measurement.a}</text>
-                  <text fill="#000000" stroke="#000" x="65" y="140" font-size="10">${measurement.b}</text>
+                  <text fill="#000000" stroke="#000" x="5" y="85" font-size="10">${a}</text>
+                  <text fill="#000000" stroke="#000" x="75" y="140" font-size="10">${b}</text>
                 </svg>
               </div>
+              <div class="total">Total: ${total} cm<sup>2</sup></div>
+            </div>`;
+  }
+
+  rectangule(blockSize, measurement, id) {
+    const a = ((blockSize * measurement.a) / 100).toFixed(2);
+    const b = ((blockSize * measurement.b) / 100).toFixed(2);
+    const total = (a * b * measurement.times).toFixed(2);
+
+    return `<div class="measure">
+              <div class="amount">x${measurement.times}</div>
+              <div class="form">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-triangle" width='150' height='150'>
+                  <defs>
+                    <pattern patternUnits="userSpaceOnUse" width="150" height="150" id="${id}">
+                      <image xlink:href="${measurement.image}" x="0" y="0" width="150" height="150"></image>
+                    </pattern>
+                  </defs>
+                  <polygon fill="url(#${id})" points="30,25 30,100 205,100 205, 25"/>
+                  <text fill="#000000" stroke="#000" x="0" y="70" font-size="10">${a}</text>
+                  <text fill="#000000" stroke="#000" x="85" y="120" font-size="10">${b}</text>
+                </svg>
+              </div>
+              <div class="total">Total: ${total} cm<sup>2</sup></div>
             </div>`;
   }
 
@@ -191,14 +268,19 @@ export default class PwMeasurementsModal extends HTMLElement {
     return `<div class="global-modal">
               <div class="overlay"></div>
               <div class="global-modal_contents global-modal-transition">
+                <div class="size">
+                 <input id="blockSize" type="text" placeholder="Block Size (cm)" />
+                </div>
                   ${this._measurements.map((m, index) => {
                     /* eslint consistent-return:0 */
                     if (m.type === 'square-triangule') {
-                      return this.squareTriangule(m, index);
+                      return this.squareTriangule(this._blockSize, m, index);
                     } else if (m.type === 'square') {
-                      return this.square(m, index);
+                      return this.square(this._blockSize, m, index);
                     } else if (m.type === 'triangule') {
-                      return this.triangule(m, index);
+                      return this.triangule(this._blockSize, m, index);
+                    } else if (m.type === 'rectangule') {
+                      return this.rectangule(this._blockSize, m, index);
                     }
                   }).join('')}
               </div>
@@ -208,36 +290,69 @@ export default class PwMeasurementsModal extends HTMLElement {
 
   get style() {
     return `<style>
+              sup {
+                font-size: large;
+              }
+
+              .size {
+                display: flex;
+                width: 100%;
+                background: #d98383;
+                height: 100px;
+                justify-content: center;
+                align-items:center;
+              }
+
+              input {
+                width: 86%;
+                height: 2.5em;
+                margin: .75em;
+                border-radius: 2em;
+                border: none;
+                background: rgba(255, 255, 255, 0.9);
+                box-shadow: inset 0 0.1em 0.1em rgba(0, 0, 0, 0.8);
+                padding-left: 1em;
+                color: rgba(0, 0, 0, 0.65);
+                font-family: "Helvetica", Arial, sans-serif;
+                font-size: 100%;
+              }
+
+              input[type=text]:focus {
+                border: 2px solid rgba(81, 203, 238, 1);
+              }
+
+              input:focus {outline:0;}
+
               .measure {
                 background: #e4a0a0;
-                width: 45%;
-                height: 150px;
-                margin: 10px;
+                margin: 25px;
                 border-style: dashed;
-                float: left;
+                display: inline-flex;
+              }
+
+              .total {
+                font-size: xx-large;
+                text-align: center;
+                order: 3;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-right: 15px;
+                margin-left: 15px;
               }
 
               .amount {
-                width: 20%;
-                display: inline-block;
-                background: #bb7d7d;
                 font-size: -webkit-xxx-large;
-                text-align: right;
-                position: relative;
-                top: -50px;
+                order: 1;
               }
 
               .form > svg {
-                display: block;
                 margin: auto;
               }
 
               .form {
-                width: 33%;
-                height: 100%;
-                display: inline-block;
-                background: #e4a0a0;
-                margin-left: 50px;
+                order:2;
+                margin-left: 15px;
               }
 
               .credit {
