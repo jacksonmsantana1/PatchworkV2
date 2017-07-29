@@ -291,7 +291,7 @@ export default class PwMeasurementsModal extends HTMLElement {
   get style() {
     return `<style>
               sup {
-                font-size: large;
+                font-size: small;
               }
 
               .size {
@@ -328,10 +328,11 @@ export default class PwMeasurementsModal extends HTMLElement {
                 margin: 25px;
                 border-style: dashed;
                 display: inline-flex;
+                min-width: 45%;
               }
 
               .total {
-                font-size: xx-large;
+                font-size: large;
                 text-align: center;
                 order: 3;
                 display: flex;
