@@ -43,6 +43,8 @@ const getMeasurementFromStr = (str) => {
   };
 };
 
+const getProjectMeasurement = svg => groupMeasurements([svg]);
+
 export default {
   getMeasurement,
   getBlockMeasurement,
@@ -50,4 +52,5 @@ export default {
   compareMeasurements,
   groupMeasurements,
   getMeasurementFromStr,
+  getProjectMeasurement,
 };

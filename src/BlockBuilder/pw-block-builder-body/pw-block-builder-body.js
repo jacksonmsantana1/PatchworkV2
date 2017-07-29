@@ -341,11 +341,11 @@ export default class PwBlockBuilderBody extends HTMLElement {
               <pw-helper-buttons>
                 <pw-add-column-button active="${this.active ? 'true' : ''}"></pw-add-column-button>
                 <pw-remove-column-button active="${this.active ? 'true' : ''}"></pw-remove-column-button>
-                <pw-show-measurements-button active="${this.active ? 'true' : ''}"></pw-show-measurements-button>;
+                <pw-show-measurements-button active="${this.active ? 'true' : ''}"></pw-show-measurements-button>
               </pw-helper-buttons>
               <pw-change-block-buttons row="" column="" x="8" y="94" visible=""></pw-change-block-buttons>
               <pw-initial-image visible="" src="http://localhost:3000/images/add.svg">Start adding your first block</pw-initial-image>
-              <pw-measurements-modal visible="true"></pw-measurements-modal>
+              <pw-measurements-modal visible="true" type="blocks"></pw-measurements-modal>
             </main>`;
   }
 

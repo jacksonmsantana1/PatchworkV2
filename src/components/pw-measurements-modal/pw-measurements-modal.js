@@ -3,12 +3,13 @@ import Measurement from '../../lib/Measurement/Measurement';
 
 export default class PwMeasurementsModal extends HTMLElement {
   static get observedAttributes() {
-    return ['visible'];
+    return ['visible', 'type'];
   }
 
   createdCallback() {
     // Setting the initial attributes
     this._visible = this.getAttribute('visible') || '';
+    this._type = this.getAttribute('type') || '';
     this._measurements = [];
     this._blockSize = 1;
 
@@ -87,8 +88,10 @@ export default class PwMeasurementsModal extends HTMLElement {
     // Adding event listeners responsible with the modal scroll and to exit of the modal
     // document.addEventListener('scroll', this.scrollHandler);
     this.overlay.get().addEventListener('click', this.overlayClickHandler, false); // FIXME Give a look about it
-    this.input.get().addEventListener('focusout', this.onFocusOut.bind(this), false);
-    this.input.get().addEventListener('keypress', this.onKeyPress.bind(this), false);
+    if (this.type === 'blocks') {
+      this.input.get().addEventListener('focusout', this.onFocusOut.bind(this), false);
+      this.input.get().addEventListener('keypress', this.onKeyPress.bind(this), false);
+    }
   }
 
   removeListeners() {
@@ -147,13 +150,13 @@ export default class PwMeasurementsModal extends HTMLElement {
       .chain(H.querySelector('div.global-modal_contents'));
   }
 
-  get id() {
-    return this._id;
+  get type() {
+    return this._type;
   }
 
-  set id(value) {
-    this._id = value;
-    this.setAttribute('id', value);
+  set type(value) {
+    this._type = value;
+    this.setAttribute('type', value);
     this.render();
   }
 
@@ -269,7 +272,7 @@ export default class PwMeasurementsModal extends HTMLElement {
               <div class="overlay"></div>
               <div class="global-modal_contents global-modal-transition">
                 <div class="size">
-                 <input id="blockSize" type="text" placeholder="Block Size (cm)" />
+                 ${this.type === 'blocks' ? '<input id="blockSize" type="text" placeholder="Block Size (cm)" />' : ''}
                 </div>
                   ${this._measurements.map((m, index) => {
                     /* eslint consistent-return:0 */

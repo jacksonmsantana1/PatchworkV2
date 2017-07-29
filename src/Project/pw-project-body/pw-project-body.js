@@ -1,4 +1,5 @@
 import H from '../../lib/Helper/Helper';
+import Measurement from '../../lib/Measurement/Measurement';
 import './pw-project/pw-project';
 import './pw-fabrics-list/pw-fabrics-list';
 
@@ -23,6 +24,7 @@ export default class PwProjectBody extends HTMLElement {
     this.addEventListener('zoom-out-block-up', this.onZoomOutUp.bind(this), false);
     this.addEventListener('save-project', this.onSaveProject.bind(this), false);
     this.addEventListener('remove-project', this.onRemoveProject.bind(this), false);
+    this.addEventListener('show-measurements-modal-up', this.onShowMeasurementsModalUp.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -33,6 +35,17 @@ export default class PwProjectBody extends HTMLElement {
     if (this[name] !== newVal) {
       this[name] = newVal;
     }
+  }
+
+  onShowMeasurementsModalUp(evt) {
+    const svg = this.getPwProject().get()._svg; // TODO Think a better way
+    const detail = Measurement.getProjectMeasurement(svg);
+
+    this.getPwMeasurementsModal().map((pwMeasurementsModal) => {
+      H.emitEvent(true, true, detail, 'show-measurements-modal-down', pwMeasurementsModal);
+    });
+
+    evt.stopPropagation();
   }
 
   onRemoveProject(evt) {
@@ -105,8 +118,13 @@ export default class PwProjectBody extends HTMLElement {
     evt.stopPropagation();
   }
 
+  getPwMeasurementsModal() {
+    return H.getShadowRoot(this)
+      .chain(H.querySelector('pw-measurements-modal'));
+  }
 
   getPwProject() {
+    // FIXME
     return H.getShadowRoot(this)
       .chain(H.childNodes)
       .chain(H.nth(1))
@@ -115,6 +133,7 @@ export default class PwProjectBody extends HTMLElement {
   }
 
   getPwFabricList() {
+    // FIXME
     return H.getShadowRoot(this)
       .chain(H.childNodes)
       .chain(H.nth(1))
@@ -155,6 +174,7 @@ export default class PwProjectBody extends HTMLElement {
               <pw-helper-buttons>
                 <pw-show-measurements-button active="${this.active ? 'true' : ''}"></pw-show-measurements-button>;
               </pw-helper-buttons>
+              <pw-measurements-modal visible="true" type="project"></pw-measurements-modal>
             </main>`;
   }
 
