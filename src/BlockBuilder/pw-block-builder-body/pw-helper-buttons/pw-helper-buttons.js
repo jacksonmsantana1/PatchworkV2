@@ -1,7 +1,4 @@
 import H from '../../../lib/Helper/Helper';
-import './pw-add-column-button/pw-add-column-button';
-import './pw-remove-column-button/pw-remove-column-button';
-import './pw-show-measurements-button/pw-show-measurements-button';
 
 export default class PwHelperButtons extends HTMLElement {
   static get observedAttributes() {
@@ -15,8 +12,6 @@ export default class PwHelperButtons extends HTMLElement {
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
     this.render();
-
-    // EventListeners
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -39,9 +34,33 @@ export default class PwHelperButtons extends HTMLElement {
     }
   }
 
+  setSlotsActive() {
+    this.slots.map(nodes =>
+      /* eslint array-callback-return: 0 */
+      Array.prototype.slice.call(nodes).map((node) => {
+        const _node = node;
+        _node.active = true;
+      }));
+  }
+
+  setSlotsDeactive() {
+    this.slots.map(nodes =>
+      /* eslint array-callback-return: 0 */
+      Array.prototype.slice.call(nodes).map((node) => {
+        const _node = node;
+        _node.active = '';
+      }));
+  }
+
   get button() {
     return H.getShadowRoot(this)
       .chain(H.querySelector('div.plus-button'));
+  }
+
+  get slots() {
+    return H.getShadowRoot(this)
+      .chain(H.querySelector('slot'))
+      .chain(H.assignedNodes);
   }
 
   render() {
@@ -54,6 +73,12 @@ export default class PwHelperButtons extends HTMLElement {
   }
 
   set active(value) {
+    if (value) {
+      this.setSlotsActive();
+    } else {
+      this.setSlotsDeactive();
+    }
+
     this._active = value;
     this.setAttribute('active', value);
     this.render();
@@ -62,9 +87,7 @@ export default class PwHelperButtons extends HTMLElement {
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<div class="plus-button ${this.active ? 'open' : ''}"></div>
-              <pw-add-column-button active="${this.active ? 'true' : ''}"></pw-add-column-button>
-              <pw-remove-column-button active="${this.active ? 'true' : ''}"></pw-remove-column-button>
-              <pw-show-measurements-button active="${this.active ? 'true' : ''}"></pw-show-measurements-button>`;
+              <slot></slot>`;
   }
 
   get style() {

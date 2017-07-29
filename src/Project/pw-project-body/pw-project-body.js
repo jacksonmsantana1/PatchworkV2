@@ -152,6 +152,9 @@ export default class PwProjectBody extends HTMLElement {
               <pw-project id="${this.id}" session="${this.session}"></pw-project>
               <pw-fabrics-list visible=""></pw-fabrics-list>
               <pw-zoom-buttons scale="10"></pw-zoom-buttons>
+              <pw-helper-buttons>
+                <pw-show-measurements-button active="${this.active ? 'true' : ''}"></pw-show-measurements-button>;
+              </pw-helper-buttons>
             </main>`;
   }
 
