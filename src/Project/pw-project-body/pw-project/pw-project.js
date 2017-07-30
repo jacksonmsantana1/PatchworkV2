@@ -17,6 +17,9 @@ export default class PwProject extends HTMLElement {
     this.id = this.getAttribute('id') || '';
     this.session = this.getAttribute('session') || '';
     this._svg = {};
+    this._width = 0;
+    this._height = 0;
+    this._layout = '';
     this._zoomScale = 100;
     this._exit = false;
 
@@ -35,6 +38,9 @@ export default class PwProject extends HTMLElement {
         .then((res) => {
           if (res.body && res.body.projectId === this.id) {
             this._svg = res.body.svg;
+            this._width = res.body.width;
+            this._height = res.body.height;
+            this._layout = res.body.layout;
             this.render();
             Token.setToken(res.req.header.Authorization);
           } else {
@@ -46,6 +52,9 @@ export default class PwProject extends HTMLElement {
           this.getNewProject(this.id)
             .then((res) => {
               this._svg = res.body.svg;
+              this._width = res.body.width;
+              this._height = res.body.height;
+              this._layout = res.body.layout;
               this.render();
               this.addListenersToPolygons();
               this.addMouseOverListenersToPolygons();
@@ -285,6 +294,10 @@ export default class PwProject extends HTMLElement {
         sessionId: this.session,
         name: '//TODO See how to do this',
         svg: this._svg,
+        type: 'project',
+        layout: this._layout,
+        width: this._width,
+        height: this._height,
       })
       .catch((err) => {
         if (err.message === 'Unauthorized') {

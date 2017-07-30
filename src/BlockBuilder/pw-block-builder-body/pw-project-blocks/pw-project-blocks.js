@@ -423,6 +423,7 @@ export default class PwProjectBlocks extends HTMLElement {
         sessionId: this.session,
         name: '//TODO See how to do this',
         svg: {},
+        type: 'blocks',
       })
       .catch((err) => {
         if (err.message === 'Unauthorized') {
