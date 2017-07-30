@@ -49,15 +49,17 @@ export default class PwProject extends HTMLElement {
         .catch(() => {
           this.getNewProject(this.id)
             .then((res) => {
-              this._svg = res.body.svg;
-              this._width = res.body.width;
-              this._height = res.body.height;
-              this.render();
-              this.addListenersToPolygons();
-              this.addMouseOverListenersToPolygons();
-              this.addMouseOutListenersToPolygons();
-              Token.setToken(res.req.header.Authorization);
-              return this.saveNewProject();
+              if (res && res.body) {
+                this._svg = res.body.svg;
+                this._width = res.body.width;
+                this._height = res.body.height;
+                this.render();
+                this.addListenersToPolygons();
+                this.addMouseOverListenersToPolygons();
+                this.addMouseOutListenersToPolygons();
+                Token.setToken(res.req.header.Authorization);
+                return this.saveNewProject();
+              }
             })
             .then((res) => {
               if (res.body) {
