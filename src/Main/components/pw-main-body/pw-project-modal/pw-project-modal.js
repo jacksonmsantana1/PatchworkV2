@@ -8,13 +8,14 @@ import Token from '../../../../lib/Token/Token';
 /*  eslint no-underscore-dangle:0 */
 export default class PwProjectModal extends HTMLElement {
   static get observedAttributes() {
-    return ['visible', 'id'];
+    return ['visible', 'id', 'buttonvisible'];
   }
 
   createdCallback() {
     // Setting the initial attributes
     this._visible = this.getAttribute('visible') || '';
     this._id = this.getAttribute('id') || '';
+    this._buttonvisible = this.getAttribute('buttonvisible') || '';
     this._project = {};
 
     // Setting the Inner Dom and the styles
@@ -126,6 +127,15 @@ export default class PwProjectModal extends HTMLElement {
     this.render();
   }
 
+  get buttonvisible() {
+    return this._buttonVisible;
+  }
+
+  set buttonvisible(value) {
+    this._buttonVisible = value;
+    this.setAttribute('buttonvisible', value);
+  }
+
   get visible() {
     return this._visible;
   }
@@ -153,7 +163,7 @@ export default class PwProjectModal extends HTMLElement {
                   <span class="mobile-close"> X </span>
                   <h3> <span> ${project.name} </span> </h3>
                   <pw-project-layout svg="${project.layout}"></pw-project-layout>
-                  <pw-project-modal-button id="${this.id}"></pw-project-modal-button>
+                  ${this._buttonvisible ? `<pw-project-modal-button id="${this.id}"></pw-project-modal-button>` : ''}
                 </div>
               </div>
             </div>`;

@@ -36,7 +36,7 @@ export default class PwMainBody extends HTMLElement {
   get html() {
     /* eslint quotes:0 class-methods-use-this:0 */
     return `<main>
-              <pw-project-modal visible=""></pw-project-modal>
+              <pw-project-modal buttonvisible="true" visible=""></pw-project-modal>
               <slot></slot>
             </main>`;
   }

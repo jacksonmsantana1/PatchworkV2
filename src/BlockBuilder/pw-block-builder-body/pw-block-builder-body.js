@@ -11,6 +11,7 @@ import '../../components/pw-measurements-modal/pw-measurements-modal';
 import './pw-helper-buttons/pw-add-column-button/pw-add-column-button'; // Should be Central component
 import './pw-helper-buttons/pw-remove-column-button/pw-remove-column-button'; // Should be Central component
 import './pw-helper-buttons/pw-show-measurements-button/pw-show-measurements-button'; // Should be Central component
+import './pw-helper-buttons/pw-show-layout-button/pw-show-layout-button'; // Should be Central component
 
 export default class PwBlockBuilderBody extends HTMLElement {
   static get observedAttributes() {

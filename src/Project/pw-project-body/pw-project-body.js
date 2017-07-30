@@ -25,6 +25,7 @@ export default class PwProjectBody extends HTMLElement {
     this.addEventListener('save-project', this.onSaveProject.bind(this), false);
     this.addEventListener('remove-project', this.onRemoveProject.bind(this), false);
     this.addEventListener('show-measurements-modal-up', this.onShowMeasurementsModalUp.bind(this), false);
+    this.addEventListener('show-layout-modal-up', this.onShowLayoutModalUp.bind(this), false);
 
     if (super.createdCallback) {
       super.createdCallback();
@@ -46,6 +47,13 @@ export default class PwProjectBody extends HTMLElement {
     });
 
     evt.stopPropagation();
+  }
+
+  onShowLayoutModalUp() {
+    this.getPwProjectModal().map((pwProjectModal) => {
+      pwProjectModal.id = this.id;
+      pwProjectModal.visible = true;
+    });
   }
 
   onRemoveProject(evt) {
@@ -124,21 +132,18 @@ export default class PwProjectBody extends HTMLElement {
   }
 
   getPwProject() {
-    // FIXME
     return H.getShadowRoot(this)
-      .chain(H.childNodes)
-      .chain(H.nth(1))
-      .chain(H.childNodes)
-      .chain(H.nth(1));
+      .chain(H.querySelector('pw-project'));
   }
 
   getPwFabricList() {
-    // FIXME
     return H.getShadowRoot(this)
-      .chain(H.childNodes)
-      .chain(H.nth(1))
-      .chain(H.childNodes)
-      .chain(H.nth(3));
+      .chain(H.querySelector('pw-fabrics-list'));
+  }
+
+  getPwProjectModal() {
+    return H.getShadowRoot(this)
+      .chain(H.querySelector('pw-project-modal'));
   }
 
   render() {
@@ -172,9 +177,11 @@ export default class PwProjectBody extends HTMLElement {
               <pw-fabrics-list visible=""></pw-fabrics-list>
               <pw-zoom-buttons scale="10"></pw-zoom-buttons>
               <pw-helper-buttons>
-                <pw-show-measurements-button active="${this.active ? 'true' : ''}"></pw-show-measurements-button>;
+                <pw-show-measurements-button active="${this.active ? 'true' : ''}"></pw-show-measurements-button>
+                <pw-show-layout-button active="${this.active ? 'true' : ''}"></pw-show-layout-button>
               </pw-helper-buttons>
               <pw-measurements-modal visible="true" type="project"></pw-measurements-modal>
+              <pw-project-modal visible="" buttonvisible=""></pw-project-modal>
             </main>`;
   }
 
