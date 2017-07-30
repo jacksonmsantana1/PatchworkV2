@@ -11,7 +11,7 @@ export default class PwMeasurementsModal extends HTMLElement {
     this._visible = this.getAttribute('visible') || '';
     this._type = this.getAttribute('type') || '';
     this._measurements = [];
-    this._blockSize = 1;
+    this._blockSize = 100;
 
     // Setting the Inner Dom and the styles
     this.attachShadow({ mode: 'open' });
