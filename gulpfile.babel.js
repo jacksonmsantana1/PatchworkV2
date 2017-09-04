@@ -41,11 +41,13 @@ gulp.task('dev', ['main'], () => {
 });
 
 gulp.task('clean', () => del([paths.libDir, paths.clientBundle]));
+
 gulp.task('checkDistFolder', () => {
   const folder = './dist';
   const fileName = 'index.html';
   const htmlString = '<!doctype html> <html> <head> </head> <body> ' +
         '<div class="app"></div> <script src="client-bundle.js"></script> </body> </html>';
+
   fs.readdir(folder, (err, files) => {
     if (!_.includes(files, fileName)) {
       fs.writeFile(folder.concat('/').concat(fileName), htmlString, () => {
@@ -54,6 +56,7 @@ gulp.task('checkDistFolder', () => {
     }
   });
 });
+
 gulp.task('main', ['lint', 'clean', 'checkDistFolder'], () => gulp.src(paths.clientEntryPoint)
   .pipe(webpack(webpackConfig))
   .pipe(gulp.dest(paths.distDir))
